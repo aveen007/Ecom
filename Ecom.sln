@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecom", "Ecom\Ecom.csproj", "{40575280-AB19-43F4-9079-5338169EF322}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "db_Context", "db_Context\db_Context.csproj", "{72BC7198-77A7-4792-8879-1AF2A1E37517}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40575280-AB19-43F4-9079-5338169EF322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40575280-AB19-43F4-9079-5338169EF322}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40575280-AB19-43F4-9079-5338169EF322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40575280-AB19-43F4-9079-5338169EF322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D5652BF3-D464-4283-87F9-4B4207E6A53A}
+	EndGlobalSection
+EndGlobal
