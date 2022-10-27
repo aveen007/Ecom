@@ -7,17 +7,13 @@ using System.Collections.Generic;
 
 namespace db_Context.Models
 {
-    public partial class ShippingState
+    public partial class CategoryProduct
     {
-        public ShippingState()
-        {
-            Shipping = new HashSet<Shipping>();
-        }
-
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public int CategoryId { get; set; }
+        public int ProductId { get; set; }
 
-        public virtual ICollection<Shipping> Shipping { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual Attribute Product { get; set; }
     }
 }

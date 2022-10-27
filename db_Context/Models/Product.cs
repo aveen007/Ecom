@@ -5,13 +5,15 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Ecom.Models
+namespace db_Context.Models
 {
     public partial class Product
     {
         public Product()
         {
+            ProductAttribute = new HashSet<ProductAttribute>();
             ProductOrder = new HashSet<ProductOrder>();
+            ProductValue = new HashSet<ProductValue>();
         }
 
         public int Id { get; set; }
@@ -21,6 +23,8 @@ namespace Ecom.Models
         public int CategoryId { get; set; }
 
         public virtual Category Category { get; set; }
+        public virtual ICollection<ProductAttribute> ProductAttribute { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder { get; set; }
+        public virtual ICollection<ProductValue> ProductValue { get; set; }
     }
 }
