@@ -5,22 +5,21 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace db_Context.Models
+namespace DbContext.Models
 {
-    public partial class Category
+    public partial class Value
     {
-        public Category()
+        public Value()
         {
-            CategoryProduct = new HashSet<CategoryProduct>();
             CategoryValue = new HashSet<CategoryValue>();
-            Product = new HashSet<Product>();
+            ProductValue = new HashSet<ProductValue>();
         }
 
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Value1 { get; set; }
+        public int AttributeId { get; set; }
 
-        public virtual ICollection<CategoryProduct> CategoryProduct { get; set; }
         public virtual ICollection<CategoryValue> CategoryValue { get; set; }
-        public virtual ICollection<Product> Product { get; set; }
+        public virtual ICollection<ProductValue> ProductValue { get; set; }
     }
 }

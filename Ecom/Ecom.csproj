@@ -20,11 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\db_Context\db_Context.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\DbContext\DbContext.csproj" />
   </ItemGroup>
 
 </Project>

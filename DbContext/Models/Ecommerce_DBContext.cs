@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace db_Context.Models
+namespace DbContext.Models
 {
     public partial class Ecommerce_DBContext : DbContext
     {
@@ -38,7 +38,7 @@ namespace db_Context.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-LFO5DLA\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-LFO5DLA\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
             }
         }
 
