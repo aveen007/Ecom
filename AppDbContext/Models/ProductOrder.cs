@@ -5,15 +5,15 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace DbContext.Models
+namespace AppDbContext.Models
 {
-    public partial class ProductValue
+    public partial class ProductOrder
     {
         public int Id { get; set; }
+        public int OrderId { get; set; }
         public int ProductId { get; set; }
-        public int ValueId { get; set; }
 
+        public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
-        public virtual Value Value { get; set; }
     }
 }
