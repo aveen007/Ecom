@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecom", "Ecom\Ecom.csproj", "{40575280-AB19-43F4-9079-5338169EF322}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppDbContext", "db_Context\AppDbContext.csproj", "{72BC7198-77A7-4792-8879-1AF2A1E37517}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDbContext", "AppDbContext\AppDbContext.csproj", "{7675ACF7-AEDD-4A74-949D-BD5BDF11AFE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{40575280-AB19-43F4-9079-5338169EF322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40575280-AB19-43F4-9079-5338169EF322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40575280-AB19-43F4-9079-5338169EF322}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72BC7198-77A7-4792-8879-1AF2A1E37517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7675ACF7-AEDD-4A74-949D-BD5BDF11AFE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7675ACF7-AEDD-4A74-949D-BD5BDF11AFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7675ACF7-AEDD-4A74-949D-BD5BDF11AFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7675ACF7-AEDD-4A74-949D-BD5BDF11AFE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,19 +5,23 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace db_Context.Models
+namespace AppDbContext.Models
 {
-    public partial class ShippingState
+    public partial class Order
     {
-        public ShippingState()
+        public Order()
         {
+            ProductOrder = new HashSet<ProductOrder>();
             Shipping = new HashSet<Shipping>();
         }
 
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public DateTime DateCreated { get; set; }
+        public int CustomerId { get; set; }
+        public int ShippingId { get; set; }
 
+        public virtual Customer Customer { get; set; }
+        public virtual ICollection<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<Shipping> Shipping { get; set; }
     }
 }
