@@ -7,13 +7,14 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class ProductValue
+    public partial class ProductSpecificationValue
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
-        public int ValueId { get; set; }
+        public int SpecificationId { get; set; }
+        public string Value { get; set; }
 
         public virtual Product Product { get; set; }
-        public virtual Value Value { get; set; }
+        public virtual ProductSpecification Specification { get; set; }
     }
 }

@@ -3,23 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AppDbContext.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Attribute",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Attribute", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Category",
                 columns: table => new
@@ -31,6 +18,19 @@ namespace AppDbContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Category", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category_Specification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Specification = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category_Specification", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,6 +51,19 @@ namespace AppDbContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Product_Specification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Specification = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product_Specification", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShippingState",
                 columns: table => new
                 {
@@ -62,46 +75,6 @@ namespace AppDbContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShippingState", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Value",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    AttributeId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Value", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Category_Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category_Product", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Category_Product_Category",
-                        column: x => x.CategoryId,
-                        principalTable: "Category",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Category_Product_Attribute",
-                        column: x => x.ProductId,
-                        principalTable: "Attribute",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -122,6 +95,33 @@ namespace AppDbContext.Migrations
                         name: "FK_Product_Category",
                         column: x => x.CategoryId,
                         principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category_Specification_Value",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryId = table.Column<int>(nullable: false),
+                    SpecificationId = table.Column<int>(nullable: false),
+                    Value = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category_Specification_Value", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Category_Specification_Value_Category",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Category_Specification_Value_Category_Specification",
+                        column: x => x.SpecificationId,
+                        principalTable: "Category_Specification",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -148,79 +148,28 @@ namespace AppDbContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category_Value",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(nullable: false),
-                    ValueId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category_Value", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Category_Value_Category",
-                        column: x => x.CategoryId,
-                        principalTable: "Category",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Category_Value_Value",
-                        column: x => x.ValueId,
-                        principalTable: "Value",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product_Attribute",
+                name: "Product_Specification_Value",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(nullable: false),
-                    AttributeId = table.Column<int>(nullable: false)
+                    SpecificationId = table.Column<int>(nullable: false),
+                    Value = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product_Attribute", x => x.Id);
+                    table.PrimaryKey("PK_Product_Specification_Value", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_Attribute_Attribute",
-                        column: x => x.AttributeId,
-                        principalTable: "Attribute",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Product_Attribute_Product",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product_Value",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(nullable: false),
-                    ValueId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product_Value", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Product_Value_Product",
+                        name: "FK_Product_Specification_Value_Product",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Product_Value_Value",
-                        column: x => x.ValueId,
-                        principalTable: "Value",
+                        name: "FK_Product_Specification_Value_Product_Specification",
+                        column: x => x.SpecificationId,
+                        principalTable: "Product_Specification",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -279,25 +228,20 @@ namespace AppDbContext.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_Product_ProductId",
-                table: "Category_Product",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "Unique_Category_Product",
-                table: "Category_Product",
-                columns: new[] { "CategoryId", "ProductId" },
+                name: "Unique_Category_Specification",
+                table: "Category_Specification",
+                column: "Specification",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_Value_ValueId",
-                table: "Category_Value",
-                column: "ValueId");
+                name: "IX_Category_Specification_Value_SpecificationId",
+                table: "Category_Specification_Value",
+                column: "SpecificationId");
 
             migrationBuilder.CreateIndex(
-                name: "Unique_Category_Value",
-                table: "Category_Value",
-                columns: new[] { "CategoryId", "ValueId" },
+                name: "Unique_Category_Specification_Value",
+                table: "Category_Specification_Value",
+                columns: new[] { "CategoryId", "SpecificationId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -311,25 +255,20 @@ namespace AppDbContext.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_Attribute_ProductId",
-                table: "Product_Attribute",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "Unique_Product_Attribute",
-                table: "Product_Attribute",
-                columns: new[] { "AttributeId", "ProductId" },
+                name: "Unique_Product_Specification",
+                table: "Product_Specification",
+                column: "Specification",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_Value_ValueId",
-                table: "Product_Value",
-                column: "ValueId");
+                name: "IX_Product_Specification_Value_SpecificationId",
+                table: "Product_Specification_Value",
+                column: "SpecificationId");
 
             migrationBuilder.CreateIndex(
-                name: "Unique_Product_Value",
-                table: "Product_Value",
-                columns: new[] { "ProductId", "ValueId" },
+                name: "Unique_Product_Specification_Value",
+                table: "Product_Specification_Value",
+                columns: new[] { "ProductId", "SpecificationId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -357,16 +296,10 @@ namespace AppDbContext.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Category_Product");
+                name: "Category_Specification_Value");
 
             migrationBuilder.DropTable(
-                name: "Category_Value");
-
-            migrationBuilder.DropTable(
-                name: "Product_Attribute");
-
-            migrationBuilder.DropTable(
-                name: "Product_Value");
+                name: "Product_Specification_Value");
 
             migrationBuilder.DropTable(
                 name: "ProductOrder");
@@ -375,10 +308,10 @@ namespace AppDbContext.Migrations
                 name: "Shipping");
 
             migrationBuilder.DropTable(
-                name: "Attribute");
+                name: "Category_Specification");
 
             migrationBuilder.DropTable(
-                name: "Value");
+                name: "Product_Specification");
 
             migrationBuilder.DropTable(
                 name: "Product");

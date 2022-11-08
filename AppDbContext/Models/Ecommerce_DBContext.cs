@@ -19,42 +19,29 @@ namespace AppDbContext.Models
         {
         }
 
-        public virtual DbSet<Attribute> Attribute { get; set; }
         public virtual DbSet<Category> Category { get; set; }
-        public virtual DbSet<CategoryProduct> CategoryProduct { get; set; }
-        public virtual DbSet<CategoryValue> CategoryValue { get; set; }
+        public virtual DbSet<CategorySpecification> CategorySpecification { get; set; }
+        public virtual DbSet<CategorySpecificationValue> CategorySpecificationValue { get; set; }
         public virtual DbSet<Customer> Customer { get; set; }
         public virtual DbSet<Order> Order { get; set; }
         public virtual DbSet<Product> Product { get; set; }
-        public virtual DbSet<ProductAttribute> ProductAttribute { get; set; }
         public virtual DbSet<ProductOrder> ProductOrder { get; set; }
-        public virtual DbSet<ProductValue> ProductValue { get; set; }
+        public virtual DbSet<ProductSpecification> ProductSpecification { get; set; }
+        public virtual DbSet<ProductSpecificationValue> ProductSpecificationValue { get; set; }
         public virtual DbSet<Shipping> Shipping { get; set; }
         public virtual DbSet<ShippingState> ShippingState { get; set; }
-        public virtual DbSet<Value> Value { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                // Rami
                 optionsBuilder.UseSqlServer("Server=DESKTOP-LFO5DLA\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
-                // Aveen
-                // optionsBuilder.UseSqlServer("Server=DESKTOP-P9JQUDQ\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Attribute>(entity =>
-            {
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.Name)
@@ -63,46 +50,44 @@ namespace AppDbContext.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<CategoryProduct>(entity =>
+            modelBuilder.Entity<CategorySpecification>(entity =>
             {
-                entity.ToTable("Category_Product");
+                entity.ToTable("Category_Specification");
 
-                entity.HasIndex(e => new { e.CategoryId, e.ProductId })
-                    .HasName("Unique_Category_Product")
+                entity.HasIndex(e => e.Specification)
+                    .HasName("Unique_Category_Specification")
                     .IsUnique();
 
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.CategoryProduct)
-                    .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Category_Product_Category");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.CategoryProduct)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Category_Product_Attribute");
+                entity.Property(e => e.Specification)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
-            modelBuilder.Entity<CategoryValue>(entity =>
+            modelBuilder.Entity<CategorySpecificationValue>(entity =>
             {
-                entity.ToTable("Category_Value");
+                entity.ToTable("Category_Specification_Value");
 
-                entity.HasIndex(e => new { e.CategoryId, e.ValueId })
-                    .HasName("Unique_Category_Value")
+                entity.HasIndex(e => new { e.CategoryId, e.SpecificationId })
+                    .HasName("Unique_Category_Specification_Value")
                     .IsUnique();
 
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.CategoryValue)
+                    .WithMany(p => p.CategorySpecificationValue)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Category_Value_Category");
+                    .HasConstraintName("FK_Category_Specification_Value_Category");
 
-                entity.HasOne(d => d.Value)
-                    .WithMany(p => p.CategoryValue)
-                    .HasForeignKey(d => d.ValueId)
+                entity.HasOne(d => d.Specification)
+                    .WithMany(p => p.CategorySpecificationValue)
+                    .HasForeignKey(d => d.SpecificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Category_Value_Value");
+                    .HasConstraintName("FK_Category_Specification_Value_Category_Specification");
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -162,27 +147,6 @@ namespace AppDbContext.Models
                     .HasConstraintName("FK_Product_Category");
             });
 
-            modelBuilder.Entity<ProductAttribute>(entity =>
-            {
-                entity.ToTable("Product_Attribute");
-
-                entity.HasIndex(e => new { e.AttributeId, e.ProductId })
-                    .HasName("Unique_Product_Attribute")
-                    .IsUnique();
-
-                entity.HasOne(d => d.Attribute)
-                    .WithMany(p => p.ProductAttribute)
-                    .HasForeignKey(d => d.AttributeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Product_Attribute_Attribute");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProductAttribute)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Product_Attribute_Product");
-            });
-
             modelBuilder.Entity<ProductOrder>(entity =>
             {
                 entity.HasIndex(e => new { e.OrderId, e.ProductId })
@@ -202,25 +166,44 @@ namespace AppDbContext.Models
                     .HasConstraintName("FK_ProductOrder_Product");
             });
 
-            modelBuilder.Entity<ProductValue>(entity =>
+            modelBuilder.Entity<ProductSpecification>(entity =>
             {
-                entity.ToTable("Product_Value");
+                entity.ToTable("Product_Specification");
 
-                entity.HasIndex(e => new { e.ProductId, e.ValueId })
-                    .HasName("Unique_Product_Value")
+                entity.HasIndex(e => e.Specification)
+                    .HasName("Unique_Product_Specification")
                     .IsUnique();
 
+                entity.Property(e => e.Specification)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ProductSpecificationValue>(entity =>
+            {
+                entity.ToTable("Product_Specification_Value");
+
+                entity.HasIndex(e => new { e.ProductId, e.SpecificationId })
+                    .HasName("Unique_Product_Specification_Value")
+                    .IsUnique();
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProductValue)
+                    .WithMany(p => p.ProductSpecificationValue)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Product_Value_Product");
+                    .HasConstraintName("FK_Product_Specification_Value_Product");
 
-                entity.HasOne(d => d.Value)
-                    .WithMany(p => p.ProductValue)
-                    .HasForeignKey(d => d.ValueId)
+                entity.HasOne(d => d.Specification)
+                    .WithMany(p => p.ProductSpecificationValue)
+                    .HasForeignKey(d => d.SpecificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Product_Value_Value");
+                    .HasConstraintName("FK_Product_Specification_Value_Product_Specification");
             });
 
             modelBuilder.Entity<Shipping>(entity =>
@@ -249,15 +232,6 @@ namespace AppDbContext.Models
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Value>(entity =>
-            {
-                entity.Property(e => e.Value1)
-                    .IsRequired()
-                    .HasColumnName("Value")
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });

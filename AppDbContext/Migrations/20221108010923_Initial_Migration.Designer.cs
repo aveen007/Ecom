@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppDbContext.Migrations
 {
     [DbContext(typeof(Ecommerce_DBContext))]
-    [Migration("20221107161137_initial")]
-    partial class initial
+    [Migration("20221108010923_Initial_Migration")]
+    partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,24 +20,6 @@ namespace AppDbContext.Migrations
                 .HasAnnotation("ProductVersion", "3.1.30")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("AppDbContext.Models.Attribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Attribute");
-                });
 
             modelBuilder.Entity("AppDbContext.Models.Category", b =>
                 {
@@ -57,31 +39,29 @@ namespace AppDbContext.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.CategoryProduct", b =>
+            modelBuilder.Entity("AppDbContext.Models.CategorySpecification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("Specification")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("CategoryId", "ProductId")
+                    b.HasIndex("Specification")
                         .IsUnique()
-                        .HasName("Unique_Category_Product");
+                        .HasName("Unique_Category_Specification");
 
-                    b.ToTable("Category_Product");
+                    b.ToTable("Category_Specification");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.CategoryValue", b =>
+            modelBuilder.Entity("AppDbContext.Models.CategorySpecificationValue", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,18 +71,24 @@ namespace AppDbContext.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ValueId")
+                    b.Property<int>("SpecificationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ValueId");
+                    b.HasIndex("SpecificationId");
 
-                    b.HasIndex("CategoryId", "ValueId")
+                    b.HasIndex("CategoryId", "SpecificationId")
                         .IsUnique()
-                        .HasName("Unique_Category_Value");
+                        .HasName("Unique_Category_Specification_Value");
 
-                    b.ToTable("Category_Value");
+                    b.ToTable("Category_Specification_Value");
                 });
 
             modelBuilder.Entity("AppDbContext.Models.Customer", b =>
@@ -199,30 +185,6 @@ namespace AppDbContext.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.ProductAttribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("AttributeId", "ProductId")
-                        .IsUnique()
-                        .HasName("Unique_Product_Attribute");
-
-                    b.ToTable("Product_Attribute");
-                });
-
             modelBuilder.Entity("AppDbContext.Models.ProductOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -247,7 +209,29 @@ namespace AppDbContext.Migrations
                     b.ToTable("ProductOrder");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.ProductValue", b =>
+            modelBuilder.Entity("AppDbContext.Models.ProductSpecification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Specification")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Specification")
+                        .IsUnique()
+                        .HasName("Unique_Product_Specification");
+
+                    b.ToTable("Product_Specification");
+                });
+
+            modelBuilder.Entity("AppDbContext.Models.ProductSpecificationValue", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,18 +241,24 @@ namespace AppDbContext.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ValueId")
+                    b.Property<int>("SpecificationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ValueId");
+                    b.HasIndex("SpecificationId");
 
-                    b.HasIndex("ProductId", "ValueId")
+                    b.HasIndex("ProductId", "SpecificationId")
                         .IsUnique()
-                        .HasName("Unique_Product_Value");
+                        .HasName("Unique_Product_Specification_Value");
 
-                    b.ToTable("Product_Value");
+                    b.ToTable("Product_Specification_Value");
                 });
 
             modelBuilder.Entity("AppDbContext.Models.Shipping", b =>
@@ -320,55 +310,18 @@ namespace AppDbContext.Migrations
                     b.ToTable("ShippingState");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.Value", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value1")
-                        .IsRequired()
-                        .HasColumnName("Value")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Value");
-                });
-
-            modelBuilder.Entity("AppDbContext.Models.CategoryProduct", b =>
+            modelBuilder.Entity("AppDbContext.Models.CategorySpecificationValue", b =>
                 {
                     b.HasOne("AppDbContext.Models.Category", "Category")
-                        .WithMany("CategoryProduct")
+                        .WithMany("CategorySpecificationValue")
                         .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK_Category_Product_Category")
+                        .HasConstraintName("FK_Category_Specification_Value_Category")
                         .IsRequired();
 
-                    b.HasOne("AppDbContext.Models.Attribute", "Product")
-                        .WithMany("CategoryProduct")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Category_Product_Attribute")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AppDbContext.Models.CategoryValue", b =>
-                {
-                    b.HasOne("AppDbContext.Models.Category", "Category")
-                        .WithMany("CategoryValue")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK_Category_Value_Category")
-                        .IsRequired();
-
-                    b.HasOne("AppDbContext.Models.Value", "Value")
-                        .WithMany("CategoryValue")
-                        .HasForeignKey("ValueId")
-                        .HasConstraintName("FK_Category_Value_Value")
+                    b.HasOne("AppDbContext.Models.CategorySpecification", "Specification")
+                        .WithMany("CategorySpecificationValue")
+                        .HasForeignKey("SpecificationId")
+                        .HasConstraintName("FK_Category_Specification_Value_Category_Specification")
                         .IsRequired();
                 });
 
@@ -390,21 +343,6 @@ namespace AppDbContext.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.ProductAttribute", b =>
-                {
-                    b.HasOne("AppDbContext.Models.Attribute", "Attribute")
-                        .WithMany("ProductAttribute")
-                        .HasForeignKey("AttributeId")
-                        .HasConstraintName("FK_Product_Attribute_Attribute")
-                        .IsRequired();
-
-                    b.HasOne("AppDbContext.Models.Product", "Product")
-                        .WithMany("ProductAttribute")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Product_Attribute_Product")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AppDbContext.Models.ProductOrder", b =>
                 {
                     b.HasOne("AppDbContext.Models.Order", "Order")
@@ -420,18 +358,18 @@ namespace AppDbContext.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.ProductValue", b =>
+            modelBuilder.Entity("AppDbContext.Models.ProductSpecificationValue", b =>
                 {
                     b.HasOne("AppDbContext.Models.Product", "Product")
-                        .WithMany("ProductValue")
+                        .WithMany("ProductSpecificationValue")
                         .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Product_Value_Product")
+                        .HasConstraintName("FK_Product_Specification_Value_Product")
                         .IsRequired();
 
-                    b.HasOne("AppDbContext.Models.Value", "Value")
-                        .WithMany("ProductValue")
-                        .HasForeignKey("ValueId")
-                        .HasConstraintName("FK_Product_Value_Value")
+                    b.HasOne("AppDbContext.Models.ProductSpecification", "Specification")
+                        .WithMany("ProductSpecificationValue")
+                        .HasForeignKey("SpecificationId")
+                        .HasConstraintName("FK_Product_Specification_Value_Product_Specification")
                         .IsRequired();
                 });
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AppDbContext.IRepos
 {
-    public interface IAttributeRepo : IBaseRepo<AppDbContext.Models.Attribute>
+    public interface IProductSpecificationValueRepo : IBaseRepo<ProductSpecificationValue>
     {
 
     }
