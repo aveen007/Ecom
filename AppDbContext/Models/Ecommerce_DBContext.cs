@@ -36,7 +36,10 @@ namespace AppDbContext.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                // Rami
                 optionsBuilder.UseSqlServer("Server=DESKTOP-LFO5DLA\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
+                // Aveen
+                // optionsBuilder.UseSqlServer("Server=DESKTOP-P9JQUDQ\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
             }
         }
 
