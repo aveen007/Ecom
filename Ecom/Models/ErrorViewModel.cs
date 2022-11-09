@@ -1,4 +1,6 @@
-﻿namespace Ecom.Models
+﻿using System;
+
+namespace Ecom.Models
 {
     public class ErrorViewModel
     {
