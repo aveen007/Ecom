@@ -1,0 +1,25 @@
+﻿@model string
+@inject Ecom.Services.ISingletonRnd singleton
+@inject Ecom.Services.IScopedRnd scoped
+@inject Ecom.Services.ITransientRnd transient
+
+<div class="container">
+    <div class="text-center">
+        @if (ViewBag.ServiceType == "Singleton")
+        {
+            <p class="text-primary">From Controller: @Model</p>
+            <p class="text-danger">From Service: @singleton.GetRandom()</p>
+        }
+        else if (ViewBag.ServiceType == "Transient")
+        {
+            <p class="text-primary">From Controller: @Model</p>
+            <p class="text-danger">From Service: @transient.GetRandom()</p>
+            <p class="text-danger">From Service2: @transient.GetRandom()</p>
+        }
+        else if (ViewBag.ServiceType == "Scoped")
+        {
+            <p class="text-primary">From Controller: @Model</p>
+            <p class="text-danger">From Service: @scoped.GetRandom()</p>
+        }
+    </div>
+</div>
