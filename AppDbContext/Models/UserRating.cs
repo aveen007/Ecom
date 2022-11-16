@@ -7,14 +7,15 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class Shipping
+    public partial class UserRating
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
-        public int ShippingStateId { get; set; }
-        public decimal? ShippingPrice { get; set; }
+        public string UserId { get; set; }
+        public int ProductOrderId { get; set; }
+        public int RatingValue { get; set; }
+        public string Comment { get; set; }
 
-        public virtual Order Order { get; set; }
-        public virtual ShippingState ShippingState { get; set; }
+        public virtual ProductOrder ProductOrder { get; set; }
+        public virtual User User { get; set; }
     }
 }

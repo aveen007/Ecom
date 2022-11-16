@@ -11,6 +11,7 @@ namespace AppDbContext.Models
     {
         public Product()
         {
+            ProductCategoryValue = new HashSet<ProductCategoryValue>();
             ProductOrder = new HashSet<ProductOrder>();
             ProductSpecificationValue = new HashSet<ProductSpecificationValue>();
         }
@@ -20,8 +21,10 @@ namespace AppDbContext.Models
         public decimal Price { get; set; }
         public string Sku { get; set; }
         public int CategoryId { get; set; }
+        public string ImageLink { get; set; }
 
         public virtual Category Category { get; set; }
+        public virtual ICollection<ProductCategoryValue> ProductCategoryValue { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<ProductSpecificationValue> ProductSpecificationValue { get; set; }
     }

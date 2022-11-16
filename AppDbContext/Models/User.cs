@@ -7,20 +7,26 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class Customer
+    public partial class User
     {
-        public Customer()
+        public User()
         {
+            Notification = new HashSet<Notification>();
             Order = new HashSet<Order>();
+            UserRating = new HashSet<UserRating>();
         }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string FirstName { get; set; }
         public byte[] LastName { get; set; }
+        public string Password { get; set; }
         public string Email { get; set; }
         public decimal? Phone { get; set; }
-        public string Address { get; set; }
+        public int AddressId { get; set; }
 
+        public virtual Address Address { get; set; }
+        public virtual ICollection<Notification> Notification { get; set; }
         public virtual ICollection<Order> Order { get; set; }
+        public virtual ICollection<UserRating> UserRating { get; set; }
     }
 }

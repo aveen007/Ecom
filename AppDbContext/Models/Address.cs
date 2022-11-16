@@ -7,14 +7,18 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class Shipping
+    public partial class Address
     {
-        public int Id { get; set; }
-        public int OrderId { get; set; }
-        public int ShippingStateId { get; set; }
-        public decimal? ShippingPrice { get; set; }
+        public Address()
+        {
+            User = new HashSet<User>();
+        }
 
-        public virtual Order Order { get; set; }
-        public virtual ShippingState ShippingState { get; set; }
+        public int Id { get; set; }
+        public string Governorate { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+
+        public virtual ICollection<User> User { get; set; }
     }
 }

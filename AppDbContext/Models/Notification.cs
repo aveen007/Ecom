@@ -7,14 +7,15 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class CategorySpecificationValue
+    public partial class Notification
     {
         public int Id { get; set; }
-        public int CategoryId { get; set; }
-        public int SpecificationId { get; set; }
-        public string Value { get; set; }
+        public string UserId { get; set; }
+        public int TypeId { get; set; }
+        public string Message { get; set; }
+        public DateTime DateTime { get; set; }
 
-        public virtual Category Category { get; set; }
-        public virtual CategorySpecification Specification { get; set; }
+        public virtual NotificationType Type { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -16,11 +16,13 @@ namespace AppDbContext.Models
         }
 
         public int Id { get; set; }
-        public DateTime DateCreated { get; set; }
-        public int CustomerId { get; set; }
+        public string UserId { get; set; }
         public int ShippingId { get; set; }
+        public DateTime OrderDate { get; set; }
+        public decimal TotalPrice { get; set; }
+        public bool IsOrdered { get; set; }
 
-        public virtual Customer Customer { get; set; }
+        public virtual User User { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<Shipping> Shipping { get; set; }
     }

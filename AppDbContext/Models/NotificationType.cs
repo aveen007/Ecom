@@ -7,14 +7,17 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class Shipping
+    public partial class NotificationType
     {
-        public int Id { get; set; }
-        public int OrderId { get; set; }
-        public int ShippingStateId { get; set; }
-        public decimal? ShippingPrice { get; set; }
+        public NotificationType()
+        {
+            Notification = new HashSet<Notification>();
+        }
 
-        public virtual Order Order { get; set; }
-        public virtual ShippingState ShippingState { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public virtual ICollection<Notification> Notification { get; set; }
     }
 }

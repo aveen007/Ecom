@@ -7,9 +7,9 @@ using System.Text;
 
 namespace AppDbContext.Repos
 {
-    public class CategorySpecificationValueRepo : BaseRepo<CategorySpecificationValue>, ICategorySpecificationValueRepo
+    public class NotificationTypeRepo : BaseRepo<NotificationType>, INotificationTypeRepo
     {
-        public CategorySpecificationValueRepo(Ecommerce_DBContext db) : base(db) 
+        public NotificationTypeRepo(Ecommerce_DBContext db) : base(db) 
         {
 
         }

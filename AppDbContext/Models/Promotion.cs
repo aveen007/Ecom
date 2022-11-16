@@ -7,20 +7,20 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class Category
+    public partial class Promotion
     {
-        public Category()
+        public Promotion()
         {
             CategoryPromotion = new HashSet<CategoryPromotion>();
-            CategorySpecification = new HashSet<CategorySpecification>();
-            Product = new HashSet<Product>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public int DiscountRate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public virtual ICollection<CategoryPromotion> CategoryPromotion { get; set; }
-        public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
-        public virtual ICollection<Product> Product { get; set; }
     }
 }

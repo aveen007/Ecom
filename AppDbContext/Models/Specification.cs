@@ -7,17 +7,17 @@ using System.Collections.Generic;
 
 namespace AppDbContext.Models
 {
-    public partial class ProductSpecification
+    public partial class Specification
     {
-        public ProductSpecification()
+        public Specification()
         {
-            ProductSpecificationValue = new HashSet<ProductSpecificationValue>();
+            CategorySpecification = new HashSet<CategorySpecification>();
         }
 
         public int Id { get; set; }
-        public string Specification { get; set; }
+        public string Specification1 { get; set; }
         public int ValueType { get; set; }
 
-        public virtual ICollection<ProductSpecificationValue> ProductSpecificationValue { get; set; }
+        public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
     }
 }
