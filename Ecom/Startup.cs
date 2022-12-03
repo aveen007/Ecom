@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ecom.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Ecom
 {
@@ -30,6 +31,9 @@ namespace Ecom
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<Ecommerce_DBContext>(options => options.UseSqlServer(Configuration.
+                GetConnectionString("DefaultConnection")));
+            services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
             services.AddDbService(Configuration);
 
             services.AddSingleton<ISingletonRnd, SingletonRnd>();

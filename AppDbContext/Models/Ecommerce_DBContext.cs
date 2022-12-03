@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -8,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AppDbContext.Models
 {
-    public partial class Ecommerce_DBContext : DbContext
+    public partial class Ecommerce_DBContext : IdentityUserContext<IdentityUser>
     {
         public Ecommerce_DBContext()
         {
@@ -42,7 +44,7 @@ namespace AppDbContext.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+/*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.*/
                 optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=Ecommerce_DB;Trusted_Connection=True;User Id=sa;Password=123456789;");
             }
         }
@@ -418,6 +420,8 @@ namespace AppDbContext.Models
             });
 
             OnModelCreatingPartial(modelBuilder);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
