@@ -6,31 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext.Models;
-using AppDbContext.UOW;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 
 namespace Ecom.Controllers
 {
-    public class CategoriesController : BaseController
+    public class SpecificationsController : Controller
     {
         private readonly Ecommerce_DBContext _context;
 
-        private readonly IWebHostEnvironment _hostEnvironment;
-       
-
-        public CategoriesController(Ecommerce_DBContext _context, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        public SpecificationsController(Ecommerce_DBContext context)
         {
-            this._hostEnvironment = _hostEnvironment;
-            this._context = _context;
+            _context = context;
         }
-        // GET: Categories
+
+        // GET: Specifications
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            return View(await _context.Specification.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Specifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,40 +32,39 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
+            var specification = await _context.Specification
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (specification == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(specification);
         }
 
-        // GET: Categories/Create
+        // GET: Specifications/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Specifications/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("Id,Specification1,ValueType")] Specification specification)
         {
             if (ModelState.IsValid)
             {
-                UnitOfWork.CategoryRepo.Add(category);
-                await UnitOfWork.SaveAsync();
+                _context.Add(specification);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-             
             }
-            return View(category);
+            return View(specification);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Specifications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,22 +72,22 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category.FindAsync(id);
-            if (category == null)
+            var specification = await _context.Specification.FindAsync(id);
+            if (specification == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(specification);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Specifications/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification1,ValueType")] Specification specification)
         {
-            if (id != category.Id)
+            if (id != specification.Id)
             {
                 return NotFound();
             }
@@ -103,12 +96,12 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    UnitOfWork.CategoryRepo.Update(category);
-                    await UnitOfWork.SaveAsync();
+                    _context.Update(specification);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!SpecificationExists(specification.Id))
                     {
                         return NotFound();
                     }
@@ -119,10 +112,10 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(specification);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Specifications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,30 +123,30 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
+            var specification = await _context.Specification
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            if (specification == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(specification);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Specifications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Category.FindAsync(id);
-            _context.Category.Remove(category);
+            var specification = await _context.Specification.FindAsync(id);
+            _context.Specification.Remove(specification);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool SpecificationExists(int id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            return _context.Specification.Any(e => e.Id == id);
         }
     }
 }

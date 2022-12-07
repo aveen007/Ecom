@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AppDbContext.UOW
 {
@@ -27,7 +28,7 @@ namespace AppDbContext.UOW
         public IUserRatingRepo UserRatingRepo { get; set; }
 
         public void SaveChanges ();
-
+        public Task<int> SaveAsync();
         public void RollBack();
     }
 }

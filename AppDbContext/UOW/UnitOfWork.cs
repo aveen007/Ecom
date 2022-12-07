@@ -4,6 +4,7 @@ using AppDbContext.Repos;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AppDbContext.UOW
 {
@@ -61,6 +62,10 @@ namespace AppDbContext.UOW
         public void SaveChanges()
         {
             _db.SaveChanges();
+        }
+        public Task<int> SaveAsync()
+        {
+            return _db.SaveChangesAsync();
         }
     }
 }

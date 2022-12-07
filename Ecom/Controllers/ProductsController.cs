@@ -6,16 +6,44 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext.Models;
+using Microsoft.Extensions.Hosting;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using AppDbContext.UOW;
+using Microsoft.Extensions.Configuration;
 
 namespace Ecom.Controllers
 {
-    public class ProductsController : Controller
+    public class ProductsController : BaseController
     {
+        private readonly IWebHostEnvironment _hostEnvironment;
         private readonly Ecommerce_DBContext _context;
 
-        public ProductsController(Ecommerce_DBContext context)
+        public ProductsController(Ecommerce_DBContext _context, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
         {
-            _context = context;
+            this._hostEnvironment = _hostEnvironment;
+            this._context = _context;
+        }
+        private async Task saveImage(Product product)
+        {
+            string wwwRootPath = _hostEnvironment.WebRootPath;
+            string filename = Path.GetFileNameWithoutExtension(product.Imagefile.FileName);
+            string extension = Path.GetExtension(product.Imagefile.FileName);
+            filename = filename + DateTime.Now.ToString("yyyy-mm-ss-fff") + extension;
+            string path = Path.Combine(wwwRootPath + "\\images\\products", filename);
+            product.ImageLink = Path.Combine("/images/products/", filename);
+            using var fileStream = new FileStream(path, FileMode.Create);
+            await product.Imagefile.CopyToAsync(fileStream);
+        }
+        private void deleteImage(string imagePath)
+        {
+            if (imagePath == null)
+                return;
+            string fullpath = Path.Combine(_hostEnvironment.WebRootPath + "\\", imagePath.Substring(1));
+            if (System.IO.File.Exists(fullpath))
+            {
+                System.IO.File.Delete(fullpath);
+            }
         }
 
         // GET: Products
@@ -56,13 +84,18 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Sku,CategoryId,ImageLink")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Sku,CategoryId,Imagefile")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+
+                if (product.Imagefile != null)
+                    await saveImage(product);
+                UnitOfWork.ProductRepo.Add(product);
+                await UnitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
+     
+
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
             return View(product);
@@ -90,7 +123,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Sku,CategoryId,ImageLink")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Sku,CategoryId,Imagefile")] Product product)
         {
             if (id != product.Id)
             {
@@ -101,8 +134,11 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    if (product.Imagefile != null)
+                        await saveImage(product);
+                    UnitOfWork.ProductRepo.Update(product);
+                    await UnitOfWork.SaveAsync();
+                
                 }
                 catch (DbUpdateConcurrencyException)
                 {
