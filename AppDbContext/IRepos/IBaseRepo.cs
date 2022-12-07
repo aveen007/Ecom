@@ -14,6 +14,8 @@ namespace AppDbContext.IRepos
 
         void Delete(int id);
 
-        IEnumerable<T> GetAll();
+        public IEnumerable<T> GetAll();
+       
+        public bool IsExist(int id);
     }
 }

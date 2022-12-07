@@ -14,20 +14,22 @@ namespace Ecom.Controllers
 {
     public class CategoriesController : BaseController
     {
-        private readonly Ecommerce_DBContext _context;
-
+  
         private readonly IWebHostEnvironment _hostEnvironment;
        
 
-        public CategoriesController(Ecommerce_DBContext _context, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        public CategoriesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-            this._context = _context;
+         
         }
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+
+            var categories = _unitOfWork.CategoryRepo.GetAll();
+            return View( categories.ToList());
+            /*  return View(await _context.Category.ToListAsync());*/
         }
 
         // GET: Categories/Details/5
@@ -37,9 +39,7 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category =  _unitOfWork.CategoryRepo.Get(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -63,8 +63,8 @@ namespace Ecom.Controllers
         {
             if (ModelState.IsValid)
             {
-                UnitOfWork.CategoryRepo.Add(category);
-                await UnitOfWork.SaveAsync();
+                _unitOfWork.CategoryRepo.Add(category);
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
              
             }
@@ -78,8 +78,8 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-
-            var category = await _context.Category.FindAsync(id);
+            var category = _unitOfWork.CategoryRepo.Get(id.Value);
+            /*var category = await _context.Category.FindAsync(id);*/
             if (category == null)
             {
                 return NotFound();
@@ -103,8 +103,8 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    UnitOfWork.CategoryRepo.Update(category);
-                    await UnitOfWork.SaveAsync();
+                    _unitOfWork.CategoryRepo.Update(category);
+                    await _unitOfWork.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -129,9 +129,9 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category = _unitOfWork.CategoryRepo.Get(id.Value);
+            /*   var category = await _context.Category
+                   .FirstOrDefaultAsync(m => m.Id == id);*/
             if (category == null)
             {
                 return NotFound();
@@ -145,15 +145,19 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Category.FindAsync(id);
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
+            /*var category = await _context.Category.FindAsync(id);*/
+            
+            _unitOfWork.CategoryRepo.Delete(id);
+            await _unitOfWork.SaveAsync();
+            /*_context.Category.Remove(category);
+            await _context.SaveChangesAsync();*/
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            return _unitOfWork.CategoryRepo.IsExist(id);
+            /*return _context.Category.Any(e => e.Id == id);*/
         }
     }
 }

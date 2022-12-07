@@ -44,5 +44,15 @@ namespace AppDbContext.Repos
         {
             _dbSet.Update(item);
         }
+        public bool IsExist(int id)
+        {
+            var dbItem = Get(id);
+            if (dbItem != null)
+            {
+                _db.Entry<T>(dbItem).State = EntityState.Detached;
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -49,8 +49,10 @@ namespace Ecom.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var ecommerce_DBContext = _context.Product.Include(p => p.Category);
-            return View(await ecommerce_DBContext.ToListAsync());
+            /*   var ecommerce_DBContext = _context.Product.Include(p => p.Category);
+               return View(await ecommerce_DBContext.ToListAsync());*/
+            var products = _unitOfWork.ProductRepo.GetAll();
+            return View(products.ToList());
         }
 
         // GET: Products/Details/5
@@ -61,9 +63,10 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            /*var product = await _context.Product
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            var product = _unitOfWork.ProductRepo.Get(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -91,8 +94,8 @@ namespace Ecom.Controllers
 
                 if (product.Imagefile != null)
                     await saveImage(product);
-                UnitOfWork.ProductRepo.Add(product);
-                await UnitOfWork.SaveAsync();
+                _unitOfWork.ProductRepo.Add(product);
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
      
 
@@ -136,8 +139,8 @@ namespace Ecom.Controllers
                 {
                     if (product.Imagefile != null)
                         await saveImage(product);
-                    UnitOfWork.ProductRepo.Update(product);
-                    await UnitOfWork.SaveAsync();
+                    _unitOfWork.ProductRepo.Update(product);
+                    await _unitOfWork.SaveAsync();
                 
                 }
                 catch (DbUpdateConcurrencyException)

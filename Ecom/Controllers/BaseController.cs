@@ -8,16 +8,16 @@ namespace Ecom.Controllers
 {
     public class BaseController : Controller
     {
-        protected readonly IUnitOfWork UnitOfWork;
-        protected readonly IConfiguration Configuration;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IConfiguration _configuration;
         protected readonly IWebHostEnvironment hostEnvironment;
 
         public BaseController(IUnitOfWork unitOfWork, IConfiguration configuration
             , IWebHostEnvironment _hostEnvironment)
         {
             hostEnvironment = _hostEnvironment;
-            Configuration = configuration;
-            UnitOfWork = unitOfWork;
+            _configuration = configuration;
+            _unitOfWork = unitOfWork;
         }
     }
 }
