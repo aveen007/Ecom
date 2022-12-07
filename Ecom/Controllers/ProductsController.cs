@@ -17,12 +17,10 @@ namespace Ecom.Controllers
     public class ProductsController : BaseController
     {
         private readonly IWebHostEnvironment _hostEnvironment;
-        private readonly Ecommerce_DBContext _context;
-
-        public ProductsController(Ecommerce_DBContext _context, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        public ProductsController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-            this._context = _context;
+       
         }
         private async Task saveImage(Product product)
         {
@@ -49,15 +47,13 @@ namespace Ecom.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            /*   var ecommerce_DBContext = _context.Product.Include(p => p.Category);
-               return View(await ecommerce_DBContext.ToListAsync());*/
+     
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
-            var product = new Product();
+
   
-            return View(products.ToList());
+            return View(products);
         }
 
-        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -65,9 +61,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            /*var product = await _context.Product
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);*/
+   
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
             var product = new Product();
             for (int i = 0; i < products.Count; i++)
@@ -91,7 +85,7 @@ namespace Ecom.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name");
             return View();
         }
 
@@ -113,7 +107,7 @@ namespace Ecom.Controllers
      
 
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -125,7 +119,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            /*var product = await _context.Product.FindAsync(id);*/
+
             var product = _unitOfWork.ProductRepo.Get(id.Value);
             if (product == null)
             {
@@ -182,9 +176,6 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            /*var product = await _context.Product
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);*/
             var product = _unitOfWork.ProductRepo.Get(id.Value);
             if (product == null)
             {
@@ -199,9 +190,7 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
-            await _context.SaveChangesAsync();*/
+
             _unitOfWork.CategoryRepo.Delete(id);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
@@ -209,7 +198,7 @@ namespace Ecom.Controllers
 
         private bool ProductExists(int id)
         {
-          /*  return _context.Product.Any(e => e.Id == id);*/
+
             return _unitOfWork.CategoryRepo.IsExist(id);
         }
     }

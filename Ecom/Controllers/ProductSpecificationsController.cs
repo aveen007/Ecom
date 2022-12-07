@@ -12,25 +12,26 @@ using Microsoft.Extensions.Configuration;
 
 namespace Ecom.Controllers
 {
-    public class SpecificationsController : BaseController
+    public class ProductSpecificationsController : BaseController
     {
 
         private readonly IWebHostEnvironment _hostEnvironment;
-        public SpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        public ProductSpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
 
         }
-        // GET: Specifications
+
+        // GET: ProductSpecifications
         public async Task<IActionResult> Index()
         {
-            var specifications = _unitOfWork.SpecificationRepo.GetAll();
+            
+            var ProductSpecification = _unitOfWork.ProductSpecificationRepo.GetAll().ToList();
+            return View(ProductSpecification);
 
-
-            return View(specifications.ToList());
         }
 
-        // GET: Specifications/Details/5
+        // GET: ProductSpecifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,38 +39,39 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-            if (specification == null)
+            var productSpecification = _unitOfWork.ProductSpecificationRepo.Get(id.Value);
+           
+            if (productSpecification == null)
             {
                 return NotFound();
             }
 
-            return View(specification);
+            return View(productSpecification);
         }
 
-        // GET: Specifications/Create
+        // GET: ProductSpecifications/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Specifications/Create
+        // POST: ProductSpecifications/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Create([Bind("Id,Specification,ValueType")] ProductSpecification productSpecification)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.SpecificationRepo.Add(specification);
+                _unitOfWork.ProductSpecificationRepo.Add(productSpecification);
                 await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(specification);
+            return View(productSpecification);
         }
 
-        // GET: Specifications/Edit/5
+        // GET: ProductSpecifications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,22 +79,23 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-            if (specification == null)
+          
+            var productSpecification = _unitOfWork.ProductSpecificationRepo.Get(id.Value);
+            if (productSpecification == null)
             {
                 return NotFound();
             }
-            return View(specification);
+            return View(productSpecification);
         }
 
-        // POST: Specifications/Edit/5
+        // POST: ProductSpecifications/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification,ValueType")] ProductSpecification productSpecification)
         {
-            if (id != specification.Id)
+            if (id != productSpecification.Id)
             {
                 return NotFound();
             }
@@ -101,12 +104,12 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    _unitOfWork.SpecificationRepo.Update(specification);
+                    _unitOfWork.ProductSpecificationRepo.Update(productSpecification);
                     await _unitOfWork.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SpecificationExists(specification.Id))
+                    if (!ProductSpecificationExists(productSpecification.Id))
                     {
                         return NotFound();
                     }
@@ -117,10 +120,10 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(specification);
+            return View(productSpecification);
         }
 
-        // GET: Specifications/Delete/5
+        // GET: ProductSpecifications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,29 +131,29 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-                
-            if (specification == null)
+            var productSpecification = _unitOfWork.ProductSpecificationRepo.Get(id.Value);
+            if (productSpecification == null)
             {
                 return NotFound();
             }
 
-            return View(specification);
+            return View(productSpecification);
         }
 
-        // POST: Specifications/Delete/5
+        // POST: ProductSpecifications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _unitOfWork.SpecificationRepo.Delete(id);
+           
+            _unitOfWork.ProductSpecificationRepo.Delete(id);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SpecificationExists(int id)
+        private bool ProductSpecificationExists(int id)
         {
-            return _unitOfWork.SpecificationRepo.IsExist(id);
+            return _unitOfWork.CategorySpecificationRepo.IsExist(id);
         }
     }
 }

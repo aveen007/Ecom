@@ -29,7 +29,7 @@ namespace Ecom.Controllers
 
             var categories = _unitOfWork.CategoryRepo.GetAll();
             return View( categories.ToList());
-            /*  return View(await _context.Category.ToListAsync());*/
+
         }
 
         // GET: Categories/Details/5
@@ -79,7 +79,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             var category = _unitOfWork.CategoryRepo.Get(id.Value);
-            /*var category = await _context.Category.FindAsync(id);*/
+
             if (category == null)
             {
                 return NotFound();
@@ -130,8 +130,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             var category = _unitOfWork.CategoryRepo.Get(id.Value);
-            /*   var category = await _context.Category
-                   .FirstOrDefaultAsync(m => m.Id == id);*/
+
             if (category == null)
             {
                 return NotFound();
@@ -145,19 +144,18 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*var category = await _context.Category.FindAsync(id);*/
+ 
             
             _unitOfWork.CategoryRepo.Delete(id);
             await _unitOfWork.SaveAsync();
-            /*_context.Category.Remove(category);
-            await _context.SaveChangesAsync();*/
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
             return _unitOfWork.CategoryRepo.IsExist(id);
-            /*return _context.Category.Any(e => e.Id == id);*/
+
         }
     }
 }
