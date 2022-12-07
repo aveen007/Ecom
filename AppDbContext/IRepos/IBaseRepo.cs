@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace AppDbContext.IRepos
 {
@@ -14,8 +17,10 @@ namespace AppDbContext.IRepos
 
         void Delete(int id);
 
-        public IEnumerable<T> GetAll();
+  /*      public IEnumerable<T> GetAll();*/
        
         public bool IsExist(int id);
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "");
+       
     }
 }

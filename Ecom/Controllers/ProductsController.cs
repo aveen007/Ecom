@@ -51,7 +51,9 @@ namespace Ecom.Controllers
         {
             /*   var ecommerce_DBContext = _context.Product.Include(p => p.Category);
                return View(await ecommerce_DBContext.ToListAsync());*/
-            var products = _unitOfWork.ProductRepo.GetAll();
+            var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var product = new Product();
+  
             return View(products.ToList());
         }
 
@@ -66,8 +68,19 @@ namespace Ecom.Controllers
             /*var product = await _context.Product
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);*/
-            var product = _unitOfWork.ProductRepo.Get(id.Value);
-            if (product == null)
+            var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var product = new Product();
+            for (int i = 0; i < products.Count; i++)
+            {
+                var temp = products[i];
+                if(temp.Id == id)
+                {
+                    product = products[i];
+                }
+                
+            }
+
+                if (product == null)
             {
                 return NotFound();
             }
@@ -112,12 +125,13 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
+            /*var product = await _context.Product.FindAsync(id);*/
+            var product = _unitOfWork.ProductRepo.Get(id.Value);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -156,7 +170,7 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -168,9 +182,10 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            /*var product = await _context.Product
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            var product = _unitOfWork.ProductRepo.Get(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -184,15 +199,18 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            /*var product = await _context.Product.FindAsync(id);
             _context.Product.Remove(product);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();*/
+            _unitOfWork.CategoryRepo.Delete(id);
+            await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+          /*  return _context.Product.Any(e => e.Id == id);*/
+            return _unitOfWork.CategoryRepo.IsExist(id);
         }
     }
 }
