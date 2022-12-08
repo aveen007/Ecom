@@ -16,6 +16,10 @@
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+       <p>
+
+       </p>
+                <button id="showSpec" class="btn btn-sm btn-light ml-2"><i class="fa fa-plus"></i></button>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -30,4 +34,46 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+@*
+    $("#showSpec").click(function () {
+                services = [];
+                $("input.ids:checked").each(function () {
+                    services.push($(this).val());
+                });
+                var input_services = services.toString();
+                var form = document.createElement("form");
+                var element1 = document.createElement("input");
+                var element2 = document.createElement("input");
+                var element3 = document.createElement("input");
+                var element4 = document.createElement("input");
+
+
+
+                form.method = "GET";
+                form.action = "/CategorySpecifications/Create";
+
+                element1.value = input_services;
+                element1.name = "services";
+                form.appendChild(element1);
+
+                element2.value =  @ViewBag.room.RoomId;
+                element2.name = "RoomId";
+                form.appendChild(element2);
+
+                element3.value =  @ViewBag.catID;
+                element3.name = "categoryID";
+                form.appendChild(element3);
+
+                element4.value =  @ViewBag.specID;
+                element4.name = "specificationID";
+                form.appendChild(element4);
+
+
+
+                document.body.appendChild(form);
+                console.log(form);
+                form.submit();
+            });
+        });*@
 }
