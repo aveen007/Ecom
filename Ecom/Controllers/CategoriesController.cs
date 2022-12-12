@@ -28,7 +28,7 @@ namespace Ecom.Controllers
         {
 
             var categories = _unitOfWork.CategoryRepo.GetAll();
-            return View( categories.ToList());
+            return View(categories.ToList());
 
         }
 

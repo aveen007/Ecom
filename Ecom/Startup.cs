@@ -33,7 +33,9 @@ namespace Ecom
         {
             services.AddDbContext<Ecommerce_DBContext>(options => options.UseSqlServer(Configuration.
                 GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
+
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
+
             services.AddDbService(Configuration);
 
             services.AddSingleton<ISingletonRnd, SingletonRnd>();
