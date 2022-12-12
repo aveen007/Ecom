@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppDbContext.Migrations
 {
     [DbContext(typeof(Ecommerce_DBContext))]
-    [Migration("20221210210954_InitIdentity")]
+    [Migration("20221212022210_InitIdentity")]
     partial class InitIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -602,7 +602,8 @@ namespace AppDbContext.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(400)")
+                        .HasMaxLength(400);
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -679,7 +680,7 @@ namespace AppDbContext.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(400)");
 
                     b.HasKey("Id");
 
@@ -701,7 +702,7 @@ namespace AppDbContext.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(400)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -713,7 +714,7 @@ namespace AppDbContext.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(400)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
@@ -728,7 +729,7 @@ namespace AppDbContext.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(400)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");

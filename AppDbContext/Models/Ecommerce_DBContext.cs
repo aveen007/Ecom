@@ -422,6 +422,11 @@ namespace AppDbContext.Models
             OnModelCreatingPartial(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityUser>(b =>
+            {
+                b.Property(u => u.Id).HasMaxLength(400);
+            });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
