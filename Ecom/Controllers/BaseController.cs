@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Ecom.Controllers
 {
+    // somar
     public class BaseController : Controller
     {
         protected readonly IUnitOfWork _unitOfWork;
