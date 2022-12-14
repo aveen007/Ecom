@@ -38,7 +38,7 @@
                     <img class="img-fluid w-100" src="@( item.Product.ImageLink )" alt="">
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Specification.Specification)
+                @Html.DisplayFor(modelItem => item.Specification.SpecificationName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

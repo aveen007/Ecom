@@ -15,9 +15,10 @@ namespace AppDbContext.Models
         }
 
         public int Id { get; set; }
-        public string Specification1 { get; set; }
-        public int ValueType { get; set; }
+        public string SpecificationName { get; set; }
+        public int ValueTypeId { get; set; }
 
+        public virtual ValueType ValueType { get; set; }
         public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
     }
 }

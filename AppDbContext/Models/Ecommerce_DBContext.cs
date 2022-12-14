@@ -263,14 +263,20 @@ namespace AppDbContext.Models
             {
                 entity.ToTable("Product_Specification");
 
-                entity.HasIndex(e => e.Specification)
+                entity.HasIndex(e => e.SpecificationName)
                     .HasName("Unique_Product_Specification")
                     .IsUnique();
 
-                entity.Property(e => e.Specification)
+                entity.Property(e => e.SpecificationName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.ValueType)
+                    .WithMany(p => p.ProductSpecification)
+                    .HasForeignKey(d => d.ValueTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Product_Specification_ValueType");
             });
 
             modelBuilder.Entity<ProductSpecificationValue>(entity =>
@@ -347,15 +353,21 @@ namespace AppDbContext.Models
 
             modelBuilder.Entity<Specification>(entity =>
             {
-                entity.HasIndex(e => e.Specification1)
+                entity.HasIndex(e => e.SpecificationName)
                     .HasName("Unique_Category_Specification")
                     .IsUnique();
 
-                entity.Property(e => e.Specification1)
+                entity.Property(e => e.SpecificationName)
                     .IsRequired()
                     .HasColumnName("Specification")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.ValueType)
+                    .WithMany(p => p.Specification)
+                    .HasForeignKey(d => d.ValueTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Specification_ValueType");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -417,6 +429,18 @@ namespace AppDbContext.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Rating_User");
+            });
+
+            modelBuilder.Entity<ValueType>(entity =>
+            {
+                entity.HasIndex(e => e.ValueName)
+                    .HasName("Unique_Value_Type")
+                    .IsUnique();
+
+                entity.Property(e => e.ValueName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);
