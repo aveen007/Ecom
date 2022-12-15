@@ -11,16 +11,21 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using AppDbContext.UOW;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
     public class ProductsController : BaseController
     {
         private readonly IWebHostEnvironment _hostEnvironment;
-        public ProductsController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly IMapper _mapper;
+
+        public ProductsController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-       
+            this._mapper = mapper;
+
         }
         private async Task saveImage(Product product)
         {
@@ -49,9 +54,9 @@ namespace Ecom.Controllers
         {
      
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var productsViewModels = _mapper.Map<List<ProductViewModel>>(products);
 
-  
-            return View(products);
+            return View(productsViewModels);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -79,7 +84,9 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            return View(product);
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
         }
 
         // GET: Products/Create
@@ -94,7 +101,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -108,7 +115,10 @@ namespace Ecom.Controllers
 
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
-            return View(product);
+
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
         }
 
         // GET: Products/Edit/5
@@ -126,7 +136,10 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
-            return View(product);
+            
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
         }
 
         // POST: Products/Edit/5
@@ -134,7 +147,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
         {
             if (id != product.Id)
             {
@@ -165,7 +178,10 @@ namespace Ecom.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
-            return View(product);
+            
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
         }
 
         // GET: Products/Delete/5
@@ -176,13 +192,26 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var product = _unitOfWork.ProductRepo.Get(id.Value);
+            var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var product = new Product();
+            for (int i = 0; i < products.Count; i++)
+            {
+                var temp = products[i];
+                if (temp.Id == id)
+                {
+                    product = products[i];
+                }
+
+            }
+
             if (product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
         }
 
         // POST: Products/Delete/5
@@ -191,7 +220,7 @@ namespace Ecom.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
 
-            _unitOfWork.CategoryRepo.Delete(id);
+            _unitOfWork.ProductRepo.Delete(id);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }

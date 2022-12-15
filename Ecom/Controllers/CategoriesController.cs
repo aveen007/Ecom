@@ -23,7 +23,7 @@ namespace Ecom.Controllers
         public CategoriesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-            _mapper = mapper;
+            this._mapper = mapper;
          
         }
         // GET: Categories
