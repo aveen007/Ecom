@@ -9,6 +9,8 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
@@ -16,11 +18,12 @@ namespace Ecom.Controllers
     {
   
         private readonly IWebHostEnvironment _hostEnvironment;
-       
+        private readonly IMapper _mapper;
 
-        public CategoriesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        public CategoriesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
+            _mapper = mapper;
          
         }
         // GET: Categories
@@ -28,6 +31,7 @@ namespace Ecom.Controllers
         {
 
             var categories = _unitOfWork.CategoryRepo.GetAll();
+            var categoriesDtos = _mapper.Map<List<CategoryViewModel>>(categories);
             return View(categories.ToList());
 
         }
