@@ -18,6 +18,7 @@ namespace AppDbContext.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
 
         public virtual ICollection<CategoryPromotion> CategoryPromotion { get; set; }
         public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }

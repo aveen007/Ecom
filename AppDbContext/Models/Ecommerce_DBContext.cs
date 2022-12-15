@@ -71,6 +71,11 @@ namespace AppDbContext.Models
 
             modelBuilder.Entity<Category>(entity =>
             {
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -187,6 +192,11 @@ namespace AppDbContext.Models
 
             modelBuilder.Entity<Product>(entity =>
             {
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.ImageLink)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -261,6 +271,11 @@ namespace AppDbContext.Models
 
             modelBuilder.Entity<ProductSpecification>(entity =>
             {
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.ToTable("Product_Specification");
 
                 entity.HasIndex(e => e.SpecificationName)
@@ -353,6 +368,11 @@ namespace AppDbContext.Models
 
             modelBuilder.Entity<Specification>(entity =>
             {
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.HasIndex(e => e.SpecificationName)
                     .HasName("Unique_Category_Specification")
                     .IsUnique();
