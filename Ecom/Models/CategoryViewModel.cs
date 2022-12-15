@@ -13,5 +13,7 @@ namespace Ecom.Models
         [Display(Name = "Category Name")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "{0} must not be empty")]
+        public string Description { get; set; }
     }
 }

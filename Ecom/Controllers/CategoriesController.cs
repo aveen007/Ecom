@@ -31,8 +31,8 @@ namespace Ecom.Controllers
         {
 
             var categories = _unitOfWork.CategoryRepo.GetAll();
-            var categoriesDtos = _mapper.Map<List<CategoryViewModel>>(categories);
-            return View(categories.ToList());
+            var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
+            return View(categoriesViewModels);
 
         }
 
@@ -49,7 +49,9 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            return View(category);
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
         }
 
         // GET: Categories/Create
@@ -63,7 +65,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +74,10 @@ namespace Ecom.Controllers
                 return RedirectToAction(nameof(Index));
              
             }
-            return View(category);
+
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
         }
 
         // GET: Categories/Edit/5
@@ -88,7 +93,10 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-            return View(category);
+
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
         }
 
         // POST: Categories/Edit/5
@@ -96,7 +104,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
         {
             if (id != category.Id)
             {
@@ -123,7 +131,10 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
         }
 
         // GET: Categories/Delete/5
@@ -140,7 +151,9 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            return View(category);
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
         }
 
         // POST: Categories/Delete/5
