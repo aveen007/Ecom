@@ -9,90 +9,104 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
-    public class SpecificationsController : BaseController
+    public class ValueTypesController : BaseController
     {
-
+  
         private readonly IWebHostEnvironment _hostEnvironment;
-        public SpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly IMapper _mapper;
+
+        public ValueTypesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-
+            this._mapper = mapper;
+         
         }
-        // GET: Specifications
+        // GET: ValueTypes
         public IActionResult Index()
         {
-            var specifications = _unitOfWork.SpecificationRepo.GetAll();
 
+            var valueTypes = _unitOfWork.ValueTypeRepo.GetAll();
+            var valueTypesViewModels = _mapper.Map<List<ValueTypeViewModel>>(valueTypes);
+            return View(valueTypesViewModels);
 
-            return View(specifications.ToList());
         }
 
-        // GET: Specifications/Details/5
+        // GET: ValueTypes/Details/5
         public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-            if (specification == null)
+            var valueType = _unitOfWork.ValueTypeRepo.Get(id.Value);
+            if (valueType == null)
             {
                 return NotFound();
             }
 
-            return View(specification);
+            var valueTypeViewModel = _mapper.Map<ValueTypeViewModel>(valueType);
+
+            return View(valueTypeViewModel);
         }
 
-        // GET: Specifications/Create
+        // GET: ValueTypes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Specifications/Create
+        // POST: ValueTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] AppDbContext.Models.ValueType valueType)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.SpecificationRepo.Add(specification);
+                _unitOfWork.ValueTypeRepo.Add(valueType);
                 await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
+             
             }
-            return View(specification);
+
+            var valueTypeViewModel = _mapper.Map<ValueTypeViewModel>(valueType);
+
+            return View(valueTypeViewModel);
         }
 
-        // GET: Specifications/Edit/5
+        // GET: ValueTypes/Edit/5
         public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var valueType = _unitOfWork.ValueTypeRepo.Get(id.Value);
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-            if (specification == null)
+            if (valueType == null)
             {
                 return NotFound();
             }
-            return View(specification);
+
+            var valueTypeViewModel = _mapper.Map<ValueTypeViewModel>(valueType);
+
+            return View(valueTypeViewModel);
         }
 
-        // POST: Specifications/Edit/5
+        // POST: ValueTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] AppDbContext.Models.ValueType valueType)
         {
-            if (id != specification.Id)
+            if (id != valueType.Id)
             {
                 return NotFound();
             }
@@ -101,12 +115,12 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    _unitOfWork.SpecificationRepo.Update(specification);
+                    _unitOfWork.ValueTypeRepo.Update(valueType);
                     await _unitOfWork.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SpecificationExists(specification.Id))
+                    if (!ValueTypeExists(valueType.Id))
                     {
                         return NotFound();
                     }
@@ -117,40 +131,48 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(specification);
+
+            var valueTypeViewModel = _mapper.Map<ValueTypeViewModel>(valueType);
+
+            return View(valueTypeViewModel);
         }
 
-        // GET: Specifications/Delete/5
+        // GET: ValueTypes/Delete/5
         public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var valueType = _unitOfWork.ValueTypeRepo.Get(id.Value);
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
-
-            if (specification == null)
+            if (valueType == null)
             {
                 return NotFound();
             }
 
-            return View(specification);
+            var valueTypeViewModel = _mapper.Map<ValueTypeViewModel>(valueType);
+
+            return View(valueTypeViewModel);
         }
 
-        // POST: Specifications/Delete/5
+        // POST: ValueTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _unitOfWork.SpecificationRepo.Delete(id);
+ 
+            
+            _unitOfWork.ValueTypeRepo.Delete(id);
             await _unitOfWork.SaveAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SpecificationExists(int id)
+        private bool ValueTypeExists(int id)
         {
-            return _unitOfWork.SpecificationRepo.IsExist(id);
+            return _unitOfWork.ValueTypeRepo.IsExist(id);
+
         }
     }
 }

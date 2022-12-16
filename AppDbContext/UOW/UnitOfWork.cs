@@ -28,6 +28,7 @@ namespace AppDbContext.UOW
         public ISpecificationRepo SpecificationRepo { get; set; }
         public IUserRepo UserRepo { get; set; }
         public IUserRatingRepo UserRatingRepo { get; set; }
+        public IValueTypeRepo ValueTypeRepo { get; set; }
 
         protected readonly Ecommerce_DBContext _db;
 

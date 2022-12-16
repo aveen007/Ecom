@@ -50,36 +50,36 @@ namespace Ecom.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-     
+
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
             var productsViewModels = _mapper.Map<List<ProductViewModel>>(products);
 
             return View(productsViewModels);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-   
+
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
             var product = new Product();
             for (int i = 0; i < products.Count; i++)
             {
                 var temp = products[i];
-                if(temp.Id == id)
+                if (temp.Id == id)
                 {
                     product = products[i];
                 }
-                
+
             }
 
-                if (product == null)
+            if (product == null)
             {
                 return NotFound();
             }
@@ -122,7 +122,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -136,7 +136,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
-            
+
             var productViewModel = _mapper.Map<ProductViewModel>(product);
 
             return View(productViewModel);
@@ -185,7 +185,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {

@@ -23,7 +23,7 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecificationValues
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
 
             var ProductSpecificationValues = _unitOfWork.ProductSpecificationValueRepo.GetAll(includeProperties: "Product,Specification").ToList();
@@ -31,7 +31,7 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecificationValues/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -84,7 +84,7 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecificationValues/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -139,7 +139,7 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecificationValues/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {

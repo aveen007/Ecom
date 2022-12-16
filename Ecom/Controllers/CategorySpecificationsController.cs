@@ -22,9 +22,9 @@ namespace Ecom.Controllers
 
         }
         // GET: CategorySpecifications
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-           
+
             var categoryspecifications = _unitOfWork.CategorySpecificationRepo.GetAll(includeProperties: "Category,Specification").ToList();
             return View(categoryspecifications);
 
@@ -32,7 +32,7 @@ namespace Ecom.Controllers
         }
 
         // GET: CategorySpecifications/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -86,14 +86,14 @@ namespace Ecom.Controllers
         }
 
         // GET: CategorySpecifications/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var categorySpecification =  _unitOfWork.CategorySpecificationRepo.Get(id.Value);
+            var categorySpecification = _unitOfWork.CategorySpecificationRepo.Get(id.Value);
             if (categorySpecification == null)
             {
                 return NotFound();
@@ -141,7 +141,7 @@ namespace Ecom.Controllers
         }
 
         // GET: CategorySpecifications/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {

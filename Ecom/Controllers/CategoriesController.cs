@@ -27,7 +27,7 @@ namespace Ecom.Controllers
          
         }
         // GET: Categories
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
 
             var categories = _unitOfWork.CategoryRepo.GetAll();
@@ -37,13 +37,13 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var category =  _unitOfWork.CategoryRepo.Get(id.Value);
+            var category = _unitOfWork.CategoryRepo.Get(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -81,7 +81,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -138,7 +138,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
