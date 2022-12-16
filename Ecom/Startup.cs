@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ecom.Services;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
 
 namespace Ecom
 {
