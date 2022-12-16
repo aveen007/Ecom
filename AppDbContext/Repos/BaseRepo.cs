@@ -39,7 +39,7 @@ namespace AppDbContext.Repos
         public IEnumerable<T> GetAll(
         
             Expression<Func<T, bool>> filter = null,
-         Func< IQueryable<T>, IOrderedQueryable < T >> orderBy = null,
+            Func< IQueryable<T>, IOrderedQueryable < T >> orderBy = null,
             string includeProperties = "")
         {
                 IQueryable<T> query = _dbSet;
