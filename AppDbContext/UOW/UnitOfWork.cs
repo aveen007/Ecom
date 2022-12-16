@@ -53,6 +53,7 @@ namespace AppDbContext.UOW
             SpecificationRepo = new SpecificationRepo(db);
             UserRepo = new UserRepo(db);
             UserRatingRepo = new UserRatingRepo(db);
+            ValueTypeRepo = new ValueTypeRepo(db);
         }
 
         public void RollBack()

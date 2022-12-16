@@ -65,7 +65,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] AppDbContext.Models.ValueType valueType)
+        public async Task<IActionResult> Create([Bind("Id,ValueName")] AppDbContext.Models.ValueType valueType)
         {
             if (ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] AppDbContext.Models.ValueType valueType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ValueName")] AppDbContext.Models.ValueType valueType)
         {
             if (id != valueType.Id)
             {
