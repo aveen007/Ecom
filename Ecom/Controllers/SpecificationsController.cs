@@ -9,6 +9,8 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
@@ -16,18 +18,19 @@ namespace Ecom.Controllers
     {
 
         private readonly IWebHostEnvironment _hostEnvironment;
-        public SpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly IMapper _mapper;
+        public SpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-
+            this._mapper = mapper;
         }
         // GET: Specifications
         public IActionResult Index()
         {
             var specifications = _unitOfWork.SpecificationRepo.GetAll();
+            var specificationsViewModels = _mapper.Map<List<SpecificationViewModel>>(specifications);
 
-
-            return View(specifications.ToList());
+            return View(specificationsViewModels);
         }
 
         // GET: Specifications/Details/5
@@ -43,8 +46,9 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
+            var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
-            return View(specification);
+            return View(specificationViewModel);
         }
 
         // GET: Specifications/Create
@@ -66,7 +70,9 @@ namespace Ecom.Controllers
                 await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(specification);
+            var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
+
+            return View(specificationViewModel);
         }
 
         // GET: Specifications/Edit/5
@@ -82,7 +88,9 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-            return View(specification);
+            var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
+
+            return View(specificationViewModel);
         }
 
         // POST: Specifications/Edit/5
@@ -117,7 +125,9 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(specification);
+            var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
+
+            return View(specificationViewModel);
         }
 
         // GET: Specifications/Delete/5
@@ -135,7 +145,9 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            return View(specification);
+            var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
+
+            return View(specificationViewModel);
         }
 
         // POST: Specifications/Delete/5
