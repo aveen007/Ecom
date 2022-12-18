@@ -379,7 +379,7 @@ namespace AppDbContext.Models
 
                 entity.Property(e => e.SpecificationName)
                     .IsRequired()
-                    .HasColumnName("Specification")
+                    .HasColumnName("SpecificationName")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
