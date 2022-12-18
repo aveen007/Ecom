@@ -54,6 +54,7 @@ namespace Ecom.Controllers
         // GET: Specifications/Create
         public IActionResult Create()
         {
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName");
             return View();
         }
 
@@ -62,7 +63,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Create([Bind("Id,SpecificationName, Description,ValueTypeId")] Specification specification)
         {
             if (ModelState.IsValid)
             {
