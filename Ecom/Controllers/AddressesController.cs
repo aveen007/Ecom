@@ -6,40 +6,52 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext.Models;
+using Microsoft.AspNetCore.Hosting;
+using AppDbContext.UOW;
+using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
-    public class AddressesController : Controller
+    public class AddressesController : BaseController
     {
-        private readonly Ecommerce_DBContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IMapper _mapper;
 
-        public AddressesController(Ecommerce_DBContext context)
+        public AddressesController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
-            _context = context;
+            this._hostEnvironment = _hostEnvironment;
+            this._mapper = mapper;
+
         }
 
         // GET: Addresses
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Address.ToListAsync());
+            var addresses = _unitOfWork.AddressRepo.GetAll();
+            var addressesViewModels = _mapper.Map<List<AddressViewModel>>(addresses);
+
+            return View(addressesViewModels);
         }
 
         // GET: Addresses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var address = await _context.Address
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var address = _unitOfWork.AddressRepo.Get(id.Value);
             if (address == null)
             {
                 return NotFound();
             }
 
-            return View(address);
+            var addressTypeViewModel = _mapper.Map<AddressViewModel>(address);
+
+            return View(addressTypeViewModel);
         }
 
         // GET: Addresses/Create
@@ -57,27 +69,33 @@ namespace Ecom.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(address);
-                await _context.SaveChangesAsync();
+                _unitOfWork.AddressRepo.Add(address);
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(address);
+
+            var addressTypeViewModel = _mapper.Map<AddressViewModel>(address);
+
+            return View(addressTypeViewModel);
         }
 
         // GET: Addresses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var address = await _context.Address.FindAsync(id);
+            var address = _unitOfWork.AddressRepo.Get(id.Value);
             if (address == null)
             {
                 return NotFound();
             }
-            return View(address);
+
+            var addressTypeViewModel = _mapper.Map<AddressViewModel>(address);
+
+            return View(addressTypeViewModel);
         }
 
         // POST: Addresses/Edit/5
@@ -96,8 +114,8 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    _context.Update(address);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.AddressRepo.Update(address);
+                    await _unitOfWork.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -112,25 +130,29 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(address);
+
+            var addressTypeViewModel = _mapper.Map<AddressViewModel>(address);
+
+            return View(addressTypeViewModel);
         }
 
         // GET: Addresses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var address = await _context.Address
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var address = _unitOfWork.AddressRepo.Get(id.Value);
             if (address == null)
             {
                 return NotFound();
             }
 
-            return View(address);
+            var addressTypeViewModel = _mapper.Map<AddressViewModel>(address);
+
+            return View(addressTypeViewModel);
         }
 
         // POST: Addresses/Delete/5
@@ -138,15 +160,15 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var address = await _context.Address.FindAsync(id);
-            _context.Address.Remove(address);
-            await _context.SaveChangesAsync();
+            _unitOfWork.AddressRepo.Delete(id);
+            await _unitOfWork.SaveAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool AddressExists(int id)
         {
-            return _context.Address.Any(e => e.Id == id);
+            return _unitOfWork.AddressRepo.IsExist(id);
         }
     }
 }
