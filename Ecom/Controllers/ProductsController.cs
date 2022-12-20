@@ -228,7 +228,7 @@ namespace Ecom.Controllers
         private bool ProductExists(int id)
         {
 
-            return _unitOfWork.CategoryRepo.IsExist(id);
+            return _unitOfWork.ProductRepo.IsExist(id);
         }
     }
 }
