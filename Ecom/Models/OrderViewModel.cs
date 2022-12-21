@@ -29,5 +29,7 @@ namespace Ecom.Models
         [Required(ErrorMessage = "{0} must not be empty")]
         public bool IsOrdered { get; set; }
 
+        public virtual UserViewModel User { get; set; }
+
     }
 }

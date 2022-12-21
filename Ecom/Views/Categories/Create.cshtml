@@ -1,4 +1,4 @@
-﻿@model Ecom.Models.CategoryViewModel
+﻿@model Ecom.Models.CategorySpecificationViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,17 +13,17 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Category.Name" class="control-label"></label>
+                <input asp-for="Category.Name" class="form-control" />
+                <span asp-validation-for="Category.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4" cols="50"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Category.Description" class="control-label"></label>
+                <textarea asp-for="Category.Description" class="form-control" rows="4" cols="50"></textarea>
+                <span asp-validation-for="Category.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button id="showSpec" class="btn btn-sm btn-light ml-2"><i class="fa fa-plus"></i></button>
+                <button id="showSpec" class="btn btn-sm btn-light ml-2">Add Specifications <i class="fa fa-plus"></i></button>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
