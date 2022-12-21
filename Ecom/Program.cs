@@ -23,4 +23,8 @@ namespace Ecom
                     webBuilder.UseStartup<Startup>();
                 });
     }
+    public enum valueTypes
+    {
+        String,Integer,Float
+    }
 }

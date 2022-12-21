@@ -23,8 +23,17 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button id="showSpec" class="btn btn-sm btn-light ml-2"><i class="fa fa-plus"></i></button>
+                <button type="button" id="showSpec" onclick="addChild()" class="btn btn-sm btn-light ml-2"><i class="fa fa-plus"></i></button>
             </div>
+             <input hidden name = "StringifiedJSArray" >
+                            <div id="spec">
+
+              
+
+            </div>
+
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -38,46 +47,41 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-@*
-    $("#showSpec").click(function () {
-                services = [];
-                $("input.ids:checked").each(function () {
-                    services.push($(this).val());
-                });
-                var input_services = services.toString();
-                var form = document.createElement("form");
-                var element1 = document.createElement("input");
-                var element2 = document.createElement("input");
-                var element3 = document.createElement("input");
-                var element4 = document.createElement("input");
-
-
-
-                form.method = "GET";
-                form.action = "/CategorySpecifications/Create";
-
-                element1.value = input_services;
-                element1.name = "services";
-                form.appendChild(element1);
-
-                element2.value =  @ViewBag.room.RoomId;
-                element2.name = "RoomId";
-                form.appendChild(element2);
-
-                element3.value =  @ViewBag.catID;
-                element3.name = "categoryID";
-                form.appendChild(element3);
-
-                element4.value =  @ViewBag.specID;
-                element4.name = "specificationID";
-                form.appendChild(element4);
-
-
-
-                document.body.appendChild(form);
-                console.log(form);
-                form.submit();
-            });
-        });*@
+        
+            
 }
+<script>
+
+
+
+         
+                    function addChild() {
+                        $("spec").append('<table class= "table table-light table-borderless table-hover text-center mb-0" >
+
+                    <tbody class="align-middle" >
+                <tr>
+
+                <td><input class="form-control Specs" /> </td>
+                < td class= "align-middle" > specification < /td>
+                < td class= "align-middle" > <button type="button"  class= "btn btn-sm btn-danger rem" > <i class="fa fa-times" > </i></button > </td> 
+                </tr> </tbody> </table>  ');
+
+              
+          }
+
+
+
+        function submitt() {
+            var Specs = document.getElementsByClass('Specs');
+           
+            var myArray = [];
+            for (var i = 0; i < Specs.length; i++) {
+                var obj = { id: "Your custom logic", Specs: Specs[i].value }
+                myArray.push(obj);
+            document.getElementById('StringifiedJSArray').value = JSON.stringify(myArray);
+          
+        }
+    </script>
+           
+        
+
