@@ -2,7 +2,7 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-
+/*
 ///////////////////////////// show specs in category
 // get reference to button
 var showbtn = document.getElementById("showSpec");
@@ -44,7 +44,7 @@ if (showbtn != null) {
         spec_index += 1;
 
     }
-}
+}*/
 ///////////////////////show specs in product
 
 // get reference to button
@@ -131,8 +131,48 @@ $(document).ready(function () {
     });
 });
 
+//////////////////////
+$(document).ready(function () {
 
 
+    let showSpec = document.querySelector("#showSpec")
+    if (showSpec ) {
+      
+        showSpec.addEventListener("click",
+
+      async function (e) {
+            e.preventDefault();
+            let link = $(this);
+            let target = $(this).attr("href");
+            const { value: formValues } =await  Swal.fire({
+                title: 'Multiple inputs',
+                html:
+                    '<form action="/action_page.php">' +
+                    '<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" >' +
+                    '<label for="vehicle1"> I have a bike</label><br>' +
+                    '<input type="checkbox" id="vehicle2" name="vehicle2" value="Car">' +
+                    '<label for="vehicle2"> I have a car</label><br>' +
+                    '<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">' +
+                    '<label for="vehicle3"> I have a boat</label><br><br>' +
+
+                    '</form>',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('vehicle1').value,
+                        document.getElementById('vehicle2').value,
+                        document.getElementById('vehicle3').value
+                    ]
+                }
+            })
+            if (formValues) {
+               Swal.fire(JSON.stringify(formValues))
+           }
+
+
+        });
+    }
+});
 
 
 
