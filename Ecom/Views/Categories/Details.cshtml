@@ -22,50 +22,36 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
+        <dt class = "col-sm-2">
+            Specifications:
+        </dt>
+        <dd class = "col-sm-10">
+            <ul id="specifications"></ul>
+        </dd>
     </dl>
 </div>
-
 <div class="form-group">
-    <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">show specification<i class="fa fa-plus"></i></button>
+    <select id="SelectedSpecs" asp-for="SelectedCategorySpecification" class ="form-control" asp-items="ViewBag.SelectedCategorySpecification" hidden></select>
+    <select id="Specs" asp-for="CategorySpecification" class ="form-control" asp-items="ViewBag.CategorySpecification" hidden></select>
 </div>
-<input hidden name="StringifiedJSArray">
 <div id="spec">
 
     <p id="msg"></p>
     <script>
 
-        // get reference to button
-        var showbtn = document.getElementById("showSpec");
-        // add event listener for the button, for action "click"
-        var spec_index = 0;
-        showbtn.addEventListener("click", addChild);
-        function addChild() {
-            var spec = "<table id='spec" + spec_index + "' class= 'table table-light table - borderless table - hover text - center mb - 0' >" +
-                "<tbody class='align-middle' >" +
-                "<tr>" +
-                "<td>" +              
-                "<td class= 'align-middle' > specification </td>" +
-                "<td class= 'align-middle' >" +
-                "<button type='button' id='rem" + spec_index + "'  class= 'btn btn-sm btn-danger rem' >" +
-                "<i class='fa fa-times' > </i>" +
-                "</button >" +
-                "</td></tr> </tbody > </table>"
-            $("#spec").append(spec);
-            let div = document.getElementById("spec")
-            let rembtn = document.querySelector("#rem" + spec_index).addEventListener("click",
-                function () {
-                    // let confirm=confirm("are you sure?");
-                    let rem_parent = this.parentNode.parentNode.parentNode.parentNode;
-                    // console.log(rem_parent);
+        var specifications = document.getElementById("Specs");
+        var selectedSpecifications = document.getElementById("SelectedSpecs");
 
-                    div.removeChild(rem_parent);
+        var selectedValues = [];
+        for (i = 0; i < selectedSpecifications.length; i++){
+            selectedValues.push('"' + selectedSpecifications[i].text + '"')
+        }
 
-
-
-                });
-
-            spec_index += 1;
-
+        for (i = 0; i < specifications.length; i++){
+            if (selectedValues.includes('"' + specifications.options[i].value + '"')){
+                var spec = "<li>" + specifications.options[i].text + "</li>"
+                $("#specifications").append(spec);
+            }
         }
     </script>
 

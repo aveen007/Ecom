@@ -16,9 +16,10 @@ namespace AppDbContext.IRepos
         void Update(T item);
 
         void Delete(int id);
+        void Delete(Expression<Func<T, bool>> filter = null);
 
         // public IEnumerable<T> GetAll();
-       
+
         public bool IsExist(int id);
         public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "");
        
