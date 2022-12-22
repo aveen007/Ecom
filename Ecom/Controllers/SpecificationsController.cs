@@ -63,13 +63,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-<<<<<<< HEAD
-
         public async Task<IActionResult> Create([Bind("Id,SpecificationName,Description,ValueTypeId")] Specification specification)
-
-=======
-        public async Task<IActionResult> Create([Bind("Id,SpecificationName,Description,ValueTypeId")] Specification specification)
->>>>>>> d2e446475989b1cbb2221f0b44ce05e06bdee07a
         {
             if (ModelState.IsValid)
             {
