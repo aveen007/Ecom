@@ -147,45 +147,54 @@ $(document).ready(function () {
         showSpec.addEventListener("click",
 
       async function (e) {
-            e.preventDefault();
-            let link = $(this);
-            let target = $(this).attr("href");
-            const { value: formValues } =await  Swal.fire({
-                title: 'Multiple inputs',
-                html:
-                    '<form action="/action_page.php">' +
-                    '<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" class="spec_check">' +
-                    '<label for="vehicle1"> I have a bike</label><br>' +
-                    '<input type="checkbox" id="vehicle2" name="vehicle2" value="Car" class="spec_check">' +
-                    '<label for="vehicle2"> I have a car</label><br>' +
-                    '<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" class="spec_check">' +
-                    '<label for="vehicle3"> I have a boat</label><br><br>' +
-
-                    '</form>',
-                focusConfirm: false,
-                preConfirm: () => {
-                    var checkedValue = [];
-                    var inputElements = document.getElementsByClassName('spec_check');
-                    for (var i = 0; inputElements[i]; ++i) {
-                        if (inputElements[i].checked) {
-                            checkedValue.push(inputElements[i].value);
+        e.preventDefault();
+        let link = $(this);
+          let target = $(this).attr("href");
+          var temp = document.getElementById("specIds")
+          var CatSpecs = []
+          if (temp) {
+              CatSpecs = temp.value.substring(1, temp.value.length - 1).split(',')
+          }
+        var tmp = "";
+        for (i = 0; i < specifications.length; i++) {
+            tmp += '<input type="checkbox" id="spec' + specifications.options[i].value + '" name="spec' + specifications.options[i].value + '" value=' + specifications.options[i].value + ' class="spec_check"'
+            if (CatSpecs.includes('"' + specifications.options[i].value + '"')) {
+                tmp += ' checked'
+            }
+            tmp += '> <label for="spec' + specifications.options[i].value + '"> ' + specifications.options[i].text + '</label><br>'
+        }
+        const { value: formValues } =await  Swal.fire({
+            title: 'Multiple inputs',
+            html:
+                '<form action="/action_page.php">' +
+                tmp +
+                '</form>',
+            focusConfirm: false,
+            preConfirm: () => {
+                var checkedValue = [];
+                var inputElements = document.getElementsByClassName('spec_check');
+                for (var i = 0; inputElements[i]; ++i) {
+                    if (inputElements[i].checked) {
+                        checkedValue.push(inputElements[i].value);
                             
                           
-                        }
                     }
-                    return checkedValue
-
-                        
-                       
-                       /* document.getElementById('vehicle1').value,
-                        document.getElementById('vehicle2').value,
-                        document.getElementById('vehicle3').value*/
-                    
                 }
-            })
-            if (formValues) {
-               Swal.fire(JSON.stringify(formValues))
-           }
+                
+                return checkedValue
+
+                    
+            }
+        })
+        if (formValues) {
+        var tmp = document.getElementById("specIds")
+            if (tmp) {
+                let div = document.getElementById("spec")
+                div.removeChild(tmp)
+        }
+        var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(formValues) + "'>"
+        $("#spec").append(spec);
+        }
 
 
         });
