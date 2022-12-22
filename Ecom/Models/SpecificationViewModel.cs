@@ -12,7 +12,7 @@ namespace Ecom.Models
         [Required(ErrorMessage = "{0} must not be empty")]
         [Display(Name = "Specification Name")]
         public string SpecificationName { get; set; }
-
+        
         [Required(ErrorMessage = "{0} must not be empty")]
         public string Description { get; set; }
 

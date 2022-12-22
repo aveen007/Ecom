@@ -110,6 +110,8 @@ namespace Ecom.Controllers
                     await saveImage(product);
                 _unitOfWork.ProductRepo.Add(product);
                 await _unitOfWork.SaveAsync();
+                Notify("Product created successfully!!");
+
                 return RedirectToAction(nameof(Index));
      
 
@@ -162,7 +164,9 @@ namespace Ecom.Controllers
                         await saveImage(product);
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
-                
+                    Notify("Edit saved successfully!!");
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -172,7 +176,8 @@ namespace Ecom.Controllers
                     }
                     else
                     {
-                        throw;
+                        Notify("oops,Something went wrong",notificationType: NotificationTypeEnum.error);
+
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -219,10 +224,18 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-
+            try { 
             _unitOfWork.ProductRepo.Delete(id);
             await _unitOfWork.SaveAsync();
+            Notify("product deleted successfully!!");
+        }
+            catch(Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+             
+    }
             return RedirectToAction(nameof(Index));
+
         }
 
         private bool ProductExists(int id)

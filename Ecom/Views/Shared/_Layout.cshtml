@@ -215,7 +215,7 @@
         <!-- Contact Javascript File -->
         <script src="~/mail/jqBootstrapValidation.min.js"></script>
         <script src="~/mail/contact.js"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Template Javascript -->
         <script src="~/js/main.js"></script>
     <div class="container">
@@ -307,7 +307,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
    @* <!-- Load JS code for the Dynamic ViewModel Lists above -->
     <script src="~/lib/dynamic-viewmodel-list/dvml.js"></script>*@
-
+    @await Html.PartialAsync("_NotificationPartial")
     @RenderSection("Scripts", required: false)
 </body>
 </html>
