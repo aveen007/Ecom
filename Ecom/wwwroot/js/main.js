@@ -99,6 +99,18 @@
         }
         button.parent().parent().find('input').val(newVal);
     });
+
+
+    /*var btn = document.getElementById("showSpec");
+    btn.addEventListener("click", addChild);*/
+    $('#showSpec').on('click', function () {
+        var spec = "<table class= 'table table-light table - borderless table - hover text - center mb - 0' >   <tbody class='align-middle' ><tr><td><input class='form-control Specs' /> </td> < td class= 'align-middle' > specification < /td>< td class= 'align-middle' > <button type='button'  class= 'btn btn-sm btn-danger rem' > <i class='fa fa-times' > </i></button > </td></tr> </tbody > </table>  "
+        $("#spec").append(spec);
+
+
+    });
+
+
     
 })(jQuery);
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+/*using DynamicVML;*/
 namespace Ecom.Models
 {
     public class CategoryViewModel
@@ -15,5 +15,8 @@ namespace Ecom.Models
 
         [Required(ErrorMessage = "{0} must not be empty")]
         public string Description { get; set; }
+ /*       [Display(Name = "Authored books")]
+        public virtual DynamicList<SpecificationViewModel> Specs { get; set; } = new DynamicList<SpecificationViewModel>();
+    */
     }
 }
