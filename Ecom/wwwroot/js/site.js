@@ -154,21 +154,33 @@ $(document).ready(function () {
                 title: 'Multiple inputs',
                 html:
                     '<form action="/action_page.php">' +
-                    '<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" >' +
+                    '<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" class="spec_check">' +
                     '<label for="vehicle1"> I have a bike</label><br>' +
-                    '<input type="checkbox" id="vehicle2" name="vehicle2" value="Car">' +
+                    '<input type="checkbox" id="vehicle2" name="vehicle2" value="Car" class="spec_check">' +
                     '<label for="vehicle2"> I have a car</label><br>' +
-                    '<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">' +
+                    '<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" class="spec_check">' +
                     '<label for="vehicle3"> I have a boat</label><br><br>' +
 
                     '</form>',
                 focusConfirm: false,
                 preConfirm: () => {
-                    return [
-                        document.getElementById('vehicle1').value,
+                    var checkedValue = [];
+                    var inputElements = document.getElementsByClassName('spec_check');
+                    for (var i = 0; inputElements[i]; ++i) {
+                        if (inputElements[i].checked) {
+                            checkedValue.push(inputElements[i].value);
+                            
+                          
+                        }
+                    }
+                    return checkedValue
+
+                        
+                       
+                       /* document.getElementById('vehicle1').value,
                         document.getElementById('vehicle2').value,
-                        document.getElementById('vehicle3').value
-                    ]
+                        document.getElementById('vehicle3').value*/
+                    
                 }
             })
             if (formValues) {
