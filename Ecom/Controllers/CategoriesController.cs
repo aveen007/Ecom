@@ -27,12 +27,28 @@ namespace Ecom.Controllers
          
         }
         // GET: Categories
-        public IActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             var categories = _unitOfWork.CategoryRepo.GetAll();
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
-            return View(categoriesViewModels);
+            var categoryVMs = from s in categoriesViewModels
+                             select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    categoryVMs = categoryVMs.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    categoryVMs = categoryVMs.OrderBy(s => s.Id);
+                    break;
+                
+                default:
+                    categoryVMs = categoryVMs.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(categoryVMs);
 
         }
 
