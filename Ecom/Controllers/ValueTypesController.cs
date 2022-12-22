@@ -32,6 +32,7 @@ namespace Ecom.Controllers
 
             var valueTypes = _unitOfWork.ValueTypeRepo.GetAll();
             var valueTypesViewModels = _mapper.Map<List<ValueTypeViewModel>>(valueTypes);
+
             return View(valueTypesViewModels);
 
         }

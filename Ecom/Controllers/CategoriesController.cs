@@ -57,6 +57,7 @@ namespace Ecom.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
+            ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
             return View();
         }
 

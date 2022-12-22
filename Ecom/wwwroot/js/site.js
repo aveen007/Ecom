@@ -16,7 +16,13 @@ if (showbtn != null) {
             "<tr>" +
             "<td>" +
             "<select class='form-control Specs' >" +
-            "<option selected> United States </option>" +
+            "<option selected hidden> Select One </option>";
+        alert(specifications[0])
+        for (var specification in specifications) {
+            alert(specification.SpecificationName);
+            spec += "<option value=" + specification.Id + ">" + specification.SpecificationName + "</option > ";
+        }
+            spec += "<option> United States </option>" +
             "<option > Afghanistan </option>" +
             "<option > Albania </option>" +
             "<option > Algeria </option>" +

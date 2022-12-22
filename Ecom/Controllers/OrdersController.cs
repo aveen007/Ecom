@@ -6,48 +6,69 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext.Models;
+using Microsoft.AspNetCore.Hosting;
+using AppDbContext.UOW;
+using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
-    public class OrdersController : Controller
+    public class OrdersController : BaseController
     {
-        private readonly Ecommerce_DBContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IMapper _mapper;
 
-        public OrdersController(Ecommerce_DBContext context)
+        public OrdersController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
-            _context = context;
+            this._hostEnvironment = _hostEnvironment;
+            this._mapper = mapper;
+
         }
 
         // GET: Orders
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var ecommerce_DBContext = _context.Order.Include(o => o.User);
-            return View(await ecommerce_DBContext.ToListAsync());
+            var orders = _unitOfWork.OrderRepo.GetAll(includeProperties: "User").ToList();
+            var ordersViewModels = _mapper.Map<List<OrderViewModel>>(orders);
+
+            return View(ordersViewModels);
         }
 
         // GET: Orders/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Order
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var orders = _unitOfWork.OrderRepo.GetAll(includeProperties: "User").ToList();
+            var order = new Order();
+            for (int i = 0; i < orders.Count; i++)
+            {
+                var temp = orders[i];
+                if (temp.Id == id)
+                {
+                    order = orders[i];
+                }
+
+            }
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            var orderViewModel = _mapper.Map<OrderViewModel>(order);
+
+            return View(orderViewModel);
         }
 
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName");
             return View();
         }
 
@@ -60,29 +81,35 @@ namespace Ecom.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
+                _unitOfWork.OrderRepo.Add(order);
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", order.UserId);
-            return View(order);
+            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+            
+            var orderViewModel = _mapper.Map<OrderViewModel>(order);
+            
+            return View(orderViewModel);
         }
 
         // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Order.FindAsync(id);
+            var order = _unitOfWork.OrderRepo.Get(id.Value);
             if (order == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", order.UserId);
-            return View(order);
+            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+
+            var orderViewModel = _mapper.Map<OrderViewModel>(order);
+
+            return View(orderViewModel);
         }
 
         // POST: Orders/Edit/5
@@ -101,8 +128,8 @@ namespace Ecom.Controllers
             {
                 try
                 {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.OrderRepo.Update(order);
+                    await _unitOfWork.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,27 +144,41 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", order.UserId);
-            return View(order);
+            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+
+            var orderViewModel = _mapper.Map<OrderViewModel>(order);
+
+            return View(orderViewModel);
         }
 
         // GET: Orders/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Order
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var orders = _unitOfWork.OrderRepo.GetAll(includeProperties: "User").ToList();
+            var order = new Order();
+            for (int i = 0; i < orders.Count; i++)
+            {
+                var temp = orders[i];
+                if (temp.Id == id)
+                {
+                    order = orders[i];
+                }
+
+            }
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            var orderViewModel = _mapper.Map<OrderViewModel>(order);
+
+            return View(orderViewModel);
         }
 
         // POST: Orders/Delete/5
@@ -145,15 +186,14 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Order.FindAsync(id);
-            _context.Order.Remove(order);
-            await _context.SaveChangesAsync();
+            _unitOfWork.OrderRepo.Delete(id);
+            await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderExists(int id)
         {
-            return _context.Order.Any(e => e.Id == id);
+            return _unitOfWork.OrderRepo.IsExist(id);
         }
     }
 }

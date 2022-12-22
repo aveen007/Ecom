@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AppDbContext.Models;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,8 +16,10 @@ namespace Ecom.Models
 
         [Required(ErrorMessage = "{0} must not be empty")]
         public string Description { get; set; }
- /*       [Display(Name = "Authored books")]
-        public virtual DynamicList<SpecificationViewModel> Specs { get; set; } = new DynamicList<SpecificationViewModel>();
-    */
+
+        public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
+        /*       [Display(Name = "Authored books")]
+               public virtual DynamicList<SpecificationViewModel> Specs { get; set; } = new DynamicList<SpecificationViewModel>();
+           */
     }
 }

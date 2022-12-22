@@ -23,15 +23,25 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
+<<<<<<< HEAD
                 <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">show specifications<i class="fa fa-plus"></i></button>
+=======
+                <select id="Specs" asp-for="CategorySpecification" class ="form-control" asp-items="ViewBag.CategorySpecification" hidden></select>
+            </div>
+            <div class="form-group">
+                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Add Specification <i class="fa fa-plus"></i></button>
+
+>>>>>>> b1be026ea4e74c8877eb409e6d103e939c0ef7ec
             </div>
              <input hidden name = "StringifiedJSArray" >
                             <div id="spec">
 
                 <p id="msg"></p>
                 <script>
-           
-              
+                    var specifications = document.getElementById("Specs");
+                    for (i = 0; i < specifications.length; i++) {
+                        alert(specifications.options[i].value);
+                    }
                 </script>
 
             </div>
