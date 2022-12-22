@@ -61,7 +61,7 @@ namespace Ecom.Controllers
             
             var specifications = _unitOfWork.SpecificationRepo.GetAll();
             var specificationsViewModels = _mapper.Map<List<SpecificationViewModel>>(specifications);
-
+            Console.WriteLine(specificationsViewModels.Count());
             var categorySpecificationsViewModel = new CategorySpecificationViewModel(categoryViewModel, specificationsViewModels);
             return View(categorySpecificationsViewModel);
         }
