@@ -31,6 +31,21 @@ namespace AppDbContext.Repos
             _dbSet.Remove(entity);
         }
 
+        public void Delete(Expression<Func<T, bool>> filter = null)
+        {
+            IQueryable<T> query = _dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            var entities = query.ToList();
+            foreach (var entity in entities)
+            {
+                _dbSet.Remove(entity);
+            }
+            
+        }
+
         public T Get(int id)
         {
             return _dbSet.Find(id);

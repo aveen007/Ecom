@@ -48,6 +48,8 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
+            ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            ViewData["SelectedCategorySpecification"] = new SelectList(_unitOfWork.CategorySpecificationRepo.GetAll(filter: e => e.CategoryId == id).ToList(), "Id", "SpecificationId");
 
             var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
 
@@ -119,6 +121,7 @@ namespace Ecom.Controllers
             }
 
             ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            ViewData["SelectedCategorySpecification"] = new SelectList(_unitOfWork.CategorySpecificationRepo.GetAll(filter:e => e.CategoryId == id).ToList(), "Id", "SpecificationId");
 
             var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
 
@@ -130,7 +133,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category, [Bind("CategorySpecifications")] String CategorySpecifications)
         {
             if (id != category.Id)
             {
@@ -142,6 +145,30 @@ namespace Ecom.Controllers
                 try
                 {
                     _unitOfWork.CategoryRepo.Update(category);
+
+                    await _unitOfWork.SaveAsync();
+
+                    _unitOfWork.CategorySpecificationRepo.Delete(filter: e => e.CategoryId == category.Id);
+
+                    await _unitOfWork.SaveAsync();
+
+                    var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                    var tmps = tmp.Split(',');
+                    var CatSpecs = new List<int>();
+                    foreach (var catSpec in tmps)
+                    {
+                        var t = catSpec.Substring(1, catSpec.Length - 2);
+                        CatSpecs.Add(Int32.Parse(t));
+                    }
+
+                    foreach (var t in CatSpecs)
+                    {
+                        CategorySpecification categorySpecification = new CategorySpecification();
+                        categorySpecification.CategoryId = category.Id;
+                        categorySpecification.SpecificationId = t;
+
+                        _unitOfWork.CategorySpecificationRepo.Add(categorySpecification);
+                    }
                     await _unitOfWork.SaveAsync();
                     Notify("Edit saved successfully!!");
                 }

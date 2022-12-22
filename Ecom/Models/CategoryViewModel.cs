@@ -18,6 +18,7 @@ namespace Ecom.Models
         public string Description { get; set; }
 
         public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
+        public virtual ICollection<CategorySpecification> SelectedCategorySpecification { get; set; }
         /*       [Display(Name = "Authored books")]
                public virtual DynamicList<SpecificationViewModel> Specs { get; set; } = new DynamicList<SpecificationViewModel>();
            */

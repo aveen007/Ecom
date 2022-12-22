@@ -24,54 +24,28 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">edit specifications<i class="fa fa-plus"></i></button>
+                <select id="SelectedSpecs" asp-for="SelectedCategorySpecification" class ="form-control" asp-items="ViewBag.SelectedCategorySpecification" hidden></select>
+                <select id="Specs" asp-for="CategorySpecification" class ="form-control" asp-items="ViewBag.CategorySpecification" hidden></select>
             </div>
-            <input hidden name="StringifiedJSArray">
+            <div class="form-group">
+                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Edit Specification <i class="fa fa-plus"></i></button>
+            </div>
             <div id="spec">
 
-                <p id="msg"></p>
-                <script>
+            <p id="msg"></p>
 
-                    // get reference to button
-                    var showbtn = document.getElementById("showSpec");
-                    // add event listener for the button, for action "click"
-                    var spec_index = 0;
-                    showbtn.addEventListener("click", addChild);
-                    function addChild() {
-                        var spec = "<table id='spec" + spec_index + "' class= 'table table-light table - borderless table - hover text - center mb - 0' >" +
-                            "<tbody class='align-middle' >" +
-                            "<tr>" +
-                            "<td>" +
-                            "<select class='form-control Specs' >" +
-                            "<option selected> United States </option>" +
-                            "<option > Afghanistan </option>" +
-                            "<option > Albania </option>" +
-                            "<option > Algeria </option>" +
-                            "</select> </td>" +
-                            "<td class= 'align-middle' > specification </td>" +
-                            "<td class= 'align-middle' >" +
-                            "<button type='button' id='rem" + spec_index + "'  class= 'btn btn-sm btn-danger rem' >" +
-                            "<i class='fa fa-times' > </i>" +
-                            "</button >" +
-                            "</td></tr> </tbody > </table>"
-                        $("#spec").append(spec);
-                        let div = document.getElementById("spec")
-                        let rembtn = document.querySelector("#rem" + spec_index).addEventListener("click",
-                            function () {
-                                // let confirm=confirm("are you sure?");
-                                let rem_parent = this.parentNode.parentNode.parentNode.parentNode;
-                                // console.log(rem_parent);
+            <script>
+                var specifications = document.getElementById("Specs");
+                var selectedSpecifications = document.getElementById("SelectedSpecs");
 
-                                div.removeChild(rem_parent);
+                var selectedValues = [];
+                for (i = 0; i < selectedSpecifications.length; i++){
+                    selectedValues.push(selectedSpecifications[i].text)
+                }
 
-
-
-                            });
-
-                        spec_index += 1;
-
-                    }
-                </script>
+                var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(selectedValues) + "'>"
+                $("#spec").append(spec);
+            </script>
 
             </div>
             <div class="form-group">
