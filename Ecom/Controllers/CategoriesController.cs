@@ -57,13 +57,8 @@ namespace Ecom.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            var categoryViewModel = new CategoryViewModel();
-            
-            var specifications = _unitOfWork.SpecificationRepo.GetAll();
-            var specificationsViewModels = _mapper.Map<List<SpecificationViewModel>>(specifications);
-            Console.WriteLine(specificationsViewModels.Count());
-            var categorySpecificationsViewModel = new CategorySpecificationViewModel(categoryViewModel, specificationsViewModels);
-            return View(categorySpecificationsViewModel);
+            ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            return View();
         }
 
         // POST: Categories/Create
