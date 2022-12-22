@@ -99,26 +99,28 @@ namespace Ecom.Controllers
                 _unitOfWork.CategoryRepo.Add(category);
 
                 await _unitOfWork.SaveAsync();
-
-                var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
-                var tmps = tmp.Split(',');
-                var CatSpecs = new List<int>();
-                foreach (var catSpec in tmps)
+                if (CategorySpecifications != null)
                 {
-                    var t = catSpec.Substring(1, catSpec.Length - 2);
-                    CatSpecs.Add(Int32.Parse(t));
+                    var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                    var tmps = tmp.Split(',');
+                    var CatSpecs = new List<int>();
+                    foreach (var catSpec in tmps)
+                    {
+                        var t = catSpec.Substring(1, catSpec.Length - 2);
+                        CatSpecs.Add(Int32.Parse(t));
+                    }
+
+                    foreach (var t in CatSpecs)
+                    {
+                        CategorySpecification categorySpecification = new CategorySpecification();
+                        categorySpecification.CategoryId = category.Id;
+                        categorySpecification.SpecificationId = t;
+
+                        _unitOfWork.CategorySpecificationRepo.Add(categorySpecification);
+                    }
+
+                    await _unitOfWork.SaveAsync();
                 }
-
-                foreach (var t in CatSpecs)
-                {
-                    CategorySpecification categorySpecification = new CategorySpecification();
-                    categorySpecification.CategoryId = category.Id;
-                    categorySpecification.SpecificationId = t;
-
-                    _unitOfWork.CategorySpecificationRepo.Add(categorySpecification);
-                }
-
-                await _unitOfWork.SaveAsync();
                 Notify("category created successfully!!");
 
                 return RedirectToAction(nameof(Index));
@@ -176,24 +178,27 @@ namespace Ecom.Controllers
 
                     await _unitOfWork.SaveAsync();
 
-                    var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
-                    var tmps = tmp.Split(',');
-                    var CatSpecs = new List<int>();
-                    foreach (var catSpec in tmps)
+                    if (CategorySpecifications != null)
                     {
-                        var t = catSpec.Substring(1, catSpec.Length - 2);
-                        CatSpecs.Add(Int32.Parse(t));
-                    }
+                        var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                        var tmps = tmp.Split(',');
+                        var CatSpecs = new List<int>();
+                        foreach (var catSpec in tmps)
+                        {
+                            var t = catSpec.Substring(1, catSpec.Length - 2);
+                            CatSpecs.Add(Int32.Parse(t));
+                        }
 
-                    foreach (var t in CatSpecs)
-                    {
-                        CategorySpecification categorySpecification = new CategorySpecification();
-                        categorySpecification.CategoryId = category.Id;
-                        categorySpecification.SpecificationId = t;
+                        foreach (var t in CatSpecs)
+                        {
+                            CategorySpecification categorySpecification = new CategorySpecification();
+                            categorySpecification.CategoryId = category.Id;
+                            categorySpecification.SpecificationId = t;
 
-                        _unitOfWork.CategorySpecificationRepo.Add(categorySpecification);
+                            _unitOfWork.CategorySpecificationRepo.Add(categorySpecification);
+                        }
+                        await _unitOfWork.SaveAsync();
                     }
-                    await _unitOfWork.SaveAsync();
                     Notify("Edit saved successfully!!");
                 }
                 catch (DbUpdateConcurrencyException)
@@ -242,7 +247,12 @@ namespace Ecom.Controllers
         {
             try
             {
+                _unitOfWork.CategorySpecificationRepo.Delete(filter: e => e.CategoryId == id);
+
+                await _unitOfWork.SaveAsync();
+
                 _unitOfWork.CategoryRepo.Delete(id);
+
                 await _unitOfWork.SaveAsync();
                 Notify("category deleted successfully!!");
             }
