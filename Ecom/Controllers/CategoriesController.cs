@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Ecom.Models;
+using PagedList;
 
 namespace Ecom.Controllers
 {
@@ -27,10 +28,12 @@ namespace Ecom.Controllers
          
         }
         // GET: Categories
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder,int? page )
         {
+           
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page= page;
             var categories = _unitOfWork.CategoryRepo.GetAll();
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
@@ -48,7 +51,12 @@ namespace Ecom.Controllers
                     categoryVMs = categoryVMs.OrderBy(s => s.Name);
                     break;
             }
-            return View(categoryVMs);
+
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            return View(categoryVMs.ToPagedList(pageNumber, pageSize));
+          
 
         }
 
