@@ -71,6 +71,8 @@ namespace Ecom.Controllers
             {
                 _unitOfWork.CategoryRepo.Add(category);
                 await _unitOfWork.SaveAsync();
+                Notify("category created successfully!!");
+
                 return RedirectToAction(nameof(Index));
              
             }
@@ -117,6 +119,7 @@ namespace Ecom.Controllers
                 {
                     _unitOfWork.CategoryRepo.Update(category);
                     await _unitOfWork.SaveAsync();
+                    Notify("Edit saved successfully!!");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,7 +129,8 @@ namespace Ecom.Controllers
                     }
                     else
                     {
-                        throw;
+                        Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -161,12 +165,19 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
- 
-            
-            _unitOfWork.CategoryRepo.Delete(id);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                _unitOfWork.CategoryRepo.Delete(id);
+                await _unitOfWork.SaveAsync();
+                Notify("category deleted successfully!!");
+            }
+            catch(Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+            }
+                return RedirectToAction(nameof(Index));
+           
 
-            return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
