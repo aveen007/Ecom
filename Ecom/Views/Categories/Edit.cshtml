@@ -42,9 +42,9 @@
                 for (i = 0; i < selectedSpecifications.length; i++){
                     selectedValues.push(selectedSpecifications[i].text)
                 }
-
-                var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(selectedValues) + "'>"
-                $("#spec").append(spec);
+                if(selectedValues.length > 0)
+                    var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(selectedValues) + "'>"
+                    $("#spec").append(spec);
             </script>
 
             </div>
