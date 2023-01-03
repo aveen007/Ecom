@@ -194,6 +194,7 @@ $(document).ready(function () {
         }
         var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(formValues) + "'>"
         $("#spec").append(spec);
+        updateSpecs();
         }
 
 
