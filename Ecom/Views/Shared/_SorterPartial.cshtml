@@ -12,8 +12,8 @@
                     @*<a class="dropdown-item" href="#">Name</a>
                     <a class="dropdown-item" href="#">Date</a>*@
 
-                    <a class="dropdown-item" href=@Url.Action(null , new { sortOrder=ViewBag.NameSortParm })>Name</a>
-                    <a class="dropdown-item" href=@Url.Action(null , new { sortOrder = ViewBag.DateSortParm })>Date</a>
+                    <a class="dropdown-item" href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm })>Name</a>
+                    <a class="dropdown-item" href=@Url.Action(null , new {page=1, sortOrder = ViewBag.DateSortParm })>Date</a>
                 
                 </div>
             </div>
