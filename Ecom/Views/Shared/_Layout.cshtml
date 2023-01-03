@@ -180,7 +180,7 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
                                     <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                        <a href="~/Categories" class="dropdown-item">Categories</a>
+                                    <a href=@Url.Action("index", "Categories", new { page=1}) class="dropdown-item">Categories</a>
                                         <a href="~/Products" class="dropdown-item">Products</a>
                                         <a href="~/Specifications" class="dropdown-item">Specifications</a>
                                         <a href="~/CategorySpecifications" class="dropdown-item">Category Specifications</a>
