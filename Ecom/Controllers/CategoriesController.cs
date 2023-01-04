@@ -121,7 +121,7 @@ namespace Ecom.Controllers
 
                     await _unitOfWork.SaveAsync();
                 }
-                Notify("category created successfully!!");
+                Notify("Category created successfully!!");
 
                 return RedirectToAction(nameof(Index));
              

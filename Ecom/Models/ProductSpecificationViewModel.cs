@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecom.Models
 {
-    public class SpecificationViewModel
+    public class ProductSpecificationViewModel
     {
         public int Id { get; set; }
 
@@ -18,7 +18,6 @@ namespace Ecom.Models
 
         public int ValueTypeId { get; set; }
 
-        [Display(Name = "Value Type")]
         public virtual ValueTypeViewModel ValueType { get; set; }
     }
 }

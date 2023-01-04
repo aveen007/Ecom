@@ -9,6 +9,8 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
@@ -16,18 +18,21 @@ namespace Ecom.Controllers
     {
 
         private readonly IWebHostEnvironment _hostEnvironment;
-        public ProductSpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly IMapper _mapper;
+        public ProductSpecificationsController (IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
-
+            this._mapper = mapper;
         }
 
         // GET: ProductSpecifications
         public IActionResult Index()
         {
 
-            var ProductSpecification = _unitOfWork.ProductSpecificationRepo.GetAll().ToList();
-            return View(ProductSpecification);
+            var productSpecifications = _unitOfWork.ProductSpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
+            var productSpecificationsViewModels = _mapper.Map<List<ProductSpecificationViewModel>>(productSpecifications);
+
+            return View(productSpecificationsViewModels);
 
         }
 
@@ -39,19 +44,30 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var productSpecification = _unitOfWork.ProductSpecificationRepo.Get(id.Value);
+            var productSpecifications = _unitOfWork.ProductSpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
+            var productSpecification = new ProductSpecification();
+            for (int i = 0; i < productSpecifications.Count; i++)
+            {
+                var temp = productSpecifications[i];
+                if (temp.Id == id)
+                {
+                    productSpecification = productSpecifications[i];
+                }
 
+            }
             if (productSpecification == null)
             {
                 return NotFound();
             }
+            var productSpecificationsViewModel = _mapper.Map<ProductSpecificationViewModel>(productSpecification);
 
-            return View(productSpecification);
+            return View(productSpecificationsViewModel);
         }
 
         // GET: ProductSpecifications/Create
         public IActionResult Create()
         {
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName");
             return View();
         }
 
@@ -60,15 +76,20 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Specification,ValueType")] ProductSpecification productSpecification)
+        public async Task<IActionResult> Create([Bind("Id,SpecificationName,Description,ValueTypeId")] ProductSpecification productSpecification)
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.ProductSpecificationRepo.Add(productSpecification);
                 await _unitOfWork.SaveAsync();
+                Notify("Product specification created successfully!!");
                 return RedirectToAction(nameof(Index));
             }
-            return View(productSpecification);
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", productSpecification.ValueTypeId);
+
+            var productSpecificationsViewModel = _mapper.Map<ProductSpecificationViewModel>(productSpecification);
+
+            return View(productSpecificationsViewModel);
         }
 
         // GET: ProductSpecifications/Edit/5

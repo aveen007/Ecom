@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AppDbContext.Models.ProductSpecification>
+﻿@model IEnumerable<Ecom.Models.ProductSpecificationViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -29,7 +29,7 @@
                 @Html.DisplayFor(modelItem => item.SpecificationName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ValueType)
+                @Html.DisplayFor(modelItem => item.ValueType.ValueName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

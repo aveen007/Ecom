@@ -19,7 +19,7 @@ namespace Ecom.Controllers
 
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
-        public SpecificationsController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
+        public SpecificationsController (IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
             this._mapper = mapper;
@@ -27,7 +27,7 @@ namespace Ecom.Controllers
         // GET: Specifications
         public IActionResult Index()
         {
-            var specifications = _unitOfWork.SpecificationRepo.GetAll();
+            var specifications = _unitOfWork.SpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
             var specificationsViewModels = _mapper.Map<List<SpecificationViewModel>>(specifications);
 
             return View(specificationsViewModels);
@@ -41,7 +41,17 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
+            var specifications = _unitOfWork.SpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
+            var specification = new Specification();
+            for (int i = 0; i < specifications.Count; i++)
+            {
+                var temp = specifications[i];
+                if (temp.Id == id)
+                {
+                    specification = specifications[i];
+                }
+
+            }
             if (specification == null)
             {
                 return NotFound();
@@ -69,8 +79,11 @@ namespace Ecom.Controllers
             {
                 _unitOfWork.SpecificationRepo.Add(specification);
                 await _unitOfWork.SaveAsync();
+                Notify("Specification created successfully!!");
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", specification.ValueTypeId);
+
             var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
             return View(specificationViewModel);
@@ -89,6 +102,8 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", specification.ValueTypeId);
+
             var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
             return View(specificationViewModel);
@@ -99,7 +114,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification1,ValueType")] Specification specification)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SpecificationName,Description,ValueTypeId")] Specification specification)
         {
             if (id != specification.Id)
             {
@@ -112,6 +127,7 @@ namespace Ecom.Controllers
                 {
                     _unitOfWork.SpecificationRepo.Update(specification);
                     await _unitOfWork.SaveAsync();
+                    Notify("Edit saved successfully!!");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,7 +137,7 @@ namespace Ecom.Controllers
                     }
                     else
                     {
-                        throw;
+                        Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -139,7 +155,17 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var specification = _unitOfWork.SpecificationRepo.Get(id.Value);
+            var specifications = _unitOfWork.SpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
+            var specification = new Specification();
+            for (int i = 0; i < specifications.Count; i++)
+            {
+                var temp = specifications[i];
+                if (temp.Id == id)
+                {
+                    specification = specifications[i];
+                }
+
+            }
 
             if (specification == null)
             {
@@ -156,8 +182,16 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _unitOfWork.SpecificationRepo.Delete(id);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                _unitOfWork.SpecificationRepo.Delete(id);
+                await _unitOfWork.SaveAsync();
+                Notify("specification deleted successfully!!");
+            }
+            catch (Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+            }
             return RedirectToAction(nameof(Index));
         }
 
