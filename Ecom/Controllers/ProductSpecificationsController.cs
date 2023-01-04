@@ -33,9 +33,10 @@ namespace Ecom.Controllers
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page = page;
+
             var productSpecifications = _unitOfWork.ProductSpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
             var productSpecificationsViewModels = _mapper.Map<List<ProductSpecificationViewModel>>(productSpecifications);
-            var ProductSpecs = from s in productSpecifications
+            var ProductSpecs = from s in productSpecificationsViewModels
                                select s;
             switch (sortOrder)
             {
@@ -53,7 +54,6 @@ namespace Ecom.Controllers
 
             
 
-            return View(productSpecificationsViewModels);
 
             int pageSize = 3;
             int pageNumber = (page ?? 1);
@@ -135,7 +135,11 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-            return View(productSpecification);
+            ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", productSpecification.ValueTypeId);
+
+            var productSpecificationsViewModel = _mapper.Map<ProductSpecificationViewModel>(productSpecification);
+
+            return View(productSpecificationsViewModel);
         }
 
         // POST: ProductSpecifications/Edit/5
@@ -143,7 +147,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Specification,ValueType")] ProductSpecification productSpecification)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SpecificationName,Description,ValueTypeId")] ProductSpecification productSpecification)
         {
             if (id != productSpecification.Id)
             {
@@ -156,6 +160,7 @@ namespace Ecom.Controllers
                 {
                     _unitOfWork.ProductSpecificationRepo.Update(productSpecification);
                     await _unitOfWork.SaveAsync();
+                    Notify("Edit saved successfully!!");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -165,7 +170,7 @@ namespace Ecom.Controllers
                     }
                     else
                     {
-                        throw;
+                        Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
                     }
                 }
                 return RedirectToAction(nameof(Index), new
@@ -173,7 +178,9 @@ namespace Ecom.Controllers
                     page = 1
                 });
             }
-            return View(productSpecification);
+            var productSpecificationsViewModel = _mapper.Map<ProductSpecificationViewModel>(productSpecification);
+
+            return View(productSpecificationsViewModel);
         }
 
         // GET: ProductSpecifications/Delete/5
@@ -184,13 +191,24 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
-            var productSpecification = _unitOfWork.ProductSpecificationRepo.Get(id.Value);
+            var productSpecifications = _unitOfWork.ProductSpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
+            var productSpecification = new ProductSpecification();
+            for (int i = 0; i < productSpecifications.Count; i++)
+            {
+                var temp = productSpecifications[i];
+                if (temp.Id == id)
+                {
+                    productSpecification = productSpecifications[i];
+                }
+
+            }
             if (productSpecification == null)
             {
                 return NotFound();
             }
+            var productSpecificationsViewModel = _mapper.Map<ProductSpecificationViewModel>(productSpecification);
 
-            return View(productSpecification);
+            return View(productSpecificationsViewModel);
         }
 
         // POST: ProductSpecifications/Delete/5
@@ -198,9 +216,16 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-           
-            _unitOfWork.ProductSpecificationRepo.Delete(id);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                _unitOfWork.ProductSpecificationRepo.Delete(id);
+                await _unitOfWork.SaveAsync();
+                Notify("Product specification deleted successfully!!");
+            }
+           catch (Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+            }
             return RedirectToAction(nameof(Index), new
             {
                 page = 1
@@ -209,7 +234,7 @@ namespace Ecom.Controllers
 
         private bool ProductSpecificationExists(int id)
         {
-            return _unitOfWork.CategorySpecificationRepo.IsExist(id);
+            return _unitOfWork.ProductSpecificationRepo.IsExist(id);
         }
     }
 }
