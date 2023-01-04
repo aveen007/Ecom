@@ -1,15 +1,20 @@
-﻿<div class="col-12">
+﻿
+<div class="col-12">
     <nav>
         <ul class="pagination justify-content-center">
-            <li class="page-item disabled"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page -1})>Previous</span></a></li>
-            <li class="page-item active"><a class="page-link" href=@Url.Action(null, new { page=1})>1</a></li>
-            <li class="page-item"><a class="page-link" href=@Url.Action(null, new { page=2}) >2</a></li>
-            <li class="page-item"><a class="page-link" href=@Url.Action(null, new { page=3})>3</a></li>
-            <li class="page-item"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page +1})>Next</a></li>
+            <li class="page-item @( (!(ViewBag.page-1>0) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page -1,sortOrder = ViewBag.CurrentSort})>Previous</span></a></li>
+            <li class="page-item active"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page)</a></li>
+            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+1,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page + 1)</a></li>
+
+            <li class="page-item @( (!(ViewBag.page+2<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+2,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page + 2)</a></li>
+            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page +1,sortOrder = ViewBag.CurrentSort})>Next</a></li>
         </ul>
     </nav>
 </div>
-
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@*
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))*@
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>

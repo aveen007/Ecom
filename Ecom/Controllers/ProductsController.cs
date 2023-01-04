@@ -13,6 +13,7 @@ using AppDbContext.UOW;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Ecom.Models;
+using PagedList;
 
 namespace Ecom.Controllers
 {
@@ -50,13 +51,37 @@ namespace Ecom.Controllers
         }
 
         // GET: Products
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
 
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
             var productsViewModels = _mapper.Map<List<ProductViewModel>>(products);
+            var productVMs = from s in productsViewModels
+                             select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    productVMs = productVMs.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    productVMs = productVMs.OrderBy(s => s.Id);
+                    break;
 
-            return View(productsViewModels);
+                default:
+                    productVMs = productVMs.OrderBy(s => s.Name);
+                    break;
+            }
+
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return View(productVMs.ToPagedList(pageNumber, pageSize));
+          
         }
 
         public IActionResult Details(int? id)

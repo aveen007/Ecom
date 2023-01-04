@@ -23,11 +23,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="/css/style.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
 
 
  
@@ -174,17 +174,17 @@
                         </button>
                         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                             <div class="navbar-nav mr-auto py-0">
-                                <a href="index.html" class="nav-item nav-link active">Home</a>
+                            <a href=@Url.Action("index", "Home") class="nav-item nav-link active">Home</a>
                                 <a href="shop.html" class="nav-item nav-link">Shop</a>
                                 <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
                                     <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                     <a href=@Url.Action("index", "Categories", new { page=1}) class="dropdown-item">Categories</a>
-                                        <a href="~/Products" class="dropdown-item">Products</a>
-                                        <a href="~/Specifications" class="dropdown-item">Specifications</a>
+                                    <a href=@Url.Action("index", "Products", new { page=1}) class="dropdown-item">Products</a>
+                                    <a href=@Url.Action("index", "Specifications", new { page=1}) class="dropdown-item">Specifications</a>
                                         <a href="~/CategorySpecifications" class="dropdown-item">Category Specifications</a>
-                                        <a href="~/ProductSpecifications" class="dropdown-item">Product Specifications</a>
+                                    <a href=@Url.Action("index", "ProductSpecifications", new { page=1}) class="dropdown-item">Product Specifications</a>
                                         <a href="~/ProductSpecificationValues" class="dropdown-item">Product Specification Values</a>
                                         <a href="~/ValueTypes" class="dropdown-item">Value Types</a>
                                      
@@ -309,7 +309,7 @@
     </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="/js/site.js" asp-append-version="true"></script>
    @* <!-- Load JS code for the Dynamic ViewModel Lists above -->
     <script src="~/lib/dynamic-viewmodel-list/dvml.js"></script>*@
     @await Html.PartialAsync("_NotificationPartial")

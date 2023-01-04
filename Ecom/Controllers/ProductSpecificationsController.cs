@@ -9,6 +9,8 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using PagedList;
+using Ecom.Models;
 
 namespace Ecom.Controllers
 {
@@ -23,11 +25,34 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecifications
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, int? page)
         {
-
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
             var ProductSpecification = _unitOfWork.ProductSpecificationRepo.GetAll().ToList();
-            return View(ProductSpecification);
+            var ProductSpecs = from s in ProductSpecification
+                             select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    ProductSpecs = ProductSpecs.OrderByDescending(s => s.SpecificationName);
+                    break;
+                case "Date":
+                    ProductSpecs = ProductSpecs.OrderBy(s => s.Id);
+                    break;
+
+                default:
+                    ProductSpecs = ProductSpecs.OrderBy(s => s.SpecificationName);
+                    break;
+            }
+
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return View(ProductSpecs.ToPagedList(pageNumber, pageSize));
 
         }
 
