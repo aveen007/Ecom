@@ -137,7 +137,10 @@ namespace Ecom.Controllers
                 await _unitOfWork.SaveAsync();
                 Notify("Product created successfully!!");
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
      
 
             }
@@ -205,7 +208,10 @@ namespace Ecom.Controllers
 
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
             
@@ -259,7 +265,10 @@ namespace Ecom.Controllers
                 Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
              
     }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                page = 1
+            });
 
         }
 

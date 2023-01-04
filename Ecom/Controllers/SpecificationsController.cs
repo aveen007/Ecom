@@ -95,7 +95,10 @@ namespace Ecom.Controllers
             {
                 _unitOfWork.SpecificationRepo.Add(specification);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
@@ -150,7 +153,10 @@ namespace Ecom.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
@@ -184,7 +190,10 @@ namespace Ecom.Controllers
         {
             _unitOfWork.SpecificationRepo.Delete(id);
             await _unitOfWork.SaveAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                page = 1
+            });
         }
 
         private bool SpecificationExists(int id)

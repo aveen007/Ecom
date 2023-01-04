@@ -91,7 +91,10 @@ namespace Ecom.Controllers
             {
                 _unitOfWork.ProductSpecificationRepo.Add(productSpecification);
                 await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             return View(productSpecification);
         }
@@ -143,7 +146,10 @@ namespace Ecom.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             return View(productSpecification);
         }
@@ -173,7 +179,10 @@ namespace Ecom.Controllers
            
             _unitOfWork.ProductSpecificationRepo.Delete(id);
             await _unitOfWork.SaveAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                page = 1
+            });
         }
 
         private bool ProductSpecificationExists(int id)
