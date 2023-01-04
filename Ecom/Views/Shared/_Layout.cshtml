@@ -175,8 +175,8 @@
                         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                             <div class="navbar-nav mr-auto py-0">
                             <a href=@Url.Action("index", "Home") class="nav-item nav-link active">Home</a>
-                                <a href="shop.html" class="nav-item nav-link">Shop</a>
-                                <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
+                                <a href="~/shop.html" class="nav-item nav-link">Shop</a>
+                                <a href="~/detail.html" class="nav-item nav-link">Shop Detail</a>
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
                                     <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
@@ -188,11 +188,11 @@
                                         <a href="~/ProductSpecificationValues" class="dropdown-item">Product Specification Values</a>
                                         <a href="~/ValueTypes" class="dropdown-item">Value Types</a>
                                      
-                                        <a href="cart.html" class="dropdown-item">Shopping Cart</a>
-                                        <a href="checkout.html" class="dropdown-item">Checkout</a>
+                                        <a href="~/cart.html" class="dropdown-item">Shopping Cart</a>
+                                        <a href="~/checkout.html" class="dropdown-item">Checkout</a>
                                     </div>
                                 </div>
-                                <a href="contact.html" class="nav-item nav-link">Contact</a>
+                                <a href="~/contact.html" class="nav-item nav-link">Contact</a>
                             </div>
                             <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                                 <a href="" class="btn px-0">
@@ -309,7 +309,7 @@
     </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
    @* <!-- Load JS code for the Dynamic ViewModel Lists above -->
     <script src="~/lib/dynamic-viewmodel-list/dvml.js"></script>*@
     @await Html.PartialAsync("_NotificationPartial")
