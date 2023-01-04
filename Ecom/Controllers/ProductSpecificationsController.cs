@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Ecom.Models;
+using PagedList;
 
 namespace Ecom.Controllers
 {
@@ -26,13 +27,38 @@ namespace Ecom.Controllers
         }
 
         // GET: ProductSpecifications
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, int? page)
         {
-
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
             var productSpecifications = _unitOfWork.ProductSpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
             var productSpecificationsViewModels = _mapper.Map<List<ProductSpecificationViewModel>>(productSpecifications);
+            var ProductSpecs = from s in productSpecifications
+                               select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    ProductSpecs = ProductSpecs.OrderByDescending(s => s.SpecificationName);
+                    break;
+                case "Date":
+                    ProductSpecs = ProductSpecs.OrderBy(s => s.Id);
+                    break;
+
+                default:
+                    ProductSpecs = ProductSpecs.OrderBy(s => s.SpecificationName);
+                    break;
+            }
+
+            
 
             return View(productSpecificationsViewModels);
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return View(ProductSpecs.ToPagedList(pageNumber, pageSize));
 
         }
 
@@ -83,7 +109,10 @@ namespace Ecom.Controllers
                 _unitOfWork.ProductSpecificationRepo.Add(productSpecification);
                 await _unitOfWork.SaveAsync();
                 Notify("Product specification created successfully!!");
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", productSpecification.ValueTypeId);
 
@@ -139,7 +168,10 @@ namespace Ecom.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             return View(productSpecification);
         }
@@ -169,7 +201,10 @@ namespace Ecom.Controllers
            
             _unitOfWork.ProductSpecificationRepo.Delete(id);
             await _unitOfWork.SaveAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                page = 1
+            });
         }
 
         private bool ProductSpecificationExists(int id)

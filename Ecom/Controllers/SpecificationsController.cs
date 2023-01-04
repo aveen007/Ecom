@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Ecom.Models;
+using PagedList;
 
 namespace Ecom.Controllers
 {
@@ -25,12 +26,37 @@ namespace Ecom.Controllers
             this._mapper = mapper;
         }
         // GET: Specifications
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
+
             var specifications = _unitOfWork.SpecificationRepo.GetAll(includeProperties: "ValueType").ToList();
             var specificationsViewModels = _mapper.Map<List<SpecificationViewModel>>(specifications);
+            var SpecificationsVMs = from s in specificationsViewModels
+                                    select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    SpecificationsVMs = SpecificationsVMs.OrderByDescending(s => s.SpecificationName);
+                    break;
+                case "Date":
+                    SpecificationsVMs = SpecificationsVMs.OrderBy(s => s.Id);
+                    break;
 
-            return View(specificationsViewModels);
+                default:
+                    SpecificationsVMs = SpecificationsVMs.OrderBy(s => s.SpecificationName);
+                    break;
+            }
+
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return View(SpecificationsVMs.ToPagedList(pageNumber, pageSize));
+            
         }
 
         // GET: Specifications/Details/5
@@ -80,7 +106,10 @@ namespace Ecom.Controllers
                 _unitOfWork.SpecificationRepo.Add(specification);
                 await _unitOfWork.SaveAsync();
                 Notify("Specification created successfully!!");
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName", specification.ValueTypeId);
 
@@ -140,7 +169,10 @@ namespace Ecom.Controllers
                         Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1
+                });
             }
             var specificationViewModel = _mapper.Map<SpecificationViewModel>(specification);
 
@@ -182,6 +214,7 @@ namespace Ecom.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            
             try
             {
                 _unitOfWork.SpecificationRepo.Delete(id);
@@ -192,7 +225,10 @@ namespace Ecom.Controllers
             {
                 Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                page = 1
+            });
         }
 
         private bool SpecificationExists(int id)

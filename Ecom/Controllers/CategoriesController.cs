@@ -30,7 +30,7 @@ namespace Ecom.Controllers
         // GET: Categories
         public ActionResult Index(string sortOrder,int? page )
         {
-           
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page= page;
@@ -55,6 +55,7 @@ namespace Ecom.Controllers
 
             int pageSize = 3;
             int pageNumber = (page ?? 1);
+            
             return View(categoryVMs.ToPagedList(pageNumber, pageSize));
           
 
@@ -123,7 +124,11 @@ namespace Ecom.Controllers
                 }
                 Notify("Category created successfully!!");
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    page = 1,
+                   
+                });
              
             }
 
@@ -213,7 +218,7 @@ namespace Ecom.Controllers
 
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { page = 1 });
             }
 
             var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
@@ -260,7 +265,7 @@ namespace Ecom.Controllers
             {
                 Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
             }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { page = 1 });
            
 
         }

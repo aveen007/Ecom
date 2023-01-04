@@ -12,7 +12,9 @@
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Products</span></h2>
 <p>
-    <a asp-action="Create">Create New</a>
+        @await Html.PartialAsync("_SorterPartial")
+
+        <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
     <div class="row px-xl-5">
     @foreach (var item in Model) {
@@ -294,3 +296,5 @@
 }
     </tbody>
 </table>
+@await Html.PartialAsync("_PaginationPartial")
+

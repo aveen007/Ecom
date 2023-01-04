@@ -7,7 +7,9 @@
 @*<h1>Index</h1>*@
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @await Html.PartialAsync("_SorterPartial")
+
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -43,3 +45,4 @@
 }
     </tbody>
 </table>
+@await Html.PartialAsync("_PaginationPartial")
