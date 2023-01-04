@@ -31,11 +31,18 @@
                 <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Edit Specification <i class="fa fa-plus"></i></button>
             </div>
             <div id="spec">
+                <div id='specs_list' class='form-group'>
 
+                </div>
             <p id="msg"></p>
 
+            <script type="text/javascript" src="~/js/site.js"></script>
             <script>
                 var specifications = document.getElementById("Specs");
+                var spec_dictionary = {};
+                for (i = 0; i < specifications.length; i++){
+                    spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                }
                 var selectedSpecifications = document.getElementById("SelectedSpecs");
 
                 var selectedValues = [];
@@ -45,6 +52,7 @@
                 if(selectedValues.length > 0)
                     var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(selectedValues) + "'>"
                     $("#spec").append(spec);
+                    updateSpecs();
             </script>
 
             </div>

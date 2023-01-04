@@ -202,7 +202,31 @@ $(document).ready(function () {
     }
 });
 
+function updateSpecs() {
+    var spec = document.getElementById("spec")
+    var specs_list = document.getElementById("specs_list")
 
+    if (specs_list) {
+        spec.removeChild(specs_list);
+        var tmp_div = "<div id='specs_list' class='form-group'></div>";
+        $("#spec").append(tmp_div);
+    }
+
+    var specIds = document.getElementById("specIds")
+    if (specIds && specIds.value.length > 2) {
+        var label = "<label class='control-label'>Specifications:</label>"
+        $("#specs_list").append(label);
+
+        var tmp = specIds.value.substring(1, specIds.value.length - 1);
+        var tmps = tmp.split(',');
+        for (var i = 0; i < tmps.length; i++) {
+            tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
+            var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div>"
+            $("#specs_list").append(tmp_spec);
+        }
+
+    }
+}
 
 
 ///////////alerts
