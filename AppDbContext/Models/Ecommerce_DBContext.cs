@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AppDbContext.Models
 {
-    public partial class Ecommerce_DBContext : IdentityDbContext<IdentityUser>
+    public partial class Ecommerce_DBContext : IdentityDbContext<ApplicationUser>
     {
         public Ecommerce_DBContext()
         {
