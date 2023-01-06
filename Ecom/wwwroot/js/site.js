@@ -208,22 +208,40 @@ function updateSpecs() {
 
     if (specs_list) {
         spec.removeChild(specs_list);
-        var tmp_div = "<div id='specs_list' class='form-group'></div>";
+        var tmp_div = "<div id='specs_list' class='form-group'>";
+        var tmp_table = "<table id='ta' class='form-group table table-striped table-bordered table-sm' cellspacing = '0'"
+            + "width = '100%'>" +
+            " <thead>" +
+            "<tr >" +
+            "<th class='th-sm'>#</th>"+
+        "<th class='th-sm'>Specification</th>" +
+            " </tr>" +
+            "</thead >" + 
+            "<tbody>"
+            ;
         $("#spec").append(tmp_div);
+        $("#specs_list").append(tmp_table);
+
     }
 
     var specIds = document.getElementById("specIds")
     if (specIds && specIds.value.length > 2) {
-        var label = "<label class='control-label'>Specifications:</label>"
+        /*var label = "<label class='control-label'>Specifications:</label>"
         $("#specs_list").append(label);
-
+*/
         var tmp = specIds.value.substring(1, specIds.value.length - 1);
         var tmps = tmp.split(',');
         for (var i = 0; i < tmps.length; i++) {
             tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-            var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div>"
-            $("#specs_list").append(tmp_spec);
+            
+            var tmp_spec = "<tr><th scope='row'>"+i+"</th><td><div >" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td></tr>"
+
+            
+            $("#ta").append(tmp_spec);
         }
+        var tmp_end = "  </tbody></table ></div>";
+        $("#specs_list").append(tmp_end);
+
 
     }
 }
