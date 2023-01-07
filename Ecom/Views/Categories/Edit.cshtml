@@ -38,6 +38,7 @@
 
             <script type="text/javascript" src="~/js/site.js"></script>
             <script>
+                var isProduct = false;
                 var specifications = document.getElementById("Specs");
                 var spec_dictionary = {};
                 for (i = 0; i < specifications.length; i++){
@@ -50,9 +51,11 @@
                     selectedValues.push(selectedSpecifications[i].text)
                 }
                 if(selectedValues.length > 0)
-                    var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(selectedValues) + "'>"
+                {
+                    var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(selectedValues) + "'>"
                     $("#spec").append(spec);
                     updateSpecs();
+                }
             </script>
 
             </div>

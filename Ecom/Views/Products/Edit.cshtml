@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -63,45 +62,38 @@
 
     <p id="msg"></p>
     <script>
+        var isProduct = true;
+        var specifications = document.getElementById("Specs");
+        var spec_dictionary = {};
+        for (i = 0; i < specifications.length; i++){
+            spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+        }
+        var selectedSpecifications = document.getElementById("SelectedSpecs");
 
-        // get reference to button
-        var showbtn = document.getElementById("showSpec");
-        // add event listener for the button, for action "click"
-        var spec_index = 0;
-        showbtn.addEventListener("click", addChild);
-        function addChild() {
-            var spec = "<table id='spec" + spec_index + "' class= 'table table-light table - borderless table - hover text - center mb - 0' >" +
-                "<tbody class='align-middle' >" +
-                "<tr>" +
-                "<td>" +
-                "<select class='form-control Specs' >" +
-                "<option selected> United States </option>" +
-                "<option > Afghanistan </option>" +
-                "<option > Albania </option>" +
-                "<option > Algeria </option>" +
-                "</select> </td>" +
-                "<td class= 'align-middle' > specification </td>" +
-                "<td class= 'align-middle' >" +
-                "<button type='button' id='rem" + spec_index + "'  class= 'btn btn-sm btn-danger rem' >" +
-                "<i class='fa fa-times' > </i>" +
-                "</button >" +
-                "</td></tr> </tbody > </table>"
+        var selectedValues = [];
+        for (i = 0; i < selectedSpecifications.length; i++){
+            selectedValues.push(selectedSpecifications[i].text)
+        }
+        if(selectedValues.length > 0)
+        {
+            var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(selectedValues) + "'>"
             $("#spec").append(spec);
-            let div = document.getElementById("spec")
-            let rembtn = document.querySelector("#rem" + spec_index).addEventListener("click",
-                function () {
-                    // let confirm=confirm("are you sure?");
-                    let rem_parent = this.parentNode.parentNode.parentNode.parentNode;
-                    // console.log(rem_parent);
+            updateSpecs();
+        }
 
-                    div.removeChild(rem_parent);
-
-
-
-                });
-
-            spec_index += 1;
-
+        function updateValuesInput(){
+            var tmp = document.getElementById("specValues")
+            if (tmp) {
+                let div = document.getElementById("spec")
+                div.removeChild(tmp)
+            }
+            var values_inputs = document.getElementsByClassName("values");
+            var values_inputs_values = [];
+            for (var i = 0; i < values_inputs.length; i++){
+                values_inputs_values.push(values_inputs[i].value)
+            }
+            var spec = "<input hidden id='specValues' name='ProductSpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+            $("#spec").append(spec);
         }
     </script>
 

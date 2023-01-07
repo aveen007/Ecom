@@ -187,14 +187,17 @@ $(document).ready(function () {
             }
         })
         if (formValues) {
-        var tmp = document.getElementById("specIds")
-            if (tmp) {
-                let div = document.getElementById("spec")
-                div.removeChild(tmp)
-        }
-        var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(formValues) + "'>"
-        $("#spec").append(spec);
-        updateSpecs();
+            var tmp = document.getElementById("specIds")
+                if (tmp) {
+                    let div = document.getElementById("spec")
+                    div.removeChild(tmp)
+            }
+            var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(formValues) + "'>"
+            $("#spec").append(spec);
+            if (isProduct) {
+                updateValuesInput();
+            }
+            updateSpecs();
         }
 
 
@@ -213,16 +216,35 @@ function updateSpecs() {
     }
 
     var specIds = document.getElementById("specIds")
+    var specValues = document.getElementById("specValues");
     if (specIds && specIds.value.length > 2) {
         var label = "<label class='control-label'>Specifications:</label>"
         $("#specs_list").append(label);
 
         var tmp = specIds.value.substring(1, specIds.value.length - 1);
         var tmps = tmp.split(',');
+        if (isProduct) {
+            var value_dic_tmp = {};
+        }
         for (var i = 0; i < tmps.length; i++) {
             tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-            var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div>"
+            var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])];
+            if (isProduct) {
+                tmp_spec += "<input class='form-control values' oninput='updateValuesInput()' ";
+                if (value_dictionary[tmps[i]]) {
+                    value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
+                    tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
+                }
+                else {
+                    value_dic_tmp[tmps[i]] = "";
+                }
+                tmp_spec += " required>";
+            }
+            tmp_spec += "</div>";
             $("#specs_list").append(tmp_spec);
+        }
+        if (isProduct) {
+            value_dictionary = value_dic_tmp;
         }
 
     }

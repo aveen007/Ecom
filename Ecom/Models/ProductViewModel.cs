@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AppDbContext.Models;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -30,6 +31,8 @@ namespace Ecom.Models
         [Display(Name = "Upload Image")]
         public IFormFile Imagefile { get; set; }
         public virtual CategoryViewModel Category { get; set; }
+
+        public virtual ICollection<ProductSpecification> ProductSpecification { get; set; }
 
     }
 }

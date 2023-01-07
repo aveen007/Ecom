@@ -118,6 +118,8 @@ namespace Ecom.Controllers
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name");
+            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            //ViewBag.CategorySpecifications = _unitOfWork.CategorySpecificationRepo.GetAll().ToList();
             return View();
         }
 
@@ -126,7 +128,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product, [Bind("Specifications")] String Specifications, [Bind("ProductSpecificationValues")] String ProductSpecificationValues)
         {
             if (ModelState.IsValid)
             {
@@ -135,6 +137,48 @@ namespace Ecom.Controllers
                     await saveImage(product);
                 _unitOfWork.ProductRepo.Add(product);
                 await _unitOfWork.SaveAsync();
+                if (Specifications != null)
+                {
+                    var tmp = Specifications.Substring(1, Specifications.Length - 2);
+                    var tmps = tmp.Split(',');
+
+                    var value_tmp = ProductSpecificationValues.Substring(1, ProductSpecificationValues.Length - 2);
+                    var value_tmps = value_tmp.Split(',');
+
+                    var CatSpecs = new List<Tuple<int, string>>();
+                    if (tmps.Length == value_tmps.Length)
+                    {
+                        for (var i = 0; i < tmps.Length; i++)
+                        {
+                            var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                            var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                            CatSpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                        }
+                    }
+                    else
+                    {
+                        ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                        ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+
+                        var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                        Notify("Not All Specifications have Values!!");
+
+                        return View(tmp_productViewModel);
+                    }
+
+                    foreach (var t in CatSpecs)
+                    {
+                        ProductSpecificationValue productSpecificationValue = new ProductSpecificationValue();
+                        productSpecificationValue.ProductId = product.Id;
+                        productSpecificationValue.SpecificationId = t.Item1;
+                        productSpecificationValue.Value = t.Item2;
+
+                        _unitOfWork.ProductSpecificationValueRepo.Add(productSpecificationValue);
+                    }
+
+                    await _unitOfWork.SaveAsync();
+                }
                 Notify("Product created successfully!!");
 
                 return RedirectToAction(nameof(Index), new
@@ -166,6 +210,7 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
 
             var productViewModel = _mapper.Map<ProductViewModel>(product);
 
@@ -177,7 +222,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product, [Bind("Specifications")] String Specifications, [Bind("ProductSpecificationValues")] String ProductSpecificationValues)
         {
             if (id != product.Id)
             {
@@ -190,8 +235,55 @@ namespace Ecom.Controllers
                 {
                     if (product.Imagefile != null)
                         await saveImage(product);
+
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
+
+                    _unitOfWork.ProductSpecificationValueRepo.Delete(filter: e => e.ProductId == product.Id);
+                    await _unitOfWork.SaveAsync();
+
+                    if (Specifications != null)
+                    {
+                        var tmp = Specifications.Substring(1, Specifications.Length - 2);
+                        var tmps = tmp.Split(',');
+
+                        var value_tmp = ProductSpecificationValues.Substring(1, ProductSpecificationValues.Length - 2);
+                        var value_tmps = value_tmp.Split(',');
+
+                        var CatSpecs = new List<Tuple<int, string>>();
+                        if (tmps.Length == value_tmps.Length)
+                        {
+                            for (var i = 0; i < tmps.Length; i++)
+                            {
+                                var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                                var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                                CatSpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                            }
+                        }
+                        else
+                        {
+                            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+
+                            var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                            Notify("Not All Specifications have Values!!");
+
+                            return View(tmp_productViewModel);
+                        }
+
+                        foreach (var t in CatSpecs)
+                        {
+                            ProductSpecificationValue productSpecificationValue = new ProductSpecificationValue();
+                            productSpecificationValue.ProductId = product.Id;
+                            productSpecificationValue.SpecificationId = t.Item1;
+                            productSpecificationValue.Value = t.Item2;
+
+                            _unitOfWork.ProductSpecificationValueRepo.Add(productSpecificationValue);
+                        }
+
+                        await _unitOfWork.SaveAsync();
+                    }
                     Notify("Edit saved successfully!!");
 
 

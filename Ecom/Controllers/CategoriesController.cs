@@ -93,16 +93,16 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category, [Bind("CategorySpecifications")]  String CategorySpecifications)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category, [Bind("Specifications")]  String Specifications)
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.CategoryRepo.Add(category);
 
                 await _unitOfWork.SaveAsync();
-                if (CategorySpecifications != null)
+                if (Specifications != null)
                 {
-                    var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                    var tmp = Specifications.Substring(1, Specifications.Length - 2);
                     var tmps = tmp.Split(',');
                     var CatSpecs = new List<int>();
                     foreach (var catSpec in tmps)
@@ -164,7 +164,7 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category, [Bind("CategorySpecifications")] String CategorySpecifications)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category, [Bind("Specifications")] String Specifications)
         {
             if (id != category.Id)
             {
@@ -183,9 +183,9 @@ namespace Ecom.Controllers
 
                     await _unitOfWork.SaveAsync();
 
-                    if (CategorySpecifications != null)
+                    if (Specifications != null)
                     {
-                        var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                        var tmp = Specifications.Substring(1, Specifications.Length - 2);
                         var tmps = tmp.Split(',');
                         var CatSpecs = new List<int>();
                         foreach (var catSpec in tmps)
