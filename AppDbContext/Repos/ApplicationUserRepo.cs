@@ -7,11 +7,12 @@ using System.Text;
 
 namespace AppDbContext.Repos
 {
-    public class ProductCategoryValueRepo : BaseRepo<ProductCategoryValue>, IProductCategoryValueRepo
+    public class ApplicationUserRepo : BaseRepo<ApplicationUser>, IApplicationUserRepo
     {
-        public ProductCategoryValueRepo(Ecommerce_DBContext db) : base(db) 
+        public ApplicationUserRepo(Ecommerce_DBContext db) : base(db) 
         {
 
         }
+
     }
 }

@@ -37,8 +37,10 @@ namespace Ecom
 
             //services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
 
-            services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<Ecommerce_DBContext>();
-
+            //services.AddDefaultIdentity<ApplicationUser>()..AddRoles<IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<Ecommerce_DBContext>();
             services.AddDbService(Configuration);
 
             services.AddSingleton<ISingletonRnd, SingletonRnd>();   

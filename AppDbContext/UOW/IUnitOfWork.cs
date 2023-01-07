@@ -27,6 +27,7 @@ namespace AppDbContext.UOW
         public IUserRepo UserRepo { get; set; }
         public IUserRatingRepo UserRatingRepo { get; set; }
         public IValueTypeRepo ValueTypeRepo { get; set; }
+        public IApplicationUserRepo ApplicationUserRepo { get; set; }
 
         public void SaveChanges ();
         public Task<int> SaveAsync();

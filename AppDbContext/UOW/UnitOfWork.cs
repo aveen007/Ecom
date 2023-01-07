@@ -29,6 +29,7 @@ namespace AppDbContext.UOW
         public IUserRepo UserRepo { get; set; }
         public IUserRatingRepo UserRatingRepo { get; set; }
         public IValueTypeRepo ValueTypeRepo { get; set; }
+        public IApplicationUserRepo ApplicationUserRepo { get; set; }
 
         protected readonly Ecommerce_DBContext _db;
 
@@ -54,6 +55,7 @@ namespace AppDbContext.UOW
             UserRepo = new UserRepo(db);
             UserRatingRepo = new UserRatingRepo(db);
             ValueTypeRepo = new ValueTypeRepo(db);
+            ApplicationUserRepo = new ApplicationUserRepo(db);
         }
 
         public void RollBack()
