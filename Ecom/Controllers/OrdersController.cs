@@ -68,7 +68,7 @@ namespace Ecom.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName");
+            ViewData["UserId"] = new SelectList(_unitOfWork.ApplicationUserRepo.GetAll().ToList(), "Id", "FirstName", "LastName");
             return View();
         }
 
@@ -85,7 +85,7 @@ namespace Ecom.Controllers
                 await _unitOfWork.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+            ViewData["UserId"] = new SelectList(_unitOfWork.ApplicationUserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
             
             var orderViewModel = _mapper.Map<OrderViewModel>(order);
             
@@ -105,7 +105,7 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+            ViewData["UserId"] = new SelectList(_unitOfWork.ApplicationUserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
 
             var orderViewModel = _mapper.Map<OrderViewModel>(order);
 
@@ -144,7 +144,7 @@ namespace Ecom.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_unitOfWork.UserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
+            ViewData["UserId"] = new SelectList(_unitOfWork.ApplicationUserRepo.GetAll().ToList(), "Id", "FirstName", "LastName", order.UserId);
 
             var orderViewModel = _mapper.Map<OrderViewModel>(order);
 

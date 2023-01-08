@@ -39,6 +39,18 @@
     <Compile Remove="Migrations\20221214221343_AddiingValueTypeTable.Designer.cs" />
     <Compile Remove="Migrations\20221215001942_AddingDescription.cs" />
     <Compile Remove="Migrations\20221215001942_AddingDescription.Designer.cs" />
+    <Compile Remove="Migrations\20230107175031_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107175031_FixUsers.Designer.cs" />
+    <Compile Remove="Migrations\20230107175324_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107175324_FixUsers.Designer.cs" />
+    <Compile Remove="Migrations\20230107175610_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107175610_FixUsers.Designer.cs" />
+    <Compile Remove="Migrations\20230107175823_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107175823_FixUsers.Designer.cs" />
+    <Compile Remove="Migrations\20230107182154_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107182154_FixUsers.Designer.cs" />
+    <Compile Remove="Migrations\20230107182741_FixUsers.cs" />
+    <Compile Remove="Migrations\20230107182741_FixUsers.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DynamicVML" Version="1.5.1" />

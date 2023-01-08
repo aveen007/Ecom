@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppDbContext.Migrations
 {
     [DbContext(typeof(Ecommerce_DBContext))]
-    [Migration("20230106214210_firstName")]
-    partial class firstName
+    [Migration("20230107191357_fisAddess")]
+    partial class fisAddess
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,36 +21,6 @@ namespace AppDbContext.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AppDbContext.Models.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Governorate")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Region")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Address");
-                });
-
             modelBuilder.Entity("AppDbContext.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -59,25 +29,34 @@ namespace AppDbContext.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("varchar(100)")
+                        .HasMaxLength(100)
+                        .IsUnicode(false);
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasColumnType("varchar(256)")
+                        .HasMaxLength(256)
+                        .IsUnicode(false);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -574,48 +553,6 @@ namespace AppDbContext.Migrations
                     b.ToTable("Specification");
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(400)")
-                        .HasMaxLength(400);
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<byte[]>("LastName")
-                        .IsRequired()
-                        .HasColumnType("varbinary(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<decimal?>("Phone")
-                        .HasColumnType("numeric(10, 0)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("AppDbContext.Models.UserRating", b =>
                 {
                     b.Property<int>("Id")
@@ -898,16 +835,16 @@ namespace AppDbContext.Migrations
                         .HasConstraintName("FK_Notification_Notification_Type")
                         .IsRequired();
 
-                    b.HasOne("AppDbContext.Models.User", "User")
+                    b.HasOne("AppDbContext.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("Notification")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK_Notification_User")
+                        .HasConstraintName("FK_Notification_ApplicationUser")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("AppDbContext.Models.Order", b =>
                 {
-                    b.HasOne("AppDbContext.Models.User", "User")
+                    b.HasOne("AppDbContext.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("Order")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Order_Customer")
@@ -1001,15 +938,6 @@ namespace AppDbContext.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AppDbContext.Models.User", b =>
-                {
-                    b.HasOne("AppDbContext.Models.Address", "Address")
-                        .WithMany("User")
-                        .HasForeignKey("AddressId")
-                        .HasConstraintName("FK_User_Address")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AppDbContext.Models.UserRating", b =>
                 {
                     b.HasOne("AppDbContext.Models.ProductOrder", "ProductOrder")
@@ -1018,10 +946,10 @@ namespace AppDbContext.Migrations
                         .HasConstraintName("FK_User_Rating_ProductOrder")
                         .IsRequired();
 
-                    b.HasOne("AppDbContext.Models.User", "User")
+                    b.HasOne("AppDbContext.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("UserRating")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK_User_Rating_User")
+                        .HasConstraintName("FK_User_Rating_ApplicationUser")
                         .IsRequired();
                 });
 
