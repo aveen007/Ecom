@@ -11,6 +11,7 @@ namespace Ecom.Seeders
 {
     public static class DBSeeder
     {
+
         public static void SeedUser(IUnitOfWork unitOfWork,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
@@ -75,6 +76,40 @@ namespace Ecom.Seeders
                     unitOfWork.SaveChanges();
                 }
             }
+        }
+
+        public static void SeedDeleteUser(IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
+        {
+            var adminRole = roleManager.FindByNameAsync("Admin").Result;
+
+            if (adminRole != null)
+            {
+
+                var role = roleManager.DeleteAsync(adminRole).Result;
+                //await unitOfWork.SaveAsync();
+                if (role.Succeeded) unitOfWork.SaveChanges();
+
+                var userRole = roleManager.FindByNameAsync("User").Result;
+                role = roleManager.DeleteAsync(userRole).Result;
+                //await unitOfWork.SaveAsync();
+                if (role.Succeeded) unitOfWork.SaveChanges();
+            }
+            var users = new List<ApplicationUser>();
+            users = unitOfWork.ApplicationUserRepo.GetAll().ToList();
+            foreach(var user in users)
+            {
+
+                var del = userManager.DeleteAsync(user).Result;
+                if (del.Succeeded)
+                {
+                    unitOfWork.SaveChanges();
+                }
+            }
+
+            
+
         }
 
         /*

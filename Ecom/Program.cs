@@ -40,7 +40,8 @@ namespace Ecom
                 var roleManager = service.GetRequiredService<RoleManager<IdentityRole>>();
                 var unitOfWork = service.GetRequiredService<IUnitOfWork>();
 
-                DBSeeder.SeedUser(unitOfWork, userManager, roleManager);
+                DBSeeder.SeedDeleteUser(unitOfWork, userManager, roleManager);
+                //DBSeeder.SeedUser(unitOfWork, userManager, roleManager);
             }
         }
     }
