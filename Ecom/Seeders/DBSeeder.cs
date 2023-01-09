@@ -37,24 +37,34 @@ namespace Ecom.Seeders
                 if (role.Succeeded) unitOfWork.SaveChanges();
             }
 
-            var user = userManager.FindByEmailAsync("Admin@gmail.com").Result;
+            var users = new List<ApplicationUser>();
+            users = unitOfWork.ApplicationUserRepo.GetAll().ToList();
+            foreach (var u in users)
+            {
+                var x = u.Email;
+            }
 
+            var user = userManager.FindByNameAsync("Admin@gmail.com").Result;
+            
             if (user == null)
             {
+                string email = "Admin@gmail.com";
                 ApplicationUser result = new ApplicationUser
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Email = "Admin@gmail.com",
+                    Email = email,
                     FirstName = "Admin",
                     LastName = "Admin",
                     EmailConfirmed = true,
-                    NormalizedEmail = "Admin@gmail.com",
                     UserName = "Admin@gmail.com",
+                    NormalizedUserName = email.ToUpper(),
                     AccessFailedCount = 100000,
                     LockoutEnabled = false,
                     LockoutEnd = null,
                     SecurityStamp = Guid.NewGuid().ToString("D"),
-                    PasswordHash = userManager.PasswordHasher.HashPassword(null, "Somar@123")
+                    Address = "HIAST",
+                    PasswordHash = userManager.PasswordHasher.HashPassword(null, "Somar@123"),
+                    NormalizedEmail = "dsf",
                 };
 
                 unitOfWork.ApplicationUserRepo.Add(result);
@@ -66,7 +76,7 @@ namespace Ecom.Seeders
                     unitOfWork.SaveChanges();
             }
 
-            user = userManager.FindByEmailAsync("Admin@gmail.com").Result;
+            /*user = userManager.FindByEmailAsync("Admin@gmail.com").Result;
 
             if (!userManager.IsInRoleAsync(user, "Admin").Result)
             {
@@ -76,6 +86,7 @@ namespace Ecom.Seeders
                     unitOfWork.SaveChanges();
                 }
             }
+            */
         }
 
         public static void SeedDeleteUser(IUnitOfWork unitOfWork,
