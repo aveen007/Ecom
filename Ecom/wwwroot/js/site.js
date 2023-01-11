@@ -208,8 +208,8 @@ function updateSpecs() {
 
     if (specs_list) {
         spec.removeChild(specs_list);
-        var tmp_div = "<div id='specs_list' class='form-group'>";
-        var tmp_table = "<table id='ta' class='form-group table table-striped table-bordered table-sm' cellspacing = '0'"
+        var tmp_div = "<div id='specs_list' class='table-wrapper-scroll-y my-custom-scrollbar style='position: relative;height: 200px;overflow: auto;display: block;' >";
+        var tmp_table = "<table id='taScrollable' class='table table-bordered table-striped mb-0"
             + "width = '100%'>" +
             " <thead>" +
             "<tr >" +
@@ -237,7 +237,7 @@ function updateSpecs() {
             var tmp_spec = "<tr><th scope='row'>"+i+"</th><td><div >" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td></tr>"
 
             
-            $("#ta").append(tmp_spec);
+            $("#taScrollable").append(tmp_spec);
         }
         var tmp_end = "  </tbody></table ></div>";
         $("#specs_list").append(tmp_end);
