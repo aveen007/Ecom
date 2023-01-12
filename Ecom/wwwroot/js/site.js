@@ -259,8 +259,19 @@ function updateSpecs() {
     var specIds = document.getElementById("specIds");
     var catSpecIds = document.getElementById("catSpecIds");
     if ((specIds && specIds.value.length > 2) || (catSpecIds && catSpecIds.value.length > 2)) {
-        var label = "<label class='control-label'>Specifications:</label>"
-        $("#specs_list").append(label);
+        var table = "<table id='taScrollable' class='table table-bordered table-striped mb-0"
+            + "width = '100%'>" +
+            " <thead>" +
+            "<tr >" +
+            "<th class='th-sm'>#</th>" +
+            "<th class='th-sm'>Specification</th>";
+        if (isProduct) {
+            table += "<th class='th-sm'>Value</th>";
+        }
+        table += " </tr>" +
+            "</thead >" +
+            "<tbody id='list_body'></tbody></table>";
+        $("#specs_list").append(table);
         if (specIds && specIds.value.length > 2) {
             var tmp = specIds.value.substring(1, specIds.value.length - 1);
             var tmps = tmp.split(',');
@@ -269,9 +280,9 @@ function updateSpecs() {
             }
             for (var i = 0; i < tmps.length; i++) {
                 tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-                var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])];
+                var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td>";
                 if (isProduct) {
-                    tmp_spec += "<input class='form-control values' oninput='updateValuesInput()' ";
+                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control values' oninput='updateValuesInput()' ";
                     if (value_dictionary[tmps[i]]) {
                         value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
                         tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
@@ -279,10 +290,10 @@ function updateSpecs() {
                     else {
                         value_dic_tmp[tmps[i]] = "";
                     }
-                    tmp_spec += " required>";
+                    tmp_spec += " required></div></td>";
                 }
-                tmp_spec += "</div>";
-                $("#specs_list").append(tmp_spec);
+                tmp_spec += "</tr>";
+                $("#list_body").append(tmp_spec);
             }
             if (isProduct) {
                 value_dictionary = value_dic_tmp;
@@ -300,9 +311,9 @@ function updateSpecs() {
             }
             for (var i = 0; i < tmps.length; i++) {
                 tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-                var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Red;margin: 5px;padding: 10px;width: fit-content;'>" + cat_spec_dictionary[tmps[i]];
+                var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + cat_spec_dictionary[tmps[i]] + "</div></td>";
                 if (isProduct) {
-                    tmp_spec += "<input class='form-control catValues' oninput='updateCatValuesInput()' ";
+                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control catValues' oninput='updateCatValuesInput()' ";
                     if (cat_value_dictionary[tmps[i]]) {
                         value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
                         tmp_spec += "value='" + cat_value_dictionary[tmps[i]] + "'";
@@ -310,10 +321,10 @@ function updateSpecs() {
                     else {
                         value_dic_tmp[tmps[i]] = "";
                     }
-                    tmp_spec += " required>";
+                    tmp_spec += " required></div></td>";
                 }
-                tmp_spec += "</div>";
-                $("#specs_list").append(tmp_spec);
+                tmp_spec += "</tr>";
+                $("#list_body").append(tmp_spec);
             }
             if (isProduct) {
                 cat_value_dictionary = value_dic_tmp;
@@ -322,12 +333,12 @@ function updateSpecs() {
         else {
             cat_value_dictionary = {};
         }
-
     }
     else {
         value_dictionary = {};
         cat_value_dictionary = {};
     }
+    
 }
 
 
