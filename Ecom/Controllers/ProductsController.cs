@@ -50,6 +50,35 @@ namespace Ecom.Controllers
             }
         }
 
+        public IActionResult ProductDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var product = new Product();
+            for (int i = 0; i < products.Count; i++)
+            {
+                var temp = products[i];
+                if (temp.Id == id)
+                {
+                    product = products[i];
+                }
+
+            }
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
+        }
         // GET: Products
         public IActionResult Index(string sortOrder, int? page)
         {

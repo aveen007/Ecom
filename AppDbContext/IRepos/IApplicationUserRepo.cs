@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AppDbContext.IRepos
 {
-    public interface IAddressRepo : IBaseRepo<Address>
+    public interface IApplicationUserRepo : IBaseRepo<ApplicationUser>
     {
 
     }

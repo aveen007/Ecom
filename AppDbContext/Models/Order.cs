@@ -22,7 +22,7 @@ namespace AppDbContext.Models
         public decimal TotalPrice { get; set; }
         public bool IsOrdered { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<Shipping> Shipping { get; set; }
     }

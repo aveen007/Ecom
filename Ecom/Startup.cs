@@ -35,18 +35,23 @@ namespace Ecom
             services.AddDbContext<Ecommerce_DBContext>(options => options.UseSqlServer(Configuration.
                 GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
+            //services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
 
+            //services.AddDefaultIdentity<ApplicationUser>()..AddRoles<IdentityRole>().AddEntityFrameworkStores<Ecommerce_DBContext>();
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<Ecommerce_DBContext>();
             services.AddDbService(Configuration);
 
-            services.AddSingleton<ISingletonRnd, SingletonRnd>();
+            services.AddSingleton<ISingletonRnd, SingletonRnd>();   
             services.AddTransient<ITransientRnd, TransientRnd>();
             services.AddScoped<IScopedRnd, ScopedRnd>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddAutoMapper(typeof(Startup));
-        }
+        }   
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -65,6 +70,7 @@ namespace Ecom
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -72,7 +78,8 @@ namespace Ecom
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}"); 
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

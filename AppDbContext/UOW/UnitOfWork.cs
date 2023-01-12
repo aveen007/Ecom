@@ -10,7 +10,6 @@ namespace AppDbContext.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public IAddressRepo AddressRepo { get; set; }
         public ICategoryPromotionRepo CategoryPromotionRepo { get; set; }
         public ICategoryRepo CategoryRepo { get; set; }
         public ICategorySpecificationRepo CategorySpecificationRepo { get; set; }
@@ -26,16 +25,15 @@ namespace AppDbContext.UOW
         public IShippingRepo ShippingRepo { get; set; }
         public IShippingStateRepo ShippingStateRepo { get; set; }
         public ISpecificationRepo SpecificationRepo { get; set; }
-        public IUserRepo UserRepo { get; set; }
         public IUserRatingRepo UserRatingRepo { get; set; }
         public IValueTypeRepo ValueTypeRepo { get; set; }
+        public IApplicationUserRepo ApplicationUserRepo { get; set; }
 
         protected readonly Ecommerce_DBContext _db;
 
         public UnitOfWork(Ecommerce_DBContext db)
         {
             _db = db;
-            AddressRepo = new AddressRepo(db);
             CategoryPromotionRepo = new CategoryPromotionRepo(db);
             CategoryRepo = new CategoryRepo(db);
             CategorySpecificationRepo = new CategorySpecificationRepo(db);
@@ -51,9 +49,9 @@ namespace AppDbContext.UOW
             ShippingRepo = new ShippingRepo(db);
             ShippingStateRepo = new ShippingStateRepo(db);
             SpecificationRepo = new SpecificationRepo(db);
-            UserRepo = new UserRepo(db);
             UserRatingRepo = new UserRatingRepo(db);
             ValueTypeRepo = new ValueTypeRepo(db);
+            ApplicationUserRepo = new ApplicationUserRepo(db);
         }
 
         public void RollBack()

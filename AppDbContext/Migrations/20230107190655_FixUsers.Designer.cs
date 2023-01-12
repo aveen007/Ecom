@@ -4,14 +4,16 @@ using AppDbContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AppDbContext.Migrations
 {
     [DbContext(typeof(Ecommerce_DBContext))]
-    partial class Ecommerce_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230107190655_FixUsers")]
+    partial class FixUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +30,7 @@ namespace AppDbContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("varchar(100)")
                         .HasMaxLength(100)
                         .IsUnicode(false);

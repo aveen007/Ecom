@@ -1,0 +1,13 @@
+﻿
+@model IEnumerable<Ecom.Models.CategoryViewModel>
+@{
+    ViewData["Title"] = "About";
+}
+
+<div class="navbar-nav w-100">
+    <div class="nav-item dropdown dropright">
+        @foreach(var category in ViewBag.Categories){
+            <a href=@Url.Action("Shop", "Categories", new {id = category.Id}) class="nav-item nav-link">@category.Name</a>
+        }
+    </div>
+</div>
