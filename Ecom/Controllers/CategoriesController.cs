@@ -9,6 +9,7 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
 using PagedList;
@@ -27,7 +28,33 @@ namespace Ecom.Controllers
             this._mapper = mapper;
          
         }
+        public IActionResult About()
+        {
+            var categories = _unitOfWork.CategoryRepo.GetAll().ToList();
+            ViewData["Categories"] = categories;
+            var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
+            var categoryVMs = from s in categoriesViewModels
+                              select s;
+            return View(categoryVMs);
+        }
+        public IActionResult Shop(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var category = _unitOfWork.CategoryRepo.Get(id.Value);
+            var products = _unitOfWork.ProductRepo.GetAll(filter: e => e.CategoryId == id).ToList();
+            ViewData["CategoryProducts"] = products;
+            //ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            //ViewData["SelectedCategorySpecification"] = new SelectList(_unitOfWork.CategorySpecificationRepo.GetAll(filter: e => e.CategoryId == id).ToList(), "Id", "SpecificationId");
+
+            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+            return View(categoryViewModel);
+        }
         // GET: Categories
+
         public ActionResult Index(string sortOrder,int? page )
         {
             ViewBag.CurrentSort = sortOrder;
@@ -35,6 +62,8 @@ namespace Ecom.Controllers
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page= page;
             var categories = _unitOfWork.CategoryRepo.GetAll();
+            
+
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                              select s;
@@ -61,7 +90,42 @@ namespace Ecom.Controllers
 
         }
 
+
+        public IActionResult UserIndex()
+        {
+            //ViewBag.CurrentSort = sortOrder;
+            //ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            //ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            //ViewBag.Page = page;
+            var categories = _unitOfWork.CategoryRepo.GetAll();
+            var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
+            var categoryVMs = from s in categoriesViewModels
+                              select s;
+            /*switch (sortOrder)
+            {
+                case "Name":
+                    categoryVMs = categoryVMs.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    categoryVMs = categoryVMs.OrderBy(s => s.Id);
+                    break;
+
+                default:
+                    categoryVMs = categoryVMs.OrderBy(s => s.Name);
+                    break;
+            }
+            */
+
+            //int pageSize = 3;
+            //int pageNumber = (page ?? 1);
+
+            return View(categoriesViewModels);
+
+
+        }
+
         // GET: Categories/Details/5
+
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -82,6 +146,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
@@ -92,6 +157,7 @@ namespace Ecom.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category, [Bind("CategorySpecifications")]  String CategorySpecifications)
         {
@@ -138,6 +204,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -163,6 +230,7 @@ namespace Ecom.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category, [Bind("CategorySpecifications")] String CategorySpecifications)
         {
@@ -227,6 +295,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -248,6 +317,7 @@ namespace Ecom.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
@@ -269,7 +339,7 @@ namespace Ecom.Controllers
            
 
         }
-
+        [Authorize(Roles = "Admin")]
         private bool CategoryExists(int id)
         {
             return _unitOfWork.CategoryRepo.IsExist(id);

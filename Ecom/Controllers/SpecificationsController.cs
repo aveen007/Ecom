@@ -9,6 +9,7 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
 using PagedList;
@@ -20,12 +21,14 @@ namespace Ecom.Controllers
 
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
+        
         public SpecificationsController (IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
             this._mapper = mapper;
         }
         // GET: Specifications
+        [Authorize(Roles = "Admin")]
         public IActionResult Index(string sortOrder, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -60,6 +63,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Specifications/Details/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -88,6 +92,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Specifications/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["ValueTypeId"] = new SelectList(_unitOfWork.ValueTypeRepo.GetAll().ToList(), "Id", "ValueName");
@@ -98,6 +103,7 @@ namespace Ecom.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SpecificationName,Description,ValueTypeId")] Specification specification)
         {
@@ -119,6 +125,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Specifications/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -142,6 +149,7 @@ namespace Ecom.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,SpecificationName,Description,ValueTypeId")] Specification specification)
         {
@@ -180,6 +188,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Specifications/Delete/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -211,6 +220,7 @@ namespace Ecom.Controllers
 
         // POST: Specifications/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
