@@ -252,19 +252,8 @@ function updateSpecs() {
 
     if (specs_list) {
         spec.removeChild(specs_list);
-        var tmp_div = "<div id='specs_list' class='table-wrapper-scroll-y my-custom-scrollbar style='position: relative;height: 200px;overflow: auto;display: block;' >";
-        var tmp_table = "<table id='taScrollable' class='table table-bordered table-striped mb-0"
-            + "width = '100%'>" +
-            " <thead>" +
-            "<tr >" +
-            "<th class='th-sm'>#</th>"+
-        "<th class='th-sm'>Specification</th>" +
-            " </tr>" +
-            "</thead >" + 
-            "<tbody>"
-            ;
+        var tmp_div = "<div id='specs_list' class='form-group'></div>";
         $("#spec").append(tmp_div);
-        $("#specs_list").append(tmp_table);
 
     }
 
@@ -314,9 +303,6 @@ function updateSpecs() {
         else {
             value_dictionary = {};
         }
-        var tmp_end = "  </tbody></table ></div>";
-        $("#specs_list").append(tmp_end);
-
 
         if (catSpecIds && catSpecIds.value.length > 2) {
             var tmp = catSpecIds.value.substring(1, catSpecIds.value.length - 1);
