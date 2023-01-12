@@ -58,14 +58,34 @@
 
                 </div>
                 <p id="msg"></p>
+                <script type="text/javascript" src="~/js/site.js"></script>
                 <script>
+                    var isProduct = true;
+
                     var specifications = document.getElementById("Specs");
                     var spec_dictionary = {};
+                    var cat_spec_dictionary = {};
                     var value_dictionary = {};
+                    var cat_value_dictionary = {};
+
                     for (i = 0; i < specifications.length; i++){
                         spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
                     }
-                    var isProduct = true;
+
+                    var cat_spec_dictionaries = [];
+                </script>
+                @foreach (var cat_spec in @ViewBag.CategorySpecifications)
+                {
+                    <script>
+                        var tmp_dictionary = {
+                                                "Id": @cat_spec.Item1,
+                                                "CategoryId": @cat_spec.Item2,
+                                                "SpecificationName": "@cat_spec.Item3"
+                                              };
+                        cat_spec_dictionaries.push(tmp_dictionary);
+                    </script>
+                }
+                <script>
                     function updateValuesInput(){
                         var tmp = document.getElementById("specValues")
                         if (tmp) {
@@ -82,19 +102,53 @@
                         var spec = "<input hidden id='specValues' name='ProductSpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
                         $("#spec").append(spec);
                     }
-                    function updateHiddenSelect(){
-                        //var category = document.getElementById('CategoryId');
-                        //var categoryId = category.value;
-                        //console.log(categoryId)
-                        //console.log(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategorySpecifications)))
-                        //for (var i = 0; i < '@ViewBag.CategorySpecifications'.length; i++){
-                        //    if ('@ViewBag.CategorySpecifications\[' + i + '\].categoryId' == categoryId){
-                        //        console.log('@ViewBag.CategorySpecifications\[' + i + '\].Specification.SpecificationName')
-                        //    }
-                        //}
 
+                    function updateCatValuesInput(){
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+                        var values_inputs = document.getElementsByClassName("catValues");
+                        var values_inputs_values = [];
+                        for (var i = 0; i < values_inputs.length; i++){
+                            var parentId = values_inputs[i].parentElement.id.substring(5);
+                            cat_value_dictionary[parentId] = values_inputs[i].value;
+                            values_inputs_values.push(values_inputs[i].value)
+                        }
+                        var spec = "<input hidden id='catSpecValues' name='CategorySpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+                        $("#spec").append(spec);
                     }
-               
+
+                    function updateHiddenSelect(){
+                        cat_spec_dictionary = {};
+                        cat_value_dictionary = {};
+
+                        var tmp = document.getElementById("catSpecIds")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var category = document.getElementById('CategoryId');
+                        var categoryId = category.value;
+
+                        for (i = 0; i < cat_spec_dictionaries.length; i++)
+                        {
+                            if (cat_spec_dictionaries[i]["CategoryId"] == categoryId)
+                            {
+                                cat_spec_dictionary[cat_spec_dictionaries[i]["Id"]] = cat_spec_dictionaries[i]["SpecificationName"];
+                            }
+                        }
+                        updateSpecs();
+                    }
+                    updateHiddenSelect();               
                 </script>
 
             </div>

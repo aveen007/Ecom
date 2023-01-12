@@ -147,57 +147,98 @@ $(document).ready(function () {
         showSpec.addEventListener("click",
 
       async function (e) {
-        e.preventDefault();
-        let link = $(this);
+
+          e.preventDefault();
+          let link = $(this);
           let target = $(this).attr("href");
           var temp = document.getElementById("specIds")
-          var CatSpecs = []
+          var Specs = []
           if (temp) {
-              CatSpecs = temp.value.substring(1, temp.value.length - 1).split(',')
+              Specs = temp.value.substring(1, temp.value.length - 1).split(',')
           }
-        var tmp = "";
-        for (i = 0; i < specifications.length; i++) {
-            tmp += '<input type="checkbox" id="spec' + specifications.options[i].value + '" name="spec' + specifications.options[i].value + '" value=' + specifications.options[i].value + ' class="spec_check"'
-            if (CatSpecs.includes('"' + specifications.options[i].value + '"')) {
-                tmp += ' checked'
-            }
-            tmp += '> <label for="spec' + specifications.options[i].value + '"> ' + specifications.options[i].text + '</label><br>'
-        }
-        const { value: formValues } =await  Swal.fire({
-            title: 'Multiple inputs',
-            html:
-                '<form action="/action_page.php">' +
-                tmp +
-                '</form>',
-            focusConfirm: false,
-            preConfirm: () => {
-                var checkedValue = [];
-                var inputElements = document.getElementsByClassName('spec_check');
-                for (var i = 0; inputElements[i]; ++i) {
-                    if (inputElements[i].checked) {
-                        checkedValue.push(inputElements[i].value);
-                            
-                          
-                    }
-                }
-                
-                return checkedValue
+          var tmp = "";
+          for (i = 0; i < specifications.length; i++) {
+              tmp += '<input type="checkbox" id="spec' + specifications.options[i].value + '" name="spec' + specifications.options[i].value + '" value=' + specifications.options[i].value + ' class="spec_check"'
+              if (Specs.includes('"' + specifications.options[i].value + '"')) {
+                  tmp += ' checked'
+              }
+              tmp += '> <label for="spec' + specifications.options[i].value + '"> ' + specifications.options[i].text + '</label><br>'
+          }
 
-                    
-            }
+          if (isProduct) {
+              var temp2 = document.getElementById("catSpecIds")
+              var CatSpecs = []
+              if (temp2) {
+                  CatSpecs = temp2.value.substring(1, temp2.value.length - 1).split(',')
+              }
+              Object.entries(cat_spec_dictionary).forEach(entry => {
+                  const [id, name] = entry;
+                  tmp += '<input type="checkbox" id="catSpec' + id + '" name="catSpec' + id + '" value=' + id + ' class="cat_spec_check"'
+                  console.log(CatSpecs);
+                  if (CatSpecs.includes('"' + id + '"')) {
+                      tmp += ' checked'
+                  }
+                  tmp += '> <label for="catSpec' + id + '"> ' + name + '</label><br>'
+              });
+          }
+
+          const { value: formValues } = await Swal.fire({
+          title: 'Multiple inputs',
+          html:
+              '<form action="/action_page.php">' +
+              tmp +
+              '</form>',
+          focusConfirm: false,
+          preConfirm: () => {
+              var checkedValue = [];
+              var inputElements = document.getElementsByClassName('spec_check');
+              for (var i = 0; inputElements[i]; ++i) {
+                  if (inputElements[i].checked) {
+                      checkedValue.push(inputElements[i].value);
+                  }
+              }
+
+              var catCheckedValue = [];
+              var catInputElements = document.getElementsByClassName('cat_spec_check');
+              for (var i = 0; catInputElements[i]; ++i) {
+                  if (catInputElements[i].checked) {
+                      catCheckedValue.push(catInputElements[i].value);
+                  }
+              }
+              
+              return [checkedValue, catCheckedValue]
+                                 
+          }
         })
-        if (formValues) {
-            var tmp = document.getElementById("specIds")
-                if (tmp) {
-                    let div = document.getElementById("spec")
-                    div.removeChild(tmp)
-            }
-            var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(formValues) + "'>"
-            $("#spec").append(spec);
-            if (isProduct) {
-                updateValuesInput();
-            }
-            updateSpecs();
+          if (formValues) {
+              if (formValues[0]) {
+                  var tmp = document.getElementById("specIds")
+                  if (tmp) {
+                      let div = document.getElementById("spec")
+                      div.removeChild(tmp)
+                  }
+                  var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(formValues[0]) + "'>"
+                  $("#spec").append(spec);
+
+              }
+
+              if (formValues[1]) {
+                  var tmp = document.getElementById("catSpecIds")
+                  if (tmp) {
+                      let div = document.getElementById("spec")
+                      div.removeChild(tmp)
+                  }
+                  var cat_spec = "<input hidden id='catSpecIds' name='CategorySpecifications' value='" + JSON.stringify(formValues[1]) + "'>"
+                  $("#spec").append(cat_spec);
+
+              }
+
+              if (isProduct) {
+                  updateValuesInput();
+                  updateCatValuesInput();
+              }
+
+              updateSpecs();
         }
 
 
@@ -215,38 +256,77 @@ function updateSpecs() {
         $("#spec").append(tmp_div);
     }
 
-    var specIds = document.getElementById("specIds")
-    var specValues = document.getElementById("specValues");
-    if (specIds && specIds.value.length > 2) {
+    var specIds = document.getElementById("specIds");
+    var catSpecIds = document.getElementById("catSpecIds");
+    if ((specIds && specIds.value.length > 2) || (catSpecIds && catSpecIds.value.length > 2)) {
         var label = "<label class='control-label'>Specifications:</label>"
         $("#specs_list").append(label);
-
-        var tmp = specIds.value.substring(1, specIds.value.length - 1);
-        var tmps = tmp.split(',');
-        if (isProduct) {
-            var value_dic_tmp = {};
-        }
-        for (var i = 0; i < tmps.length; i++) {
-            tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-            var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])];
+        if (specIds && specIds.value.length > 2) {
+            var tmp = specIds.value.substring(1, specIds.value.length - 1);
+            var tmps = tmp.split(',');
             if (isProduct) {
-                tmp_spec += "<input class='form-control values' oninput='updateValuesInput()' ";
-                if (value_dictionary[tmps[i]]) {
-                    value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
-                    tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
-                }
-                else {
-                    value_dic_tmp[tmps[i]] = "";
-                }
-                tmp_spec += " required>";
+                var value_dic_tmp = {};
             }
-            tmp_spec += "</div>";
-            $("#specs_list").append(tmp_spec);
+            for (var i = 0; i < tmps.length; i++) {
+                tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
+                var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Black;margin: 5px;padding: 10px;width: fit-content;'>" + spec_dictionary[JSON.stringify(tmps[i])];
+                if (isProduct) {
+                    tmp_spec += "<input class='form-control values' oninput='updateValuesInput()' ";
+                    if (value_dictionary[tmps[i]]) {
+                        value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
+                        tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
+                    }
+                    else {
+                        value_dic_tmp[tmps[i]] = "";
+                    }
+                    tmp_spec += " required>";
+                }
+                tmp_spec += "</div>";
+                $("#specs_list").append(tmp_spec);
+            }
+            if (isProduct) {
+                value_dictionary = value_dic_tmp;
+            }
         }
-        if (isProduct) {
-            value_dictionary = value_dic_tmp;
+        else {
+            value_dictionary = {};
         }
 
+        if (catSpecIds && catSpecIds.value.length > 2) {
+            var tmp = catSpecIds.value.substring(1, catSpecIds.value.length - 1);
+            var tmps = tmp.split(',');
+            if (isProduct) {
+                var value_dic_tmp = {};
+            }
+            for (var i = 0; i < tmps.length; i++) {
+                tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
+                var tmp_spec = "<div id='spec_" + tmps[i] + "' style='border-radius: 25px;border: 2px solid Red;margin: 5px;padding: 10px;width: fit-content;'>" + cat_spec_dictionary[tmps[i]];
+                if (isProduct) {
+                    tmp_spec += "<input class='form-control catValues' oninput='updateCatValuesInput()' ";
+                    if (cat_value_dictionary[tmps[i]]) {
+                        value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
+                        tmp_spec += "value='" + cat_value_dictionary[tmps[i]] + "'";
+                    }
+                    else {
+                        value_dic_tmp[tmps[i]] = "";
+                    }
+                    tmp_spec += " required>";
+                }
+                tmp_spec += "</div>";
+                $("#specs_list").append(tmp_spec);
+            }
+            if (isProduct) {
+                cat_value_dictionary = value_dic_tmp;
+            }
+        }
+        else {
+            cat_value_dictionary = {};
+        }
+
+    }
+    else {
+        value_dictionary = {};
+        cat_value_dictionary = {};
     }
 }
 

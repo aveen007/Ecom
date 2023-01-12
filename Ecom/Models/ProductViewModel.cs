@@ -33,6 +33,10 @@ namespace Ecom.Models
         public virtual CategoryViewModel Category { get; set; }
 
         public virtual ICollection<ProductSpecification> ProductSpecification { get; set; }
+        public virtual ICollection<ProductSpecificationValue> SelectedProductSpecification { get; set; }
+        public virtual ICollection<ProductSpecificationValue> SelectedProductSpecificationValues { get; set; }
+        public virtual ICollection<ProductCategoryValue> SelectedProductCategorySpecification { get; set; }
+        public virtual ICollection<ProductCategoryValue> SelectedProductCategorySpecificationValues { get; set; }
 
     }
 }
