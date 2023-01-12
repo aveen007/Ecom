@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext.Models;
-using Microsoft.AspNetCore.Hosting;
 using AppDbContext.UOW;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
+using PagedList;
 
 namespace Ecom.Controllers
 {
@@ -27,12 +29,37 @@ namespace Ecom.Controllers
         }
 
         // GET: Orders
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, int? page)
         {
-            var orders = _unitOfWork.OrderRepo.GetAll(includeProperties: "User").ToList();
-            var ordersViewModels = _mapper.Map<List<OrderViewModel>>(orders);
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
+            var orders = _unitOfWork.OrderRepo.GetAll();
 
-            return View(ordersViewModels);
+
+            var ordersViewModels = _mapper.Map<List<OrderViewModel>>(orders);
+            var orderVMs = from s in ordersViewModels
+                              select s;
+            switch (sortOrder)
+            {
+                case "Name":
+                    orderVMs = orderVMs.OrderByDescending(s => s.Id);
+                    break;
+                case "Date":
+                    orderVMs = orderVMs.OrderBy(s => s.Id);
+                    break;
+                default:
+                    orderVMs = orderVMs.OrderBy(s => s.Id);
+                    break;
+            }
+
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return View(orderVMs.ToPagedList(pageNumber, pageSize));
+            
         }
 
         // GET: Orders/Details/5
@@ -42,19 +69,7 @@ namespace Ecom.Controllers
             {
                 return NotFound();
             }
-
-            var orders = _unitOfWork.OrderRepo.GetAll(includeProperties: "User").ToList();
-            var order = new Order();
-            for (int i = 0; i < orders.Count; i++)
-            {
-                var temp = orders[i];
-                if (temp.Id == id)
-                {
-                    order = orders[i];
-                }
-
-            }
-
+            var order = _unitOfWork.OrderRepo.Get(id.Value);
             if (order == null)
             {
                 return NotFound();
@@ -66,7 +81,7 @@ namespace Ecom.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        /*public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_unitOfWork.ApplicationUserRepo.GetAll().ToList(), "Id", "FirstName", "LastName");
             return View();
@@ -150,7 +165,7 @@ namespace Ecom.Controllers
 
             return View(orderViewModel);
         }
-
+        
         // GET: Orders/Delete/5
         public IActionResult Delete(int? id)
         {
@@ -190,7 +205,7 @@ namespace Ecom.Controllers
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        */
         private bool OrderExists(int id)
         {
             return _unitOfWork.OrderRepo.IsExist(id);
