@@ -7,9 +7,9 @@ using System.Text;
 
 namespace AppDbContext.Repos
 {
-    public class UserRepo : BaseRepo<User>, IUserRepo
+    public class ApplicationUserRepo : BaseRepo<ApplicationUser>, IApplicationUserRepo
     {
-        public UserRepo(Ecommerce_DBContext db) : base(db) 
+        public ApplicationUserRepo(Ecommerce_DBContext db) : base(db) 
         {
 
         }

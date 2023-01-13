@@ -16,6 +16,6 @@ namespace AppDbContext.Models
         public DateTime DateTime { get; set; }
 
         public virtual NotificationType Type { get; set; }
-        public virtual User User { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

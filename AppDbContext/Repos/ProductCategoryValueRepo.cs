@@ -13,6 +13,5 @@ namespace AppDbContext.Repos
         {
 
         }
-
     }
 }

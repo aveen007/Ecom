@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AppDbContext.Models
 {
-    public partial class Ecommerce_DBContext : IdentityDbContext<IdentityUser>
+    public partial class Ecommerce_DBContext : IdentityDbContext<ApplicationUser>
     {
         public Ecommerce_DBContext()
         {
@@ -21,7 +21,6 @@ namespace AppDbContext.Models
         {
         }
 
-        public virtual DbSet<Address> Address { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<CategoryPromotion> CategoryPromotion { get; set; }
         public virtual DbSet<CategorySpecification> CategorySpecification { get; set; }
@@ -37,7 +36,7 @@ namespace AppDbContext.Models
         public virtual DbSet<Shipping> Shipping { get; set; }
         public virtual DbSet<ShippingState> ShippingState { get; set; }
         public virtual DbSet<Specification> Specification { get; set; }
-        public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<ApplicationUser> ApplicationUser { get; set; }
         public virtual DbSet<UserRating> UserRating { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -51,23 +50,6 @@ namespace AppDbContext.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Address>(entity =>
-            {
-                entity.Property(e => e.City)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Governorate)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Region)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
 
             modelBuilder.Entity<Category>(entity =>
             {
@@ -143,11 +125,11 @@ namespace AppDbContext.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Notification_Notification_Type");
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.ApplicationUser)
                     .WithMany(p => p.Notification)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Notification_User");
+                    .HasConstraintName("FK_Notification_ApplicationUser");
             });
 
             modelBuilder.Entity<NotificationType>(entity =>
@@ -183,7 +165,7 @@ namespace AppDbContext.Models
                     .IsRequired()
                     .HasMaxLength(400);
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.ApplicationUser)
                     .WithMany(p => p.Order)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -390,9 +372,8 @@ namespace AppDbContext.Models
                     .HasConstraintName("FK_Specification_ValueType");
             });
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<ApplicationUser>(entity =>
             {
-                entity.Property(e => e.Id).HasMaxLength(400);
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -408,18 +389,13 @@ namespace AppDbContext.Models
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(50)
+
+
+                //entity.Property(e => e.Phone).HasColumnType("numeric(10, 0)");
+
+                entity.Property(e => e.Address)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
-
-                entity.Property(e => e.Phone).HasColumnType("numeric(10, 0)");
-
-                entity.HasOne(d => d.Address)
-                    .WithMany(p => p.User)
-                    .HasForeignKey(d => d.AddressId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_User_Address");
             });
 
             modelBuilder.Entity<UserRating>(entity =>
@@ -444,11 +420,11 @@ namespace AppDbContext.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Rating_ProductOrder");
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.ApplicationUser)
                     .WithMany(p => p.UserRating)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_User_Rating_User");
+                    .HasConstraintName("FK_User_Rating_ApplicationUser");
             });
 
             modelBuilder.Entity<ValueType>(entity =>

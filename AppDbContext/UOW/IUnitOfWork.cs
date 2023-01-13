@@ -8,7 +8,6 @@ namespace AppDbContext.UOW
 {
     public interface IUnitOfWork
     {
-        public IAddressRepo AddressRepo { get; set; }
         public ICategoryPromotionRepo CategoryPromotionRepo { get; set; }
         public ICategoryRepo CategoryRepo { get; set; }
         public ICategorySpecificationRepo CategorySpecificationRepo { get; set; }
@@ -24,9 +23,9 @@ namespace AppDbContext.UOW
         public IShippingRepo ShippingRepo { get; set; }
         public IShippingStateRepo ShippingStateRepo { get; set; }
         public ISpecificationRepo SpecificationRepo { get; set; }
-        public IUserRepo UserRepo { get; set; }
         public IUserRatingRepo UserRatingRepo { get; set; }
         public IValueTypeRepo ValueTypeRepo { get; set; }
+        public IApplicationUserRepo ApplicationUserRepo { get; set; }
 
         public void SaveChanges ();
         public Task<int> SaveAsync();
