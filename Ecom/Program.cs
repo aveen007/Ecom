@@ -41,6 +41,7 @@ namespace Ecom
 
                 //DBSeeder.SeedDeleteUser(unitOfWork, userManager, roleManager);
                 DBSeeder.SeedUser(unitOfWork, userManager, roleManager);
+                DBSeeder.SeedShippingState(unitOfWork);
             }
         }
     }
