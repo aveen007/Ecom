@@ -57,6 +57,6 @@ namespace Ecom.Controllers
             ViewBag.ServiceType = "Scoped";
             return View("ServicesView", scopedService.GetRandom());
         }
-
+        
     }
 }

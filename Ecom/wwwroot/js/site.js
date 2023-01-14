@@ -147,54 +147,98 @@ $(document).ready(function () {
         showSpec.addEventListener("click",
 
       async function (e) {
-        e.preventDefault();
-        let link = $(this);
+
+          e.preventDefault();
+          let link = $(this);
           let target = $(this).attr("href");
           var temp = document.getElementById("specIds")
-          var CatSpecs = []
+          var Specs = []
           if (temp) {
-              CatSpecs = temp.value.substring(1, temp.value.length - 1).split(',')
+              Specs = temp.value.substring(1, temp.value.length - 1).split(',')
           }
-        var tmp = "";
-        for (i = 0; i < specifications.length; i++) {
-            tmp += '<input type="checkbox" id="spec' + specifications.options[i].value + '" name="spec' + specifications.options[i].value + '" value=' + specifications.options[i].value + ' class="spec_check"'
-            if (CatSpecs.includes('"' + specifications.options[i].value + '"')) {
-                tmp += ' checked'
-            }
-            tmp += '> <label for="spec' + specifications.options[i].value + '"> ' + specifications.options[i].text + '</label><br>'
-        }
-        const { value: formValues } =await  Swal.fire({
-            title: 'Multiple inputs',
-            html:
-                '<form action="/action_page.php">' +
-                tmp +
-                '</form>',
-            focusConfirm: false,
-            preConfirm: () => {
-                var checkedValue = [];
-                var inputElements = document.getElementsByClassName('spec_check');
-                for (var i = 0; inputElements[i]; ++i) {
-                    if (inputElements[i].checked) {
-                        checkedValue.push(inputElements[i].value);
-                            
-                          
-                    }
-                }
-                
-                return checkedValue
+          var tmp = "";
+          for (i = 0; i < specifications.length; i++) {
+              tmp += '<input type="checkbox" id="spec' + specifications.options[i].value + '" name="spec' + specifications.options[i].value + '" value=' + specifications.options[i].value + ' class="spec_check"'
+              if (Specs.includes('"' + specifications.options[i].value + '"')) {
+                  tmp += ' checked'
+              }
+              tmp += '> <label for="spec' + specifications.options[i].value + '"> ' + specifications.options[i].text + '</label><br>'
+          }
 
-                    
-            }
+          if (isProduct) {
+              var temp2 = document.getElementById("catSpecIds")
+              var CatSpecs = []
+              if (temp2) {
+                  CatSpecs = temp2.value.substring(1, temp2.value.length - 1).split(',')
+              }
+              Object.entries(cat_spec_dictionary).forEach(entry => {
+                  const [id, name] = entry;
+                  tmp += '<input type="checkbox" id="catSpec' + id + '" name="catSpec' + id + '" value=' + id + ' class="cat_spec_check"'
+                  console.log(CatSpecs);
+                  if (CatSpecs.includes('"' + id + '"')) {
+                      tmp += ' checked'
+                  }
+                  tmp += '> <label for="catSpec' + id + '"> ' + name + '</label><br>'
+              });
+          }
+
+          const { value: formValues } = await Swal.fire({
+          title: 'Multiple inputs',
+          html:
+              '<form action="/action_page.php">' +
+              tmp +
+              '</form>',
+          focusConfirm: false,
+          preConfirm: () => {
+              var checkedValue = [];
+              var inputElements = document.getElementsByClassName('spec_check');
+              for (var i = 0; inputElements[i]; ++i) {
+                  if (inputElements[i].checked) {
+                      checkedValue.push(inputElements[i].value);
+                  }
+              }
+
+              var catCheckedValue = [];
+              var catInputElements = document.getElementsByClassName('cat_spec_check');
+              for (var i = 0; catInputElements[i]; ++i) {
+                  if (catInputElements[i].checked) {
+                      catCheckedValue.push(catInputElements[i].value);
+                  }
+              }
+              
+              return [checkedValue, catCheckedValue]
+                                 
+          }
         })
-        if (formValues) {
-        var tmp = document.getElementById("specIds")
-            if (tmp) {
-                let div = document.getElementById("spec")
-                div.removeChild(tmp)
-        }
-        var spec = "<input hidden id='specIds' name='CategorySpecifications' value='" + JSON.stringify(formValues) + "'>"
-        $("#spec").append(spec);
-        updateSpecs();
+          if (formValues) {
+              if (formValues[0]) {
+                  var tmp = document.getElementById("specIds")
+                  if (tmp) {
+                      let div = document.getElementById("spec")
+                      div.removeChild(tmp)
+                  }
+                  var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(formValues[0]) + "'>"
+                  $("#spec").append(spec);
+
+              }
+
+              if (formValues[1]) {
+                  var tmp = document.getElementById("catSpecIds")
+                  if (tmp) {
+                      let div = document.getElementById("spec")
+                      div.removeChild(tmp)
+                  }
+                  var cat_spec = "<input hidden id='catSpecIds' name='CategorySpecifications' value='" + JSON.stringify(formValues[1]) + "'>"
+                  $("#spec").append(cat_spec);
+
+              }
+
+              if (isProduct) {
+                  updateValuesInput();
+                  updateCatValuesInput();
+              }
+
+              updateSpecs();
         }
 
 
@@ -208,42 +252,94 @@ function updateSpecs() {
 
     if (specs_list) {
         spec.removeChild(specs_list);
-        var tmp_div = "<div id='specs_list' class='table-wrapper-scroll-y my-custom-scrollbar style='position: relative;height: 200px;overflow: auto;display: block;' >";
-        var tmp_table = "<table id='taScrollable' class='table table-bordered table-striped mb-0"
+        var tmp_div = "<div id='specs_list' class='form-group'></div>";
+        $("#spec").append(tmp_div);
+
+    }
+
+    var specIds = document.getElementById("specIds");
+    var catSpecIds = document.getElementById("catSpecIds");
+    if ((specIds && specIds.value.length > 2) || (catSpecIds && catSpecIds.value.length > 2)) {
+        var table = "<table id='taScrollable' class='table table-bordered table-striped mb-0"
             + "width = '100%'>" +
             " <thead>" +
             "<tr >" +
-            "<th class='th-sm'>#</th>"+
-        "<th class='th-sm'>Specification</th>" +
-            " </tr>" +
-            "</thead >" + 
-            "<tbody>"
-            ;
-        $("#spec").append(tmp_div);
-        $("#specs_list").append(tmp_table);
-
-    }
-
-    var specIds = document.getElementById("specIds")
-    if (specIds && specIds.value.length > 2) {
-        /*var label = "<label class='control-label'>Specifications:</label>"
-        $("#specs_list").append(label);
-*/
-        var tmp = specIds.value.substring(1, specIds.value.length - 1);
-        var tmps = tmp.split(',');
-        for (var i = 0; i < tmps.length; i++) {
-            tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
-            
-            var tmp_spec = "<tr><th scope='row'>"+i+"</th><td><div >" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td></tr>"
-
-            
-            $("#taScrollable").append(tmp_spec);
+            "<th class='th-sm'>#</th>" +
+            "<th class='th-sm'>Specification</th>";
+        if (isProduct) {
+            table += "<th class='th-sm'>Value</th>";
         }
-        var tmp_end = "  </tbody></table ></div>";
-        $("#specs_list").append(tmp_end);
+        table += " </tr>" +
+            "</thead >" +
+            "<tbody id='list_body'></tbody></table>";
+        $("#specs_list").append(table);
+        if (specIds && specIds.value.length > 2) {
+            var tmp = specIds.value.substring(1, specIds.value.length - 1);
+            var tmps = tmp.split(',');
+            if (isProduct) {
+                var value_dic_tmp = {};
+            }
+            for (var i = 0; i < tmps.length; i++) {
+                tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
+                var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td>";
+                if (isProduct) {
+                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control values' oninput='updateValuesInput()' ";
+                    if (value_dictionary[tmps[i]]) {
+                        value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
+                        tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
+                    }
+                    else {
+                        value_dic_tmp[tmps[i]] = "";
+                    }
+                    tmp_spec += " required></div></td>";
+                }
+                tmp_spec += "</tr>";
+                $("#list_body").append(tmp_spec);
+            }
+            if (isProduct) {
+                value_dictionary = value_dic_tmp;
+            }
+        }
+        else {
+            value_dictionary = {};
+        }
 
-
+        if (catSpecIds && catSpecIds.value.length > 2) {
+            var tmp = catSpecIds.value.substring(1, catSpecIds.value.length - 1);
+            var tmps = tmp.split(',');
+            if (isProduct) {
+                var value_dic_tmp = {};
+            }
+            for (var i = 0; i < tmps.length; i++) {
+                tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
+                var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + cat_spec_dictionary[tmps[i]] + "</div></td>";
+                if (isProduct) {
+                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control catValues' oninput='updateCatValuesInput()' ";
+                    if (cat_value_dictionary[tmps[i]]) {
+                        value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
+                        tmp_spec += "value='" + cat_value_dictionary[tmps[i]] + "'";
+                    }
+                    else {
+                        value_dic_tmp[tmps[i]] = "";
+                    }
+                    tmp_spec += " required></div></td>";
+                }
+                tmp_spec += "</tr>";
+                $("#list_body").append(tmp_spec);
+            }
+            if (isProduct) {
+                cat_value_dictionary = value_dic_tmp;
+            }
+        }
+        else {
+            cat_value_dictionary = {};
+        }
     }
+    else {
+        value_dictionary = {};
+        cat_value_dictionary = {};
+    }
+    
 }
 
 

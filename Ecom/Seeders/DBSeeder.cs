@@ -20,7 +20,7 @@ namespace Ecom.Seeders
 
             if (adminRole == null)
             {
-                
+
                 var role = roleManager.CreateAsync(new IdentityRole
                 {
                     Name = "Admin",
@@ -45,7 +45,7 @@ namespace Ecom.Seeders
             }
 
             var user = userManager.FindByNameAsync("Admin@gmail.com").Result;
-            
+
             if (user == null)
             {
                 string email = "Admin@gmail.com";
@@ -88,39 +88,33 @@ namespace Ecom.Seeders
             }
             */
         }
-
-        public static void SeedDeleteUser(IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public static void SeedShippingState(IUnitOfWork unitOfWork)
         {
-            var adminRole = roleManager.FindByNameAsync("Admin").Result;
+            var shippingStates = unitOfWork.ShippingStateRepo.GetAll().ToList();
+            List<string> shippingStateNames = new List<string>();
+            List<string> originalShippingStateNames = new List<string> { "being packed",
+                                                                         "on its way",
+                                                                         "delivered" };
 
-            if (adminRole != null)
+            foreach (var shippingState in shippingStates)
             {
-
-                var role = roleManager.DeleteAsync(adminRole).Result;
-                //await unitOfWork.SaveAsync();
-                if (role.Succeeded) unitOfWork.SaveChanges();
-
-                var userRole = roleManager.FindByNameAsync("User").Result;
-                role = roleManager.DeleteAsync(userRole).Result;
-                //await unitOfWork.SaveAsync();
-                if (role.Succeeded) unitOfWork.SaveChanges();
+                shippingStateNames.Add(shippingState.Name);
             }
-            var users = new List<ApplicationUser>();
-            users = unitOfWork.ApplicationUserRepo.GetAll().ToList();
-            foreach(var user in users)
-            {
 
-                var del = userManager.DeleteAsync(user).Result;
-                if (del.Succeeded)
+            foreach (var originalShippingStateName in originalShippingStateNames)
+            {
+                if (!shippingStateNames.Contains(originalShippingStateName))
                 {
-                    unitOfWork.SaveChanges();
+                    ShippingState shippingState = new ShippingState
+                    {
+                        Name = originalShippingStateName,
+                        Description = "Your order is " + originalShippingStateName
+                    };
+
+                    unitOfWork.ShippingStateRepo.Add(shippingState);
                 }
             }
-
-            
-
+            unitOfWork.SaveChanges();
         }
 
         /*

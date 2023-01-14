@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -36,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select id='CategoryId' asp-for="CategoryId" class="form-control" onchange='updateHiddenSelect()' asp-items="ViewBag.CategoryId"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
    @*         <div class="form-group">
@@ -50,61 +49,168 @@
                 <span asp-validation-for="Imagefile" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <select id="SelectedProductSpecs" asp-for="SelectedProductSpecification" class ="form-control" asp-items="ViewBag.SelectedProductSpecification" hidden></select>
+                <select id="SelectedProductSpecValues" asp-for="SelectedProductSpecificationValues" class ="form-control" asp-items="ViewBag.SelectedProductSpecificationValues" hidden></select>
+                <select id="SelectedCategorySpecs" asp-for="SelectedProductCategorySpecification" class ="form-control" asp-items="ViewBag.SelectedProductCategorySpecification" hidden></select>
+                <select id="SelectedCategorySpecValues" asp-for="SelectedProductCategorySpecificationValues" class ="form-control" asp-items="ViewBag.SelectedProductCategorySpecificationValues" hidden></select>
+                <select id="Specs" asp-for="ProductSpecification" class ="form-control" asp-items="ViewBag.ProductSpecification" hidden></select>
+            </div>
+            <div class="form-group">
+                <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">edit specifications<i class="fa fa-plus"></i></button>
+            </div>
+            <div id="spec">
+                <div id='specs_list' class='form-group'>
+
+                </div>
+                <p id="msg"></p>
+                <script type="text/javascript" src="~/js/site.js"></script>
+                <script>
+                    var isProduct = true;
+
+                    var specifications = document.getElementById("Specs");
+                    var spec_dictionary = {};
+                    var cat_spec_dictionary = {};
+                    var value_dictionary = {};
+                    var cat_value_dictionary = {};
+
+                    for (i = 0; i < specifications.length; i++){
+                        spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                    }
+
+                    var cat_spec_dictionaries = [];
+                </script>
+                @foreach (var cat_spec in @ViewBag.CategorySpecifications)
+                {
+                    <script>
+                        var tmp_dictionary = {
+                                                "Id": @cat_spec.Item1,
+                                                "CategoryId": @cat_spec.Item2,
+                                                "SpecificationName": "@cat_spec.Item3"
+                                              };
+                        cat_spec_dictionaries.push(tmp_dictionary);
+                    </script>
+                }
+                <script>
+                    updateHiddenSelect();
+
+                    var selectedSpecificationsValues = document.getElementById("SelectedProductSpecValues");
+
+                    for (i = 0; i < selectedSpecificationsValues.length; i++){
+                        var SpecId = selectedSpecificationsValues[i].value;
+                        var SpecValue = selectedSpecificationsValues[i].text;
+                        value_dictionary[SpecId] = SpecValue;
+                    }
+
+                    var selectedSpecifications = document.getElementById("SelectedProductSpecs");
+
+                    var selectedValues = [];
+                    for (i = 0; i < selectedSpecifications.length; i++){
+                        selectedValues.push(selectedSpecifications[i].text)
+                    }
+
+                    if(selectedValues.length > 0)
+                    {
+                        var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(selectedValues) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    var selectedCategorySpecificationsValues = document.getElementById("SelectedCategorySpecValues");
+
+                    for (i = 0; i < selectedCategorySpecificationsValues.length; i++){
+                        var SpecId = selectedCategorySpecificationsValues[i].value;
+                        var SpecValue = selectedCategorySpecificationsValues[i].text;
+                        cat_value_dictionary[SpecId] = SpecValue;
+                    }
+
+                    var selectedCategorySpecifications = document.getElementById("SelectedCategorySpecs");
+
+                    var selectedCategoryValues = [];
+                    for (i = 0; i < selectedCategorySpecifications.length; i++){
+                        selectedCategoryValues.push(selectedCategorySpecifications[i].text)
+                    }
+
+                    if(selectedCategoryValues.length > 0)
+                    {
+                        var spec = "<input hidden id='catSpecIds' name='CategorySpecifications' value='" + JSON.stringify(selectedCategoryValues) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    if (selectedValues.length > 0 || selectedCategoryValues.length > 0)
+                    {
+                        updateSpecs();
+                    }
+
+                    function updateValuesInput(){
+                        var tmp = document.getElementById("specValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+                        var values_inputs = document.getElementsByClassName("values");
+                        var values_inputs_values = [];
+                        for (var i = 0; i < values_inputs.length; i++){
+                            var parentId = values_inputs[i].parentElement.id.substring(5);
+                            value_dictionary[parentId] = values_inputs[i].value;
+                            values_inputs_values.push(values_inputs[i].value)
+                        }
+                        var spec = "<input hidden id='specValues' name='ProductSpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    function updateCatValuesInput(){
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+                        var values_inputs = document.getElementsByClassName("catValues");
+                        var values_inputs_values = [];
+                        for (var i = 0; i < values_inputs.length; i++){
+                            var parentId = values_inputs[i].parentElement.id.substring(5);
+                            cat_value_dictionary[parentId] = values_inputs[i].value;
+                            values_inputs_values.push(values_inputs[i].value)
+                        }
+                        var spec = "<input hidden id='catSpecValues' name='CategorySpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    function updateHiddenSelect(){
+                        cat_spec_dictionary = {};
+                        cat_value_dictionary = {};
+
+                        var tmp = document.getElementById("catSpecIds")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var category = document.getElementById('CategoryId');
+                        var categoryId = category.value;
+
+                        for (i = 0; i < cat_spec_dictionaries.length; i++)
+                        {
+                            if (cat_spec_dictionaries[i]["CategoryId"] == categoryId)
+                            {
+                                cat_spec_dictionary[cat_spec_dictionaries[i]["Id"]] = cat_spec_dictionaries[i]["SpecificationName"];
+                            }
+                        }
+                        updateSpecs();
+                    }
+                </script>
+
+            </div>
+
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-<div class="form-group">
-    <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">edit specifications<i class="fa fa-plus"></i></button>
-</div>
-<input hidden name="StringifiedJSArray">
-<div id="spec">
-
-    <p id="msg"></p>
-    <script>
-
-        // get reference to button
-        var showbtn = document.getElementById("showSpec");
-        // add event listener for the button, for action "click"
-        var spec_index = 0;
-        showbtn.addEventListener("click", addChild);
-        function addChild() {
-            var spec = "<table id='spec" + spec_index + "' class= 'table table-light table - borderless table - hover text - center mb - 0' >" +
-                "<tbody class='align-middle' >" +
-                "<tr>" +
-                "<td>" +
-                "<select class='form-control Specs' >" +
-                "<option selected> United States </option>" +
-                "<option > Afghanistan </option>" +
-                "<option > Albania </option>" +
-                "<option > Algeria </option>" +
-                "</select> </td>" +
-                "<td class= 'align-middle' > specification </td>" +
-                "<td class= 'align-middle' >" +
-                "<button type='button' id='rem" + spec_index + "'  class= 'btn btn-sm btn-danger rem' >" +
-                "<i class='fa fa-times' > </i>" +
-                "</button >" +
-                "</td></tr> </tbody > </table>"
-            $("#spec").append(spec);
-            let div = document.getElementById("spec")
-            let rembtn = document.querySelector("#rem" + spec_index).addEventListener("click",
-                function () {
-                    // let confirm=confirm("are you sure?");
-                    let rem_parent = this.parentNode.parentNode.parentNode.parentNode;
-                    // console.log(rem_parent);
-
-                    div.removeChild(rem_parent);
-
-
-
-                });
-
-            spec_index += 1;
-
-        }
-    </script>
-
 </div>
 <div>
     <a class="btn btn-primary" href=@Url.Action("index", "Products", new { page=1})>Back to List</a>

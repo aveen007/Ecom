@@ -50,6 +50,35 @@ namespace Ecom.Controllers
             }
         }
 
+        public IActionResult ProductDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
+            var product = new Product();
+            for (int i = 0; i < products.Count; i++)
+            {
+                var temp = products[i];
+                if (temp.Id == id)
+                {
+                    product = products[i];
+                }
+
+            }
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
+
+            return View(productViewModel);
+        }
         // GET: Products
         public IActionResult Index(string sortOrder, int? page)
         {
@@ -118,6 +147,10 @@ namespace Ecom.Controllers
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name");
+            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            
+            GetCategorySpecifications();
+
             return View();
         }
 
@@ -126,7 +159,11 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product, 
+                                                [Bind("Specifications")] String Specifications, 
+                                                [Bind("ProductSpecificationValues")] String ProductSpecificationValues,
+                                                [Bind("CategorySpecifications")] String CategorySpecifications,
+                                                [Bind("CategorySpecificationValues")] String CategorySpecificationValues)
         {
             if (ModelState.IsValid)
             {
@@ -135,6 +172,95 @@ namespace Ecom.Controllers
                     await saveImage(product);
                 _unitOfWork.ProductRepo.Add(product);
                 await _unitOfWork.SaveAsync();
+                if (Specifications != null)
+                {
+                    var tmp = Specifications.Substring(1, Specifications.Length - 2);
+                    var tmps = tmp.Split(',');
+
+                    var value_tmp = ProductSpecificationValues.Substring(1, ProductSpecificationValues.Length - 2);
+                    var value_tmps = value_tmp.Split(',');
+
+                    var ProductSpecs = new List<Tuple<int, string>>();
+                    if (tmps.Length == value_tmps.Length)
+                    {
+                        for (var i = 0; i < tmps.Length; i++)
+                        {
+                            var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                            var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                            ProductSpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                        }
+                    }
+                    else
+                    {
+                        ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                        ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+
+                        GetCategorySpecifications();
+
+                        var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                        Notify("Not All Specifications have Values!!");
+
+                        return View(tmp_productViewModel);
+                    }
+
+                    foreach (var t in ProductSpecs)
+                    {
+                        ProductSpecificationValue productSpecificationValue = new ProductSpecificationValue();
+                        productSpecificationValue.ProductId = product.Id;
+                        productSpecificationValue.SpecificationId = t.Item1;
+                        productSpecificationValue.Value = t.Item2;
+
+                        _unitOfWork.ProductSpecificationValueRepo.Add(productSpecificationValue);
+                    }
+
+                    await _unitOfWork.SaveAsync();
+                }
+
+                if (CategorySpecifications != null)
+                {
+                    var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                    var tmps = tmp.Split(',');
+
+                    var value_tmp = CategorySpecificationValues.Substring(1, CategorySpecificationValues.Length - 2);
+                    var value_tmps = value_tmp.Split(',');
+
+                    var CategorySpecs = new List<Tuple<int, string>>();
+                    if (tmps.Length == value_tmps.Length)
+                    {
+                        for (var i = 0; i < tmps.Length; i++)
+                        {
+                            var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                            var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                            CategorySpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                        }
+                    }
+                    else
+                    {
+                        ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                        ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+
+                        GetCategorySpecifications();
+
+                        var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                        Notify("Not All Specifications have Values!!");
+
+                        return View(tmp_productViewModel);
+                    }
+
+                    foreach (var t in CategorySpecs)
+                    {
+                        ProductCategoryValue productCategoryValue = new ProductCategoryValue();
+                        productCategoryValue.ProductId = product.Id;
+                        productCategoryValue.CategorySpecificationId = t.Item1;
+                        productCategoryValue.Value = t.Item2;
+
+                        _unitOfWork.ProductCategoryValueRepo.Add(productCategoryValue);
+                    }
+
+                    await _unitOfWork.SaveAsync();
+                }
                 Notify("Product created successfully!!");
 
                 return RedirectToAction(nameof(Index), new
@@ -166,6 +292,13 @@ namespace Ecom.Controllers
                 return NotFound();
             }
             ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            ViewData["SelectedProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "SpecificationId");
+            ViewData["SelectedProductSpecificationValues"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "SpecificationId", "Value");
+            ViewData["SelectedProductCategorySpecification"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "CategorySpecificationId");
+            ViewData["SelectedProductCategorySpecificationValues"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "CategorySpecificationId", "Value");
+
+            GetCategorySpecifications();
 
             var productViewModel = _mapper.Map<ProductViewModel>(product);
 
@@ -177,7 +310,11 @@ namespace Ecom.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Sku,CategoryId,Imagefile")] Product product, 
+                                                      [Bind("Specifications")] String Specifications,
+                                                      [Bind("ProductSpecificationValues")] String ProductSpecificationValues,
+                                                      [Bind("CategorySpecifications")] String CategorySpecifications,
+                                                      [Bind("CategorySpecificationValues")] String CategorySpecificationValues)
         {
             if (id != product.Id)
             {
@@ -190,8 +327,114 @@ namespace Ecom.Controllers
                 {
                     if (product.Imagefile != null)
                         await saveImage(product);
+
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
+
+                    _unitOfWork.ProductSpecificationValueRepo.Delete(filter: e => e.ProductId == product.Id);
+                    await _unitOfWork.SaveAsync();
+
+                    if (Specifications != null)
+                    {
+                        var tmp = Specifications.Substring(1, Specifications.Length - 2);
+                        var tmps = tmp.Split(',');
+
+                        var value_tmp = ProductSpecificationValues.Substring(1, ProductSpecificationValues.Length - 2);
+                        var value_tmps = value_tmp.Split(',');
+
+                        var ProductSpecs = new List<Tuple<int, string>>();
+                        if (tmps.Length == value_tmps.Length)
+                        {
+                            for (var i = 0; i < tmps.Length; i++)
+                            {
+                                var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                                var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                                ProductSpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                            }
+                        }
+                        else
+                        {
+                            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+                            ViewData["SelectedProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "SpecificationId");
+                            ViewData["SelectedProductSpecificationValues"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "SpecificationId", "Value");
+                            ViewData["SelectedProductCategorySpecification"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "CategorySpecificationId");
+                            ViewData["SelectedProductCategorySpecificationValues"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "CategorySpecificationId", "Value");
+
+                            GetCategorySpecifications();
+
+                            var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                            Notify("Not All Specifications have Values!!");
+
+                            return View(tmp_productViewModel);
+                        }
+
+                        foreach (var t in ProductSpecs)
+                        {
+                            ProductSpecificationValue productSpecificationValue = new ProductSpecificationValue();
+                            productSpecificationValue.ProductId = product.Id;
+                            productSpecificationValue.SpecificationId = t.Item1;
+                            productSpecificationValue.Value = t.Item2;
+
+                            _unitOfWork.ProductSpecificationValueRepo.Add(productSpecificationValue);
+                        }
+
+                        await _unitOfWork.SaveAsync();
+                    }
+
+                    _unitOfWork.ProductCategoryValueRepo.Delete(filter: e => e.ProductId == product.Id);
+                    await _unitOfWork.SaveAsync();
+
+                    if (CategorySpecifications != null)
+                    {
+                        var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
+                        var tmps = tmp.Split(',');
+
+                        var value_tmp = CategorySpecificationValues.Substring(1, CategorySpecificationValues.Length - 2);
+                        var value_tmps = value_tmp.Split(',');
+
+                        var CategorySpecs = new List<Tuple<int, string>>();
+                        if (tmps.Length == value_tmps.Length)
+                        {
+                            for (var i = 0; i < tmps.Length; i++)
+                            {
+                                var t1 = tmps[i].Substring(1, tmps[i].Length - 2);
+                                var t2 = value_tmps[i].Substring(1, value_tmps[i].Length - 2);
+                                CategorySpecs.Add(new Tuple<int, string>(Int32.Parse(t1), t2));
+                            }
+                        }
+                        else
+                        {
+                            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+                            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+                            ViewData["SelectedProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "SpecificationId");
+                            ViewData["SelectedProductSpecificationValues"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "SpecificationId", "Value");
+                            ViewData["SelectedProductCategorySpecification"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "CategorySpecificationId");
+                            ViewData["SelectedProductCategorySpecificationValues"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "CategorySpecificationId", "Value");
+
+                            GetCategorySpecifications();
+
+                            var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
+
+                            Notify("Not All Specifications have Values!!");
+
+                            return View(tmp_productViewModel);
+                        }
+
+                        foreach (var t in CategorySpecs)
+                        {
+                            ProductCategoryValue productCategoryValue = new ProductCategoryValue();
+                            productCategoryValue.ProductId = product.Id;
+                            productCategoryValue.CategorySpecificationId = t.Item1;
+                            productCategoryValue.Value = t.Item2;
+
+                            _unitOfWork.ProductCategoryValueRepo.Add(productCategoryValue);
+                        }
+
+                        await _unitOfWork.SaveAsync();
+                    }
+
                     Notify("Edit saved successfully!!");
 
 
@@ -272,9 +515,32 @@ namespace Ecom.Controllers
 
         }
 
+        private void GetCategorySpecifications()
+        {
+            var categorySpecifications = _unitOfWork.CategorySpecificationRepo.GetAll().ToList();
+            var specifications = _unitOfWork.SpecificationRepo.GetAll().ToList();
+            var CatSpecs = new List<Tuple<int, int, string>>();
+            foreach (var categorySpecification in categorySpecifications)
+            {
+                var tmp_spec_name = "";
+                foreach (var specification in specifications)
+                {
+                    if (specification.Id == categorySpecification.SpecificationId)
+                    {
+                        tmp_spec_name = specification.SpecificationName;
+                    }
+                }
+                var tmp = new Tuple<int, int, string>(
+                                                        categorySpecification.Id,
+                                                        categorySpecification.CategoryId,
+                                                        tmp_spec_name
+                                                     );
+                CatSpecs.Add(tmp);
+            }
+            ViewBag.CategorySpecifications = CatSpecs;
+        }
         private bool ProductExists(int id)
         {
-
             return _unitOfWork.ProductRepo.IsExist(id);
         }
     }

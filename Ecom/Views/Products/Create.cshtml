@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
@@ -36,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select id='CategoryId'  asp-for="CategoryId" class ="form-control" onchange='updateHiddenSelect()' asp-items="ViewBag.CategoryId"></select>
             </div>
         @*    <div class="form-group">
                 <label asp-for="ImageLink" class="control-label"></label>
@@ -49,15 +48,107 @@
                 <span asp-validation-for="Imagefile" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="button" id="showSpecProd" class="btn btn-sm btn-light ml-2">add specification<i class="fa fa-plus"></i></button>
+                <select id="Specs" asp-for="ProductSpecification" class ="form-control" asp-items="ViewBag.ProductSpecification" hidden></select>
             </div>
-            <input hidden name="StringifiedJSArray">
+            <div class="form-group">
+                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Show Specification <i class="fa fa-plus"></i></button>
+            </div>
             <div id="spec">
+                <div id='specs_list' class='form-group'>
 
+                </div>
                 <p id="msg"></p>
+                <script type="text/javascript" src="~/js/site.js"></script>
                 <script>
+                    var isProduct = true;
 
-               
+                    var specifications = document.getElementById("Specs");
+                    var spec_dictionary = {};
+                    var cat_spec_dictionary = {};
+                    var value_dictionary = {};
+                    var cat_value_dictionary = {};
+
+                    for (i = 0; i < specifications.length; i++){
+                        spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                    }
+
+                    var cat_spec_dictionaries = [];
+                </script>
+                @foreach (var cat_spec in @ViewBag.CategorySpecifications)
+                {
+                    <script>
+                        var tmp_dictionary = {
+                                                "Id": @cat_spec.Item1,
+                                                "CategoryId": @cat_spec.Item2,
+                                                "SpecificationName": "@cat_spec.Item3"
+                                              };
+                        cat_spec_dictionaries.push(tmp_dictionary);
+                    </script>
+                }
+                <script>
+                    function updateValuesInput(){
+                        var tmp = document.getElementById("specValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+                        var values_inputs = document.getElementsByClassName("values");
+                        var values_inputs_values = [];
+                        for (var i = 0; i < values_inputs.length; i++){
+                            var parentId = values_inputs[i].parentElement.id.substring(5);
+                            value_dictionary[parentId] = values_inputs[i].value;
+                            values_inputs_values.push(values_inputs[i].value)
+                        }
+                        var spec = "<input hidden id='specValues' name='ProductSpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    function updateCatValuesInput(){
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+                        var values_inputs = document.getElementsByClassName("catValues");
+                        var values_inputs_values = [];
+                        for (var i = 0; i < values_inputs.length; i++){
+                            var parentId = values_inputs[i].parentElement.id.substring(5);
+                            cat_value_dictionary[parentId] = values_inputs[i].value;
+                            values_inputs_values.push(values_inputs[i].value)
+                        }
+                        var spec = "<input hidden id='catSpecValues' name='CategorySpecificationValues' value='" + JSON.stringify(values_inputs_values) + "'>"
+                        $("#spec").append(spec);
+                    }
+
+                    function updateHiddenSelect(){
+                        cat_spec_dictionary = {};
+                        cat_value_dictionary = {};
+
+                        var tmp = document.getElementById("catSpecIds")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var tmp = document.getElementById("catSpecValues")
+                        if (tmp) {
+                            let div = document.getElementById("spec")
+                            div.removeChild(tmp)
+                        }
+
+                        var category = document.getElementById('CategoryId');
+                        var categoryId = category.value;
+
+                        for (i = 0; i < cat_spec_dictionaries.length; i++)
+                        {
+                            if (cat_spec_dictionaries[i]["CategoryId"] == categoryId)
+                            {
+                                cat_spec_dictionary[cat_spec_dictionaries[i]["Id"]] = cat_spec_dictionaries[i]["SpecificationName"];
+                            }
+                        }
+                        updateSpecs();
+                    }
+                    updateHiddenSelect();               
                 </script>
 
             </div>

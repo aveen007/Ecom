@@ -6,7 +6,6 @@ using AppDbContext.UOW;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -42,6 +41,7 @@ namespace Ecom
 
                 //DBSeeder.SeedDeleteUser(unitOfWork, userManager, roleManager);
                 DBSeeder.SeedUser(unitOfWork, userManager, roleManager);
+                DBSeeder.SeedShippingState(unitOfWork);
             }
         }
     }
