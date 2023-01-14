@@ -335,7 +335,7 @@ namespace Ecom.Controllers
             {
                 Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
             }
-                return RedirectToAction(nameof(Index), new { page = 1 });
+            return RedirectToAction(nameof(Index), new { page = 1 });
            
 
         }

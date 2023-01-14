@@ -9,6 +9,7 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
@@ -16,18 +17,96 @@ using PagedList;
 
 namespace Ecom.Controllers
 {
+
     public class OrdersController : BaseController
     {
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
-
-        public OrdersController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private List<ProductOrder> productsCart;
+        public OrdersController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper, UserManager<ApplicationUser> userManager) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
             this._mapper = mapper;
+            _userManager = userManager;
+        }
+        public static List< Tuple<Product, int> > cart = new List<Tuple<Product,int> >();
+        public IActionResult AddToCart(int? id, int quantity)
+        {
+            
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+
+            Product product = _unitOfWork.ProductRepo.Get(id.Value);
+            Order order;
+            if (!orders.Any())
+            {
+
+                order = new Order
+                {
+                    UserId = userId,
+                    TotalPrice = 0,
+                    OrderDate = DateTime.Today,
+                    IsOrdered = false
+                };
+                _unitOfWork.OrderRepo.Add(order);
+                _unitOfWork.SaveAsync();
+            }
+            else
+            {
+                order = orders.First();
+            }
+            order.TotalPrice += quantity * product.Price;
+            var producorders = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id && e.ProductId == product.Id).ToList();
+
+            ProductOrder productOrder;
+            if (!producorders.Any())
+            {
+                productOrder = new ProductOrder
+                {
+                    OrderId = order.Id,
+                    ProductId = product.Id,
+                    Quantity = quantity,
+                    SinglePrice = product.Price
+                };
+                _unitOfWork.ProductOrderRepo.Add(productOrder);
+                _unitOfWork.SaveAsync();
+            }
+            else
+            {
+                productOrder = producorders.First();
+                productOrder.Quantity += quantity;
+                _unitOfWork.ProductOrderRepo.Update(productOrder);
+                _unitOfWork.SaveAsync();
+            }
+
+            _unitOfWork.OrderRepo.Update(order);
+            _unitOfWork.SaveAsync();
+            var categoyId = product.CategoryId;
+            //return RedirectToAction(nameof(Index));
+            return RedirectToAction("Shop", "Categories", new {id = categoyId });
+        }
+        public IActionResult ShoppingCart()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("There are no products in your cart dude!!");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+                ViewData["ProductsOrder"] = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+            }
+
+            return View();
 
         }
-
         // GET: Orders
         public IActionResult Index(string sortOrder, int? page)
         {
@@ -36,7 +115,6 @@ namespace Ecom.Controllers
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page = page;
             var orders = _unitOfWork.OrderRepo.GetAll();
-
 
             var ordersViewModels = _mapper.Map<List<OrderViewModel>>(orders);
             var orderVMs = from s in ordersViewModels
@@ -62,6 +140,7 @@ namespace Ecom.Controllers
             
         }
 
+        
         // GET: Orders/Details/5
         public IActionResult Details(int? id)
         {
