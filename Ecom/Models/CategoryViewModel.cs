@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 /*using DynamicVML;*/
 namespace Ecom.Models
 {
-    public class CategoryViewModel
+    public class CategoryViewModel 
     {
         public int Id { get; set; }
 

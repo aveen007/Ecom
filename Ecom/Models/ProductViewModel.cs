@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecom.Models
 {
-    public class ProductViewModel
+    public class ProductViewModel 
     {
         public int Id { get; set; }
 
