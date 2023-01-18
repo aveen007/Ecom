@@ -91,21 +91,128 @@ namespace Ecom.Controllers
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
 
-            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false, includeProperties: "ProductOrder").ToList();
             Order order;
             if (!orders.Any())
             {
                 Notify("There are no products in your cart dude!!");
+                return RedirectToAction("Index", "Home");
                 //return RedirectToAction("Shop", "Categories", new { id = categoyId });
             }
             else
             {
                 order = orders.First();
-                ViewData["ProductsOrder"] = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+                var orderViewModel = _mapper.Map<OrderViewModel>(order);
+                var ProductsOrder = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+                //var productOrdersViewModels = _mapper.Map<List<ProductOrderViewModel>>(ProductsOrder);
+                ViewData["Products"] = ProductsOrder;
+                return View(orderViewModel);
+            }
+        }
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        
+        public async Task<IActionResult> ProceedToCheckOut(Order order)
+        {
+            //System.Diagnostics.Debug.WriteLine(order.Id);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //var xy = order.ProductOrder.Count();
+                    //System.Diagnostics.Debug.WriteLine(order.ProductOrder[0].OrderId);
+                    //xy = 2;
+                    foreach (var item in order.ProductOrder)
+                    {
+                        //System.Diagnostics.Debug.WriteLine("Somar");
+                        //System.Diagnostics.Debug.WriteLine(item.SinglePrice);
+                        //System.Diagnostics.Debug.WriteLine(item.Quantity);
+                        //System.Diagnostics.Debug.WriteLine(item.ProductId);
+                        _unitOfWork.ProductOrderRepo.Update(item);
+
+                        await _unitOfWork.SaveAsync();
+                    }
+                    //Notify("Edit saved successfully!!");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+                }
+                //return RedirectToAction(nameof(Index), new { page = 1 });
+            }
+            //var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+            return RedirectToAction("Checkout", "Orders");
+        }
+
+        public IActionResult Checkout()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false, includeProperties: "ProductOrder").ToList();
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("There are no products in your cart dude!!");
+                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+                var orderViewModel = _mapper.Map<OrderViewModel>(order);
+                var ProductsOrder = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+                //var productOrdersViewModels = _mapper.Map<List<ProductOrderViewModel>>(ProductsOrder);
+                ViewData["Products"] = ProductsOrder;
+                return View(orderViewModel);
+            }
+            return View();
+        }
+
+        
+        public async Task<IActionResult> PlaceOrder()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("Error");
+                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+                order.IsOrdered = true;
+                _unitOfWork.OrderRepo.Update(order);
+                await _unitOfWork.SaveAsync();
+
+                Shipping shipping = new Shipping();
+                shipping.OrderId = order.Id;
+                _unitOfWork.ShippingRepo.Add(shipping);
+                await _unitOfWork.SaveAsync();
             }
 
-            return View();
+            return RedirectToAction("Index", "Home"); ;
+        }
 
+        public async Task<IActionResult> DeleteProductOrder(int id)
+        {
+            try
+            {
+                _unitOfWork.ProductOrderRepo.Delete(id);
+
+                await _unitOfWork.SaveAsync();
+
+                Notify("Product Order deleted successfully!!");
+            }
+            catch (Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+            }
+            return RedirectToAction("ShoppingCart", "Orders");
         }
         // GET: Orders
         public IActionResult Index(string sortOrder, int? page)

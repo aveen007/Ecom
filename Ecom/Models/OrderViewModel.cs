@@ -1,4 +1,5 @@
 ﻿using System;
+using AppDbContext.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,5 +32,8 @@ namespace Ecom.Models
 
         public virtual UserViewModel User { get; set; }
 
+        //[BindProperty]
+        public List<ProductOrder> ProductOrder { get; set; }
+        //public virtual ICollection<ProductOrder> ProductOrder { get; set; }
     }
 }

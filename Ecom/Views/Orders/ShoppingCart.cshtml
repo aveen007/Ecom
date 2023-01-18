@@ -1,9 +1,17 @@
-﻿@model IEnumerable<Ecom.Models.OrderViewModel>
+﻿@model Ecom.Models.OrderViewModel
 
 @{
     ViewData["Title"] = "ShoppingCart";
 }
-
+<form asp-action = "ProceedToCheckOut">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="ShippingId" />
+    <input type="hidden" asp-for="OrderDate" />
+    <input type="hidden" asp-for="TotalPrice" />
+    <input type="hidden" asp-for="IsOrdered" />
+    @*<input type="hidden" asp-for="ProductOrder" />*@
    <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
@@ -18,34 +26,34 @@
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                        @for(int i = 0; i < ViewBag.ProductsOrder.Count; i++)
-                             {
-                                
-                             var product = ViewBag.ProductsOrder[i];
-                                 
+                        @for(int i = 0; i < Model.ProductOrder.Count ;i++)
+                             {         
+                             @Html.HiddenFor(m => m.ProductOrder[i].Id);
+                             @Html.HiddenFor(m => m.ProductOrder[i].OrderId);
+                             @Html.HiddenFor(m => m.ProductOrder[i].SinglePrice);
+                             @Html.HiddenFor(m => m.ProductOrder[i].ProductId);
                              <tr>
-                                <td class="align-middle"><img src=@product.Product.ImageLink alt="" style="width: 50px;">@product.Product.Name</td>
-                                @{
-                                    product.SinglePrice -= 5;
-                                }
-                                <td class="align-middle">@product.SinglePrice</td>
+                                <td class="align-middle"><img src="@ViewBag.Products[i].Product.ImageLink" alt="" style="width: 100px;">@ViewBag.Products[i].Product.Name</td>
+                                
+                                <td class="align-middle">@Html.DisplayFor(m => m.ProductOrder[i].SinglePrice)</td>
                                 <td class="align-middle">
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-primary btn-minus" onclick = "minus(i)">
+                                        @*<div class="input-group-btn">
+                                            <button class="btn btn-sm btn-primary btn-minus" on>
                                             <i class="fa fa-minus"></i>
                                             </button>
-                                        </div>
-                                        <input id = "btn"+toString(i) type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value=@product.Quantity>
-                                        <div class="input-group-btn">
-                                            <button id = "btn_add"+toString(i) class="btn btn-sm btn-primary btn-plus" onclick = "add(")">
+                                        </div>*@
+                                        <input asp-for = "ProductOrder[i].Quantity" class="form-control form-control-sm bg-secondary border-0 text-center" >
+                                        @*<span asp-validation-for="@Html.DisplayFor(modelItem => Model.ToList()[i].Quantity)" class="text-danger"></span>*@
+                                        @*<div class="input-group-btn">
+                                            <button id = "btn_add"+toString(i) class="btn btn-sm btn-primary btn-plus">
                                                 <i class="fa fa-plus"></i>
                                             </button>
-                                        </div>
+                                        </div>*@
                                     </div>
                                 </td>
                                 @{
-                                    var tot = product.SinglePrice * product.Quantity;
+                                    var tot = Model.ProductOrder[i].SinglePrice * Model.ProductOrder[i].Quantity;
                                     if(ViewBag.tot == null)
                                     {
                                         ViewData["tot"] = tot;
@@ -56,25 +64,19 @@
                                     }
                                 }
                                 <td id = "TotPrice" class="align-middle">@tot</td>
-                                <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
+                                <td class="align-middle"><button class="btn btn-sm btn-danger" onclick = "changeHref(@Model.ProductOrder[i].Id)"><i class="fa fa-times"></i></button></td>
                             </tr>
-                            <script>
-                                function minus(int i){
-                                    console.log("Somar");
-                                    @{
-                                        product.Quantity -= 1;
-                                     }
-                                    document.getElementById("btn"+toString(i)).value = @product.Quantity;
-                                }
-                                function add(int i){
-                                    console.log("add");
-                                    @{
-                                        product.Quantity += 1;
-                                    }
-                                    document.getElementById("btn"+toString(i)).value = @product.Quantity;
-                                }
-                            </script>
-                        }    
+                            
+                            
+                        }   
+                        <script>
+                                function changeHref(i){
+                                     var url = '@Url.Action("DeleteProductOrder", "Orders" , new {id = "ID"})';
+                                     url = url.replace("ID", i);
+                                     //alert(url);
+                                     window.location.href = url;
+                               }
+                        </script>
                     </tbody>
                 </table>
             </div>
@@ -107,11 +109,11 @@
                         }
                             <h5>@ViewBag.tot</h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" >Proceed To Checkout</button>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    
+</form>

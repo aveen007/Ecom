@@ -11,7 +11,7 @@ namespace AppDbContext.Models
     {
         public Order()
         {
-            ProductOrder = new HashSet<ProductOrder>();
+            ProductOrder = new List<ProductOrder>();
             Shipping = new HashSet<Shipping>();
         }
 
@@ -23,7 +23,7 @@ namespace AppDbContext.Models
         public bool IsOrdered { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
-        public virtual ICollection<ProductOrder> ProductOrder { get; set; }
+        public virtual List<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<Shipping> Shipping { get; set; }
     }
 }
