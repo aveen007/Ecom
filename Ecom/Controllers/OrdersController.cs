@@ -185,6 +185,8 @@ namespace Ecom.Controllers
             else
             {
                 order = orders.First();
+
+
                 order.IsOrdered = true;
                 _unitOfWork.OrderRepo.Update(order);
                 await _unitOfWork.SaveAsync();
