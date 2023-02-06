@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecom.Models
 {
-    public class OrderViewModel
+    public class OrderViewModel 
     {
         public int Id { get; set; }
 

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecom.Models
 {
-    public class SpecificationViewModel
+    public class SpecificationViewModel 
     {
         public int Id { get; set; }
 

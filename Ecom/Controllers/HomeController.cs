@@ -3,29 +3,39 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Ecom.Models;
 using Ecom.Services;
+using AppDbContext.UOW;
+using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.Web.Mvc;
 
 namespace Ecom.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private ISingletonRnd singletonService;
         private ITransientRnd transientService;
         private IScopedRnd scopedService;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public HomeController(ILogger<HomeController> logger,
-              ISingletonRnd _SingletonService,
-            ITransientRnd _transientService,
-            IScopedRnd _scopedService)
+        ISingletonRnd _SingletonService,
+        ITransientRnd _transientService,
+            IScopedRnd _scopedService,IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
+            this._hostEnvironment = _hostEnvironment;
+          
+
             _logger = logger;
             singletonService = _SingletonService;
             transientService = _transientService;
             scopedService = _scopedService;
         }
+ 
         public IActionResult Index()
         {
-            
+        
             return View();
         }
 

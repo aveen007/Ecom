@@ -2,7 +2,7 @@
 
 namespace Ecom.Models
 {
-    public class ErrorViewModel
+    public class ErrorViewModel 
     {
         public string RequestId { get; set;}
 
