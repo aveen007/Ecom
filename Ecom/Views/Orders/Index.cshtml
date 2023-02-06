@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.IsOrdered)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                @Html.DisplayNameFor(model => model.ApplicationUser)
             </th>
             <th></th>
         </tr>
@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.IsOrdered)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
+                @Html.DisplayFor(modelItem => item.ApplicationUser.FirstName) @Html.DisplayFor(modelItem => item.ApplicationUser.LastName)
             </td>
             <td>
                     <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-lg  btn-success"><i class="fas fa-pencil-alt" aria-hidden="true"></i></button></a>
