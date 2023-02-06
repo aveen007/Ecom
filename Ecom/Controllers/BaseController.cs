@@ -16,6 +16,7 @@ namespace Ecom.Controllers
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IConfiguration _configuration;
         protected readonly IWebHostEnvironment hostEnvironment;
+        
 
         public BaseController(IUnitOfWork unitOfWork, IConfiguration configuration
             , IWebHostEnvironment _hostEnvironment)
@@ -23,6 +24,7 @@ namespace Ecom.Controllers
             hostEnvironment = _hostEnvironment;
             _configuration = configuration;
             _unitOfWork = unitOfWork;
+            
         }
     
 

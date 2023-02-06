@@ -9,6 +9,7 @@ using AppDbContext.Models;
 using AppDbContext.UOW;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
@@ -16,18 +17,205 @@ using PagedList;
 
 namespace Ecom.Controllers
 {
+
     public class OrdersController : BaseController
     {
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
-
-        public OrdersController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private List<ProductOrder> productsCart;
+        public OrdersController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper, UserManager<ApplicationUser> userManager) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
             this._mapper = mapper;
+            _userManager = userManager;
+        }
+        public static List< Tuple<Product, int> > cart = new List<Tuple<Product,int> >();
+        public IActionResult AddToCart(int? id, int quantity)
+        {
+            
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
 
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+
+            Product product = _unitOfWork.ProductRepo.Get(id.Value);
+            Order order;
+            if (!orders.Any())
+            {
+
+                order = new Order
+                {
+                    UserId = userId,
+                    TotalPrice = 0,
+                    OrderDate = DateTime.Today,
+                    IsOrdered = false
+                };
+                _unitOfWork.OrderRepo.Add(order);
+                _unitOfWork.SaveAsync();
+            }
+            else
+            {
+                order = orders.First();
+            }
+            order.TotalPrice += quantity * product.Price;
+            var producorders = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id && e.ProductId == product.Id).ToList();
+
+            ProductOrder productOrder;
+            if (!producorders.Any())
+            {
+                productOrder = new ProductOrder
+                {
+                    OrderId = order.Id,
+                    ProductId = product.Id,
+                    Quantity = quantity,
+                    SinglePrice = product.Price
+                };
+                _unitOfWork.ProductOrderRepo.Add(productOrder);
+                _unitOfWork.SaveAsync();
+            }
+            else
+            {
+                productOrder = producorders.First();
+                productOrder.Quantity += quantity;
+                _unitOfWork.ProductOrderRepo.Update(productOrder);
+                _unitOfWork.SaveAsync();
+            }
+
+            _unitOfWork.OrderRepo.Update(order);
+            _unitOfWork.SaveAsync();
+            var categoyId = product.CategoryId;
+            //return RedirectToAction(nameof(Index));
+            return RedirectToAction("Shop", "Categories", new {id = categoyId });
+        }
+        public IActionResult ShoppingCart()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false, includeProperties: "ProductOrder").ToList();
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("There are no products in your cart dude!!");
+                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+                var orderViewModel = _mapper.Map<OrderViewModel>(order);
+                var ProductsOrder = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+                //var productOrdersViewModels = _mapper.Map<List<ProductOrderViewModel>>(ProductsOrder);
+                ViewData["Products"] = ProductsOrder;
+                return View(orderViewModel);
+            }
+        }
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        
+        public async Task<IActionResult> ProceedToCheckOut(Order order)
+        {
+            //System.Diagnostics.Debug.WriteLine(order.Id);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //var xy = order.ProductOrder.Count();
+                    //System.Diagnostics.Debug.WriteLine(order.ProductOrder[0].OrderId);
+                    //xy = 2;
+                    foreach (var item in order.ProductOrder)
+                    {
+                        //System.Diagnostics.Debug.WriteLine("Somar");
+                        //System.Diagnostics.Debug.WriteLine(item.SinglePrice);
+                        //System.Diagnostics.Debug.WriteLine(item.Quantity);
+                        //System.Diagnostics.Debug.WriteLine(item.ProductId);
+                        _unitOfWork.ProductOrderRepo.Update(item);
+
+                        await _unitOfWork.SaveAsync();
+                    }
+                    //Notify("Edit saved successfully!!");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+                }
+                //return RedirectToAction(nameof(Index), new { page = 1 });
+            }
+            //var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+            return RedirectToAction("Checkout", "Orders");
         }
 
+        public IActionResult Checkout()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false, includeProperties: "ProductOrder").ToList();
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("There are no products in your cart dude!!");
+                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+                var orderViewModel = _mapper.Map<OrderViewModel>(order);
+                var ProductsOrder = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id, includeProperties: "Product").ToList();
+                //var productOrdersViewModels = _mapper.Map<List<ProductOrderViewModel>>(ProductsOrder);
+                ViewData["Products"] = ProductsOrder;
+                return View(orderViewModel);
+            }
+            return View();
+        }
+
+        
+        public async Task<IActionResult> PlaceOrder()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            var orders = _unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+
+            Order order;
+            if (!orders.Any())
+            {
+                Notify("Error");
+                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Shop", "Categories", new { id = categoyId });
+            }
+            else
+            {
+                order = orders.First();
+
+
+                order.IsOrdered = true;
+                _unitOfWork.OrderRepo.Update(order);
+                await _unitOfWork.SaveAsync();
+
+                Shipping shipping = new Shipping();
+                shipping.OrderId = order.Id;
+                _unitOfWork.ShippingRepo.Add(shipping);
+                await _unitOfWork.SaveAsync();
+            }
+
+            return RedirectToAction("Index", "Home"); ;
+        }
+
+        public async Task<IActionResult> DeleteProductOrder(int id)
+        {
+            try
+            {
+                _unitOfWork.ProductOrderRepo.Delete(id);
+
+                await _unitOfWork.SaveAsync();
+
+                Notify("Product Order deleted successfully!!");
+            }
+            catch (Exception)
+            {
+                Notify("oops,Something went wrong", notificationType: NotificationTypeEnum.error);
+            }
+            return RedirectToAction("ShoppingCart", "Orders");
+        }
         // GET: Orders
         public IActionResult Index(string sortOrder, int? page)
         {
@@ -36,7 +224,6 @@ namespace Ecom.Controllers
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page = page;
             var orders = _unitOfWork.OrderRepo.GetAll();
-
 
             var ordersViewModels = _mapper.Map<List<OrderViewModel>>(orders);
             var orderVMs = from s in ordersViewModels
@@ -62,6 +249,7 @@ namespace Ecom.Controllers
             
         }
 
+        
         // GET: Orders/Details/5
         public IActionResult Details(int? id)
         {
