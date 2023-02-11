@@ -1,8 +1,11 @@
 ﻿using AppDbContext.Models;
 using AppDbContext.UOW;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ecom.Services
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class TrackOrderService : ITrackOrderService
     {
         protected readonly IUnitOfWork _unitOfWork;
@@ -12,6 +15,7 @@ namespace Ecom.Services
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet]
         public ShippingState TrackOrder(int id)
         {
             var shipping = _unitOfWork.ShippingRepo.Get(id);

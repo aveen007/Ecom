@@ -148,12 +148,15 @@
 
                                     var cats = ViewData["Cats"] as IEnumerable<Category>;
                                     var index = 10;
-                                    foreach (var category in cats)
-                                {
-                                    if (index>0){
-                                            <a href="" class="nav-item nav-link">@category.Name</a>
-                                        index--;
-                                        }
+                                    if (cats != null)
+                                    {
+                                        foreach (var category in cats)
+                                        {
+                                        if (index>0){
+                                                <a href="" class="nav-item nav-link">@category.Name</a>
+                                            index--;
+                                            }
+                                        }  
                                     }
                             }
                             
