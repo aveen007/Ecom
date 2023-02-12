@@ -64,7 +64,12 @@
                                     }
                                 }
                                 <td id = "TotPrice" class="align-middle">@tot</td>
-                                <td class="align-middle"><button class="btn btn-sm btn-danger" onclick = "changeHref(@Model.ProductOrder[i].Id)"><i class="fa fa-times"></i></button></td>
+                                <td class="align-middle">
+                                    <a asp-action="DeleteProductOrder" class="del" asp-route-id="@Model.ProductOrder[i].Id"><button type="button" class="btn btn-lg btn-danger"><i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button></a>
+                                    @*<button class="btn btn-sm btn-danger" onclick = "changeHref(@Model.ProductOrder[i].Id)"><i class="fa fa-times"></i></button>
+                                    *@
+                                </td>
                             </tr>
                             
                             
@@ -73,7 +78,7 @@
                                 function changeHref(i){
                                      var url = '@Url.Action("DeleteProductOrder", "Orders" , new {id = "ID"})';
                                      url = url.replace("ID", i);
-                                     //alert(url);
+                                     alert(url);
                                      window.location.href = url;
                                }
                         </script>
