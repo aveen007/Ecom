@@ -31,7 +31,7 @@ namespace Ecom.Controllers
             _userManager = userManager;
         }
         public static List< Tuple<Product, int> > cart = new List<Tuple<Product,int> >();
-        public IActionResult AddToCart(int? id, int quantity)
+        public async Task<IActionResult> AddToCart(int? id, int quantity)
         {
             
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
@@ -40,9 +40,9 @@ namespace Ecom.Controllers
 
             Product product = _unitOfWork.ProductRepo.Get(id.Value);
             Order order;
+            Shipping shipping;
             if (!orders.Any())
             {
-
                 order = new Order
                 {
                     UserId = userId,
@@ -51,7 +51,24 @@ namespace Ecom.Controllers
                     IsOrdered = false
                 };
                 _unitOfWork.OrderRepo.Add(order);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
+
+                order = _unitOfWork.OrderRepo.Get(order.Id);
+
+                shipping = new Shipping
+                {
+                    OrderId = order.Id,
+                    ShippingStateId = 1,
+                    ShippingPrice = 20
+                };
+                _unitOfWork.ShippingRepo.Add(shipping);
+                await _unitOfWork.SaveAsync();
+
+                shipping = _unitOfWork.ShippingRepo.Get(shipping.Id);
+
+                order.ShippingId = shipping.Id;
+                _unitOfWork.OrderRepo.Update(order);
+                await _unitOfWork.SaveAsync();
             }
             else
             {
@@ -59,7 +76,6 @@ namespace Ecom.Controllers
             }
             order.TotalPrice += quantity * product.Price;
             var producorders = _unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id && e.ProductId == product.Id).ToList();
-
             ProductOrder productOrder;
             if (!producorders.Any())
             {
@@ -71,18 +87,18 @@ namespace Ecom.Controllers
                     SinglePrice = product.Price
                 };
                 _unitOfWork.ProductOrderRepo.Add(productOrder);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
             }
             else
             {
                 productOrder = producorders.First();
                 productOrder.Quantity += quantity;
                 _unitOfWork.ProductOrderRepo.Update(productOrder);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
             }
 
-            _unitOfWork.OrderRepo.Update(order);
-            _unitOfWork.SaveAsync();
+            //_unitOfWork.OrderRepo.Update(order);
+            //_unitOfWork.SaveAsync();
             var categoyId = product.CategoryId;
             //return RedirectToAction(nameof(Index));
             return RedirectToAction("Shop", "Categories", new {id = categoyId });
@@ -191,15 +207,16 @@ namespace Ecom.Controllers
                 _unitOfWork.OrderRepo.Update(order);
                 await _unitOfWork.SaveAsync();
 
-                Shipping shipping = new Shipping();
+                /*Shipping shipping = new Shipping();
                 shipping.OrderId = order.Id;
                 _unitOfWork.ShippingRepo.Add(shipping);
                 await _unitOfWork.SaveAsync();
+                */
             }
 
             return RedirectToAction("Index", "Home"); ;
         }
-
+        
         public async Task<IActionResult> DeleteProductOrder(int id)
         {
             try
