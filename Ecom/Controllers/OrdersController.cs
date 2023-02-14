@@ -40,9 +40,9 @@ namespace Ecom.Controllers
 
             Product product = _unitOfWork.ProductRepo.Get(id.Value);
             Order order;
+            Shipping shipping;
             if (!orders.Any())
             {
-
                 order = new Order
                 {
                     UserId = userId,
@@ -51,6 +51,23 @@ namespace Ecom.Controllers
                     IsOrdered = false
                 };
                 _unitOfWork.OrderRepo.Add(order);
+                await _unitOfWork.SaveAsync();
+
+                order = _unitOfWork.OrderRepo.Get(order.Id);
+
+                shipping = new Shipping
+                {
+                    OrderId = order.Id,
+                    ShippingStateId = 1,
+                    ShippingPrice = 20
+                };
+                _unitOfWork.ShippingRepo.Add(shipping);
+                await _unitOfWork.SaveAsync();
+
+                shipping = _unitOfWork.ShippingRepo.Get(shipping.Id);
+
+                order.ShippingId = shipping.Id;
+                _unitOfWork.OrderRepo.Update(order);
                 await _unitOfWork.SaveAsync();
             }
             else

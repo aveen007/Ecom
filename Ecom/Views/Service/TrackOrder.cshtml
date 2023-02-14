@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Track Order";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="track_oreder_form" asp-action="TrackOrder" method="get">
+                <h4>Track your order by the order id</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label for="OrderId">Order Id:</label>
+                    <input name="OrderId" class="form-control" value=@ViewData["OrderId"] required/>
+                </div>
+                <div class="form-group">
+                    <label name="ShippingState">Shipping State:</label>
+                    <div class="form-group">
+                        <p style="color:black;text-align:center;padding:10px 15px">
+                            @ViewData["ShippingState"]
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Track Order</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
