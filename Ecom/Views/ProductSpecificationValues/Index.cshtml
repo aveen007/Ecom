@@ -41,10 +41,10 @@
                 @Html.DisplayFor(modelItem => item.Specification.SpecificationName)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-lg  btn-success"><i class="fas fa-pencil-alt" aria-hidden="true"></i></button></a>
-                    <a asp-action="Details" class="details" asp-route-id="@item.Id"><button type="button" class="btn btn-lg  btn-info"><i class="fas fa-eye" aria-hidden="true"></i></button></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-sm  btn-success"><i class="fas fa-pencil-alt" aria-hidden="true"></i></button></a>
+                    <a asp-action="Details" class="details" asp-route-id="@item.Id"><button type="button" class="btn btn-sm  btn-info"><i class="fas fa-eye" aria-hidden="true"></i></button></a>
                     <a asp-action="Delete" class="delete" asp-route-id="@item.Id">
-                        <button type="button" class="btn btn-lg btn-danger">
+                        <button type="button" class="btn btn-sm btn-danger">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </a>
