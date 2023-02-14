@@ -28,14 +28,38 @@ namespace Ecom.Controllers
             this._mapper = mapper;
          
         }
-        public IActionResult About()
+        public IActionResult About(string sortOrder, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
+
+
             var categories = _unitOfWork.CategoryRepo.GetAll().ToList();
-            ViewData["Categories"] = categories;
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                               select s;
-            return View(categoryVMs);
+            switch (sortOrder)
+            {
+                case "Name":
+                    categoryVMs = categoryVMs.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    categoryVMs = categoryVMs.OrderBy(s => s.Id);
+                    break;
+
+                default:
+                    categoryVMs = categoryVMs.OrderBy(s => s.Name);
+                    break;
+            }
+
+
+            int pageSize = 12;
+            int pageNumber = (page ?? 1);
+
+           /* ViewData["Categories"] = categories;*/
+            return View(categoryVMs.ToPagedList(pageNumber, pageSize));
         }
         public IActionResult Shop(int? id)
         {
