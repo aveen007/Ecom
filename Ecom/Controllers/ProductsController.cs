@@ -44,7 +44,7 @@ namespace Ecom.Controllers
             using var image = Image.Load((product.Imagefile.OpenReadStream()));
             //100: height
             //100: width
-            image.Mutate(x => x.Resize(100, 100));
+            image.Mutate(x => x.Resize(200, 200));
             image.Save(path);
             return Ok();
          /*   using var fileStream = new FileStream(path, FileMode.Create);
