@@ -31,6 +31,7 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -153,7 +154,7 @@
                                                                            @{ foreach (var category in cats)
                                                                         {
                                                                         if (index>0){
-                                                                                        <a href="" class="nav-item nav-link">@category.Name</a>
+                                                    <a href="@Url.Action("Shop", "Categories", new {id = category.Id})" class="nav-item nav-link">@category.Name</a>
                                                                             index--;
                                                                             }
                                                                         }}  
@@ -188,12 +189,12 @@
                                     <div class="nav-item dropdown">
                                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
                                         <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                            <a href=@Url.Action("index", "Categories", new { page=1}) class="dropdown-item">Categories</a>
-                                            <a href=@Url.Action("index", "Products", new { page=1}) class="dropdown-item">Products</a>
-                                            <a href=@Url.Action("index", "Specifications", new { page=1}) class="dropdown-item">Specifications</a>
+                                        <a href=@Url.Action("index", "Categories", new { page=1, sortOrder="Date" }) class="dropdown-item">Categories</a>
+                                        <a href=@Url.Action("index", "Products", new { page=1, sortOrder="Date" }) class="dropdown-item">Products</a>
+                                        <a href=@Url.Action("index", "Specifications", new { page=1, sortOrder="Date" }) class="dropdown-item">Specifications</a>
                                             <a href="~/CategorySpecifications" class="dropdown-item">Category Specifications</a>
-                                            <a href=@Url.Action("index", "ProductSpecifications", new { page=1}) class="dropdown-item">Product Specifications</a>
-                                            <a href=@Url.Action("index", "Orders", new { page=1}) class="dropdown-item">Orders</a>
+                                        <a href=@Url.Action("index", "ProductSpecifications", new { page=1, sortOrder="Date" }) class="dropdown-item">Product Specifications</a>
+                                        <a href=@Url.Action("index", "Orders", new { page=1, sortOrder="Date" }) class="dropdown-item">Orders</a>
                                             <a href="~/ProductSpecificationValues" class="dropdown-item">Product Specification Values</a>
                                             <a href="~/ValueTypes" class="dropdown-item">Value Types</a>
 
@@ -318,5 +319,7 @@
   
     @RenderSection("Scripts", required: false)
     @await Html.PartialAsync("_NotificationPartial")
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
 </body>
 </html>

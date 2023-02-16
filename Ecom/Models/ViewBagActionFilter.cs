@@ -24,10 +24,14 @@ namespace Ecom.Models
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var controller = context.Controller as BaseController;
-            var categories = controller.unitOfWork.CategoryRepo.GetAll();
+            if (!context.Controller.GetType().Equals(typeof(CategoriesController)))
+            {
+                var controller = context.Controller as BaseController;
+                var categories = controller.unitOfWork.CategoryRepo.GetAll();
+
+                controller.ViewData.Add("Cats", categories);
+            }
             
-            controller.ViewData.Add("Cats", categories);
           //  throw new System.NotImplementedException();
         }
 

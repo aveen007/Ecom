@@ -200,9 +200,26 @@ figure {
   margin: 0 0 1rem;
 }
 
+.img_product {
+    display: block;
+    max-width: 180px;
+    max-height: 180px;
+    width: auto;
+    height: auto;
+}
+
+.img_product1 {
+    display: block;
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+}
+
 img {
-  vertical-align: middle;
-  border-style: none;
+
+    vertical-align: middle;
+    border-style: none;
 }
 
 svg {

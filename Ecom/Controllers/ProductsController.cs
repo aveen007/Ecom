@@ -14,6 +14,9 @@ using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Ecom.Models;
 using PagedList;
+using SixLabors.ImageSharp;
+using static System.Net.WebRequestMethods;
+using SixLabors.ImageSharp.Processing;
 
 namespace Ecom.Controllers
 {
@@ -28,7 +31,7 @@ namespace Ecom.Controllers
             this._mapper = mapper;
 
         }
-        private async Task saveImage(Product product)
+        private  IActionResult SaveImage(Product product)
         {
             string wwwRootPath = _hostEnvironment.WebRootPath;
             string filename = Path.GetFileNameWithoutExtension(product.Imagefile.FileName);
@@ -36,8 +39,16 @@ namespace Ecom.Controllers
             filename = filename + DateTime.Now.ToString("yyyy-mm-ss-fff") + extension;
             string path = Path.Combine(wwwRootPath + "\\images\\products", filename);
             product.ImageLink = Path.Combine("/images/products/", filename);
-            using var fileStream = new FileStream(path, FileMode.Create);
-            await product.Imagefile.CopyToAsync(fileStream);
+
+
+            using var image = Image.Load((product.Imagefile.OpenReadStream()));
+            //100: height
+            //100: width
+            image.Mutate(x => x.Resize(200, 200));
+            image.Save(path);
+            return Ok();
+         /*   using var fileStream = new FileStream(path, FileMode.Create);
+            await product.Imagefile.CopyToAsync(fileStream);*/
         }
         private void deleteImage(string imagePath)
         {
@@ -169,7 +180,7 @@ namespace Ecom.Controllers
             {
 
                 if (product.Imagefile != null)
-                    await saveImage(product);
+                     SaveImage(product);
                 _unitOfWork.ProductRepo.Add(product);
                 await _unitOfWork.SaveAsync();
                 if (Specifications != null)
@@ -326,7 +337,7 @@ namespace Ecom.Controllers
                 try
                 {
                     if (product.Imagefile != null)
-                        await saveImage(product);
+                         SaveImage(product);
 
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
