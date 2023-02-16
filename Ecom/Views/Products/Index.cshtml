@@ -10,7 +10,7 @@
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Products</span></h2>
 <p>
-        @await Html.PartialAsync("_SorterPartial")
+       @* @await Html.PartialAsync("_SorterPartial")*@
 
         <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
@@ -18,8 +18,16 @@
 <table class="table">
     <thead>
         <tr>
+    
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                    <b> @Html.DisplayNameFor(model => model.Name)</b>
+
+
+                    <a href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm })> 
+                        <i class="fa fa-fw fa-sort"> </i></a>
+                       
+                       
+                    
             </th>
             <th>
                 Product Image
