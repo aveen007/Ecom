@@ -65,17 +65,24 @@ namespace Ecom.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+
+                var all_products = _unitOfWork.ProductRepo.GetAll().ToList();
+                ViewData["CategoryProducts"] = all_products;
+                return View();
             }
-            var category = _unitOfWork.CategoryRepo.Get(id.Value);
-            var products = _unitOfWork.ProductRepo.GetAll(filter: e => e.CategoryId == id).ToList();
-            ViewData["CategoryProducts"] = products;
+            else
+            {
+                var category = _unitOfWork.CategoryRepo.Get(id.Value);
+                var products = _unitOfWork.ProductRepo.GetAll(filter: e => e.CategoryId == id).ToList();
+                ViewData["CategoryProducts"] = products;
+                var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
+
+                return View(categoryViewModel);
+            }
             //ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
             //ViewData["SelectedCategorySpecification"] = new SelectList(_unitOfWork.CategorySpecificationRepo.GetAll(filter: e => e.CategoryId == id).ToList(), "Id", "SpecificationId");
 
-            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
-
-            return View(categoryViewModel);
+            
         }
         // GET: Categories
 
