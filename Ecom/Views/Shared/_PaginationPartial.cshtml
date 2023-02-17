@@ -2,12 +2,12 @@
 <div class="col-12">
     <nav>
         <ul class="pagination justify-content-center">
-            <li class="page-item @( (!(ViewBag.page-1>0) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page -1,sortOrder = ViewBag.CurrentSort})>Previous</span></a></li>
-            <li class="page-item active"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page)</a></li>
-            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+1,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page + 1)</a></li>
+            <li class="page-item @( (!(ViewBag.page-1>0) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page -1,sortOrder = ViewBag.CurrentSort, currentFilter=ViewBag.CurrentFilter })>Previous</span></a></li>
+            <li class="page-item active"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page,sortOrder = ViewBag.CurrentSort, currentFilter=ViewBag.CurrentFilter })>@(ViewBag.page)</a></li>
+            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+1,sortOrder = ViewBag.CurrentSort, currentFilter=ViewBag.CurrentFilter })>@(ViewBag.page + 1)</a></li>
 
-            <li class="page-item @( (!(ViewBag.page+2<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+2,sortOrder = ViewBag.CurrentSort})>@(ViewBag.page + 2)</a></li>
-            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page +1,sortOrder = ViewBag.CurrentSort})>Next</a></li>
+            <li class="page-item @( (!(ViewBag.page+2<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page+2,sortOrder = ViewBag.CurrentSort, currentFilter=ViewBag.CurrentFilter })>@(ViewBag.page + 2)</a></li>
+            <li class="page-item @( (!(ViewBag.page+1<=Model.PageCount) ? "disabled" : ""))"><a class="page-link" href=@Url.Action(null, new { page=ViewBag.page +1,sortOrder = ViewBag.CurrentSort, currentFilter=ViewBag.CurrentFilter })>Next</a></li>
         </ul>
     </nav>
 </div>

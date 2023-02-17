@@ -5,7 +5,7 @@
 }
 
 <p>
-    @await Html.PartialAsync("_SorterPartial")
+  @*  @await Html.PartialAsync("_SorterPartial")*@
 
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
@@ -13,7 +13,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.SpecificationName)
+                <b> @Html.DisplayNameFor(model => model.SpecificationName)</b>
+
+
+                <a href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm })>
+                    <i class="fa fa-fw fa-sort"> </i>
+                </a>
+               
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ValueType)

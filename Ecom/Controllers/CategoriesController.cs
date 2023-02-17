@@ -28,18 +28,38 @@ namespace Ecom.Controllers
             this._mapper = mapper;
          
         }
-        public IActionResult About(string sortOrder, int? page)
+        public IActionResult About(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+         
+            if (searchString != null)
+            {
+                page = 1;
+               
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
             ViewBag.Page = page;
 
+            ViewBag.CurrentFilter = searchString;
 
             var categories = _unitOfWork.CategoryRepo.GetAll().ToList();
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                               select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                categoryVMs = categoryVMs.Where(s => s.Name.Contains(searchString)
+                                      );
+            }
+
+
+
             switch (sortOrder)
             {
                 case "Name":
@@ -86,18 +106,39 @@ namespace Ecom.Controllers
         }
         // GET: Categories
 
-        public ActionResult Index(string sortOrder,int? page )
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page )
         {
+            if (page == null)
+            {
+                page = 1;
+            }
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+           
+
+            }
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page= page;
+            ViewBag.CurrentFilter = searchString;
+
             var categories = _unitOfWork.CategoryRepo.GetAll();
-            
 
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                              select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                categoryVMs = categoryVMs.Where(s => s.Name.Contains(searchString)
+                                      );
+            }
+
             switch (sortOrder)
             {
                 case "Name":
