@@ -30,21 +30,24 @@ namespace Ecom.Controllers
         }
         public IActionResult About(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-         
+            if (page == null)
+            {
+                page = 1;
+            }
             if (searchString != null)
             {
                 page = 1;
-               
             }
             else
             {
                 searchString = currentFilter;
-            }
-            ViewBag.Page = page;
 
+
+            }
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
             ViewBag.CurrentFilter = searchString;
 
             var categories = _unitOfWork.CategoryRepo.GetAll().ToList();
