@@ -208,11 +208,8 @@ namespace Ecom.Controllers
                 _unitOfWork.OrderRepo.Update(order);
                 await _unitOfWork.SaveAsync();
 
-                /*Shipping shipping = new Shipping();
-                shipping.OrderId = order.Id;
-                _unitOfWork.ShippingRepo.Add(shipping);
-                await _unitOfWork.SaveAsync();
-                */
+                string orderMessage = "Order has been placed successfully To track your order use the order id: " + order.Id.ToString();
+                Notify(orderMessage);
             }
 
             return RedirectToAction("Index", "Home"); ;
