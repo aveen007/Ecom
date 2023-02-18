@@ -103,6 +103,7 @@ namespace Ecom.Controllers
             //return RedirectToAction(nameof(Index));
             return RedirectToAction("Shop", "Categories", new {id = categoyId });
         }
+        [Authorize]
         public IActionResult ShoppingCart()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
