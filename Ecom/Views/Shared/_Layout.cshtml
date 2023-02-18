@@ -193,7 +193,7 @@
                             <div class="navbar-nav mr-auto py-0">
                                 <a href=@Url.Action("index", "Home") class="nav-item nav-link active">Home</a>
                             <a href=@Url.Action("Shop", "Categories", new { page=1, sortOrder="Date" }) class="nav-item nav-link">Shop</a>
-                                <a href="~/detail.html" class="nav-item nav-link">Shop Detail</a>
+                                @*<a href="~/detail.html" class="nav-item nav-link">Shop Detail</a>*@
                                 @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                                 {
                                 
@@ -213,7 +213,7 @@
                                             </div>
                                     </div>
                                 }
-                                <a href="~/contact.html" class="nav-item nav-link">Contact</a>
+                            <a href=@Url.Action("Contact", "Home") class="nav-item nav-link">Contact</a>
                             </div>
                             <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                                 <a href="" class="btn px-0">

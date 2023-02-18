@@ -7,6 +7,14 @@ using AppDbContext.UOW;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
+using ActionResult = Microsoft.AspNetCore.Mvc.ActionResult;
+using System;
+using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 
 namespace Ecom.Controllers
 {
@@ -37,8 +45,68 @@ namespace Ecom.Controllers
         
             return View();
         }
+        [HttpGet]
+        public IActionResult Contact()
+        {
+            return View();
+        }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Contact(ContactViewModel sendMailDto)
+        {
+            if (!ModelState.IsValid) return View();
+
+            try
+            {
+                MailMessage mail = new MailMessage();
+                // you need to enter your mail address
+                mail.From = new MailAddress("aveen2000hussein@gmail.com");
+
+                //To Email Address - your need to enter your to email address
+                mail.To.Add("aveen.hussein@yandex.com");
+
+                mail.Subject = sendMailDto.Subject;
+
+                //you can specify also CC and BCC - i will skip this
+                //mail.CC.Add("");
+                //mail.Bcc.Add("");
+
+                mail.IsBodyHtml = true;
+
+                string content = "Name : " + sendMailDto.Name;
+                content += "<br/> Message : " + sendMailDto.Message;
+
+                mail.Body = content;
+
+
+                //create SMTP instant
+
+                //you need to pass mail server address and you can also specify the port number if you required
+                SmtpClient smtpClient = new SmtpClient("mail.google.com");
+
+                //Create nerwork credential and you need to give from email address and password
+                NetworkCredential networkCredential = new NetworkCredential("aveen.hussein@yandex.com", "**");
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = networkCredential;
+                smtpClient.Port = 25; // this is default port number - you can also change this
+                smtpClient.EnableSsl = false; // if ssl required you need to enable it
+                smtpClient.Send(mail);
+
+                ViewBag.Message = "Mail Send";
+
+                // now i need to create the from 
+                ModelState.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                //If any error occured it will show
+                ViewBag.Message = ex.Message.ToString();
+            }
+            return View();
+        }
+    
+    public IActionResult Privacy()
         {
             return View();
         }
