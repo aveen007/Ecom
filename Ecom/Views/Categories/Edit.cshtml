@@ -28,7 +28,7 @@
                 <select id="Specs" asp-for="CategorySpecification" class ="form-control" asp-items="ViewBag.CategorySpecification" hidden></select>
             </div>
             <div class="form-group">
-                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Edit Specification <i class="fa fa-plus"></i></button>
+                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Edit Specifications <i class="fa fa-plus"></i></button>
             </div>
             <div id="spec">
                 <div id='specs_list' class='form-group'>
@@ -39,6 +39,8 @@
             <script type="text/javascript" src="~/js/site.js"></script>
             <script>
                 var isProduct = false;
+                var isDetails = false;
+
                 var specifications = document.getElementById("Specs");
                 var spec_dictionary = {};
                 for (i = 0; i < specifications.length; i++){
