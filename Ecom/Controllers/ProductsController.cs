@@ -241,7 +241,7 @@ namespace Ecom.Controllers
 
                         var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
 
-                        Notify("Not All Specifications have Values!!");
+                        Notify("Not All Specifications have Values!!", notificationType: NotificationTypeEnum.warning);
 
                         return View(tmp_productViewModel);
                     }
@@ -286,7 +286,7 @@ namespace Ecom.Controllers
 
                         var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
 
-                        Notify("Not All Specifications have Values!!");
+                        Notify("Not All Specifications have Values!!", notificationType: NotificationTypeEnum.warning);
 
                         return View(tmp_productViewModel);
                     }
@@ -407,7 +407,7 @@ namespace Ecom.Controllers
 
                             var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
 
-                            Notify("Not All Specifications have Values!!");
+                            Notify("Not All Specifications have Values!!", notificationType: NotificationTypeEnum.warning);
 
                             return View(tmp_productViewModel);
                         }
@@ -459,7 +459,7 @@ namespace Ecom.Controllers
 
                             var tmp_productViewModel = _mapper.Map<ProductViewModel>(product);
 
-                            Notify("Not All Specifications have Values!!");
+                            Notify("Not All Specifications have Values!!", notificationType: NotificationTypeEnum.warning);
 
                             return View(tmp_productViewModel);
                         }
