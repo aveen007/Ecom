@@ -38,6 +38,7 @@ namespace Ecom.Controllers
                         if (apiResponse == "")
                         {
                             ViewData["ShippingState"] = "An error has occurred when calling the service";
+                            Notify("An error has occurred when calling the service", notificationType: NotificationTypeEnum.error);
                         }
                         else
                         {
