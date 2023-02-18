@@ -56,7 +56,7 @@
                 <select id="Specs" asp-for="ProductSpecification" class ="form-control" asp-items="ViewBag.ProductSpecification" hidden></select>
             </div>
             <div class="form-group">
-                <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">edit specifications<i class="fa fa-plus"></i></button>
+                <button type="button" id="showSpec" class="btn btn-sm btn-light ml-2">Edit Specifications <i class="fa fa-plus"></i></button>
             </div>
             <div id="spec">
                 <div id='specs_list' class='form-group'>
@@ -202,6 +202,8 @@
                         }
                         updateSpecs();
                     }
+                    updateValuesInput();
+                    updateCatValuesInput();
                 </script>
 
             </div>
