@@ -34,27 +34,57 @@
     <select id="SelectedSpecs" asp-for="SelectedCategorySpecification" class ="form-control" asp-items="ViewBag.SelectedCategorySpecification" hidden></select>
     <select id="Specs" asp-for="CategorySpecification" class ="form-control" asp-items="ViewBag.CategorySpecification" hidden></select>
 </div>
-<div id="spec">
+<div class="form-group">
+    <button type="button" id="showSpecifications"  class="btn btn-sm btn-light ml-2" onclick='specsListChange()'>Show Specification</i></button>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div id="spec">
+            <div id='specs_list' class='form-group'>
 
-    <p id="msg"></p>
-    <script>
+            </div>
+            <p id="msg"></p>
 
-        var specifications = document.getElementById("Specs");
-        var selectedSpecifications = document.getElementById("SelectedSpecs");
+            <script type="text/javascript" src="~/js/site.js"></script>
+            <script>
+                var isProduct = false;
+                var specifications = document.getElementById("Specs");
+                var spec_dictionary = {};
+                for (i = 0; i < specifications.length; i++){
+                    spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                }
+                var selectedSpecifications = document.getElementById("SelectedSpecs");
 
-        var selectedValues = [];
-        for (i = 0; i < selectedSpecifications.length; i++){
-            selectedValues.push('"' + selectedSpecifications[i].text + '"')
-        }
+                var selectedValues = [];
+                for (i = 0; i < selectedSpecifications.length; i++){
+                    selectedValues.push(selectedSpecifications[i].text)
+                }
+                if(selectedValues.length > 0)
+                {
+                    var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(selectedValues) + "'>"
+                    $("#spec").append(spec);
+                    updateSpecs();
+                }
 
-        for (i = 0; i < specifications.length; i++){
-            if (selectedValues.includes('"' + specifications.options[i].value + '"')){
-                var spec = "<li>" + specifications.options[i].text + "</li>"
-                $("#specifications").append(spec);
-            }
-        }
-    </script>
+                document.getElementById("specs_list").hidden = true;
 
+                function specsListChange(){
+                    var specsList = document.getElementById("specs_list");
+                    var showButton = document.getElementById("showSpecifications");
+
+                    if (specsList.hidden){
+                        showButton.textContent = "Hide Specification";
+                    }
+                    else{
+                        showButton.textContent = "Show Specification";
+                    }
+
+                    specsList.hidden = !specsList.hidden;
+                }
+            </script>
+
+        </div>
+    </div>
 </div>
 <div>
     <a class="btn btn-primary"  asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
