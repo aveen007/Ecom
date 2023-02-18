@@ -171,6 +171,15 @@ namespace Ecom.Controllers
                 return NotFound();
             }
 
+            ViewData["CategoryId"] = new SelectList(_unitOfWork.CategoryRepo.GetAll().ToList(), "Id", "Name", product.CategoryId);
+            ViewData["ProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
+            ViewData["SelectedProductSpecification"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "SpecificationId");
+            ViewData["SelectedProductSpecificationValues"] = new SelectList(_unitOfWork.ProductSpecificationValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "SpecificationId", "Value");
+            ViewData["SelectedProductCategorySpecification"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "Id", "CategorySpecificationId");
+            ViewData["SelectedProductCategorySpecificationValues"] = new SelectList(_unitOfWork.ProductCategoryValueRepo.GetAll(filter: e => e.ProductId == id).ToList(), "CategorySpecificationId", "Value");
+
+            GetCategorySpecifications();
+
             var productViewModel = _mapper.Map<ProductViewModel>(product);
 
             return View(productViewModel);

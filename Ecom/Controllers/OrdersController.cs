@@ -59,7 +59,7 @@ namespace Ecom.Controllers
                 {
                     OrderId = order.Id,
                     ShippingStateId = 1,
-                    ShippingPrice = 20
+                    ShippingPrice = 10
                 };
                 _unitOfWork.ShippingRepo.Add(shipping);
                 await _unitOfWork.SaveAsync();
