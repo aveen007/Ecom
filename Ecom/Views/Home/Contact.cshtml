@@ -9,10 +9,10 @@
         <div class="col-lg-7 mb-5">
             <div class="contact-form bg-light p-30">
                 <div id="success"></div>
-                <form name="sentMessage" id="contactForm" novalidate="novalidate">
+                <form method="post" name="sentMessage" id="contactForm" novalidate="novalidate">
                     <div class="control-group">
                         <label asp-for="@Model.Name"></label>
-                        <input type="text" class="form-control" asp-for=" @Model.Name"
+                        <input type="text" class="form-control"  asp-for=" @Model.Name"
                                placeholder="Enter your name" required="required"
                                data-validation-required-message="Please enter your name">
                      
@@ -20,7 +20,7 @@
                     </div>
                     <div class="control-group">
 
-                        <input type="email" asp-for="@Model.Email" class="form-control" id="email" placeholder="Your Email"
+                        <input type="email" asp-for="@Model.Email" class="form-control"  placeholder="Your Email"
                                required="required" data-validation-required-message="Please enter your email" />
                         <p class="help-block text-danger"></p>
                     </div>
@@ -33,7 +33,7 @@
                         <p class="help-block text-danger"></p>
                     </div>
                     <div class="control-group">
-                        <textarea asp-for="@Model.Message"  class="form-control" rows="8" id="message" placeholder="Message"
+                        <textarea asp-for="@Model.Message"  class="form-control" rows="8"  placeholder="Message"
                                   required="required"
                                   data-validation-required-message="Please enter your message"></textarea>
                         <p class="help-block text-danger"></p>

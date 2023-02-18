@@ -9,12 +9,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
 using System.Net;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
-using ActionResult = Microsoft.AspNetCore.Mvc.ActionResult;
 using System;
-using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
+
 
 namespace Ecom.Controllers
 {
@@ -42,7 +38,9 @@ namespace Ecom.Controllers
  
         public IActionResult Index()
         {
-        
+            ViewBag.categories = _unitOfWork.CategoryRepo.GetAll();
+            ViewBag.products = _unitOfWork.ProductRepo.GetAll();
+
             return View();
         }
         [HttpGet]
@@ -85,7 +83,7 @@ namespace Ecom.Controllers
                 SmtpClient smtpClient = new SmtpClient("mail.google.com");
 
                 //Create nerwork credential and you need to give from email address and password
-                NetworkCredential networkCredential = new NetworkCredential("aveen.hussein@yandex.com", "**");
+                NetworkCredential networkCredential = new NetworkCredential("aveen2000hussein@gmail.com", "1aveen_Hussein");
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.Credentials = networkCredential;
                 smtpClient.Port = 25; // this is default port number - you can also change this
@@ -103,6 +101,7 @@ namespace Ecom.Controllers
                 //If any error occured it will show
                 ViewBag.Message = ex.Message.ToString();
             }
+            Notify(ViewBag.Message);
             return View();
         }
     
