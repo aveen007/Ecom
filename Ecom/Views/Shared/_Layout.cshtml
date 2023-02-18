@@ -65,7 +65,7 @@
                       
                             <div class=" dropdown">
                                 <a href="#" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account <i class="fa  mt-1"></i></a>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu dropdown-menu-right">
                                     <partial name="_LoginPartial" />
                                 </div>
                             </div>
@@ -114,9 +114,10 @@
                @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Admin"))
             {
                 <div class="col-lg-4 col-6 text-left">
-                    <form action="">
+                    <form id="myform" action=@Url.Action("Shop", "Categories",
+                      new {searchString = "xxx"})>
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search for products">
+                            <input type="text" class="form-control" id="searchStringg" placeholder="Search for products">
                             <div class="input-group-append">
                                 <span class="input-group-text bg-transparent text-primary">
                                     <i class="fa fa-search"></i>
@@ -125,7 +126,16 @@
                         </div>
                     </form>
                 </div>
-
+                <script>
+                      $(function () {
+                        $('.link').click(function () {
+                            var searchStringgg = $("#searchStringg").val();
+                            $('#myform').attr('action', Url.Action("Shop", "Categories",
+                                new { searchString =searchStringgg }));
+                            @*this.href = this.href.replace("xxx", searchString);*@
+                        });
+                      });
+                </script>
 
                 <div class="col-lg-4 col-6 text-right">
                     <p class="m-0">Customer Service</p>
