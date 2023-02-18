@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ecom.Models;
 using PagedList;
+using Microsoft.Data.SqlClient;
 
 namespace Ecom.Controllers
 {
@@ -28,18 +29,41 @@ namespace Ecom.Controllers
             this._mapper = mapper;
          
         }
-        public IActionResult About(string sortOrder, int? page)
+        public IActionResult About(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            if (page == null)
+            {
+                page = 1;
+            }
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+
+
+            }
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page = page;
-
+            ViewBag.CurrentFilter = searchString;
 
             var categories = _unitOfWork.CategoryRepo.GetAll().ToList();
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                               select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                categoryVMs = categoryVMs.Where(s => s.Name.Contains(searchString)
+                                      );
+            }
+
+
+
             switch (sortOrder)
             {
                 case "Name":
@@ -61,36 +85,101 @@ namespace Ecom.Controllers
            /* ViewData["Categories"] = categories;*/
             return View(categoryVMs.ToPagedList(pageNumber, pageSize));
         }
-        public IActionResult Shop(int? id)
+        public IActionResult Shop(int? id,string sortOrder, string currentFilter, string searchString, int? page)
         {
-            if (id == null)
+            if (page == null)
             {
-                return NotFound();
+                page = 1;
             }
-            var category = _unitOfWork.CategoryRepo.Get(id.Value);
-            var products = _unitOfWork.ProductRepo.GetAll(filter: e => e.CategoryId == id).ToList();
-            ViewData["CategoryProducts"] = products;
-            //ViewData["CategorySpecification"] = new SelectList(_unitOfWork.SpecificationRepo.GetAll().ToList(), "Id", "SpecificationName");
-            //ViewData["SelectedCategorySpecification"] = new SelectList(_unitOfWork.CategorySpecificationRepo.GetAll(filter: e => e.CategoryId == id).ToList(), "Id", "SpecificationId");
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
 
-            var categoryViewModel = _mapper.Map<CategoryViewModel>(category);
 
-            return View(categoryViewModel);
+            }
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.Page = page;
+            ViewBag.CurrentFilter = searchString;
+
+                var products = _unitOfWork.ProductRepo.GetAll().ToList();
+            if (id != null)
+            {              
+                 products = _unitOfWork.ProductRepo.GetAll(filter: e => e.CategoryId == id).ToList();
+               
+
+            }
+            var productviewmodels = _mapper.Map<List<ProductViewModel>>(products);
+            var productVMs = from s in productviewmodels
+                             select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                productVMs = productVMs.Where(s => s.Name.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "Name":
+                    productVMs = productVMs.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    productVMs = productVMs.OrderBy(s => s.Id);
+                    break;
+
+                default:
+                    productVMs = productVMs.OrderBy(s => s.Name);
+                    break;
+            }
+
+
+            int pageSize = 12;
+            int pageNumber = (page ?? 1);
+
+            return View(productVMs.ToPagedList(pageNumber, pageSize));
+           
+         
+            
         }
         // GET: Categories
 
-        public ActionResult Index(string sortOrder,int? page )
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page )
         {
+            if (page == null)
+            {
+                page = 1;
+            }
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+           
+
+            }
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page= page;
+            ViewBag.CurrentFilter = searchString;
+
             var categories = _unitOfWork.CategoryRepo.GetAll();
-            
 
             var categoriesViewModels = _mapper.Map<List<CategoryViewModel>>(categories);
             var categoryVMs = from s in categoriesViewModels
                              select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                categoryVMs = categoryVMs.Where(s => s.Name.Contains(searchString)
+                                      );
+            }
+
             switch (sortOrder)
             {
                 case "Name":

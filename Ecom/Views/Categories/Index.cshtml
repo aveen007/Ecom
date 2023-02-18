@@ -6,48 +6,48 @@
     ViewData["Title"] = "Index";
 }
 
-@*<h1>Index</h1>*@
+
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Categories</span></h2>
 
 
-
+@*search*********************@
         <div class="container-fluid pt-5">
-            <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Categories</span></h2>
+     
+                    <div class="row justify-content-start">
+                        <p >
+     
+                                    <a class="btn btn-primary" asp-action="Create">Create New</a>
+                                         <div class="col-lg-4 col-6 text-left">
 
-<p >
-        @await Html.PartialAsync("_SorterPartial")
-        
-       @*@if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)*@
-            <a class="btn btn-primary" asp-action="Create">Create New</a>
+                                            <form action="">
+                                                <div class="input-group">
+                                @Html.TextBox("SearchString",ViewBag.CurrentFilter as string , new { placeholder = "Search for categories", @class ="form-control" })
+                          
+                                      
+                                <button type="submit" class="input-group-append input-group-text bg-transparent text-primary" aria-hidden="true">
+                                    <i class="fas fa-search " ></i>
+                                </button>
+                      
+                                                </div>
+                                            </form>
+                                    </div>
         
   
-</p>
-            <div class="row px-xl-5 pb-3">
-@foreach (var item in Model) {
-        <!-- Categories Start -->
-                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                    <a class="text-decoration-none" href="">
-                        <div class="cat-item d-flex align-items-center mb-4">
-                            <div class="overflow-hidden" style="width: 100px; height: 100px;">
-                                <img class="img-fluid" src="img/cat-1.jpg" alt="">
-                            </div>
-                            <div class="flex-fill pl-3">
-                            <h6>@Html.DisplayFor(modelItem => item.Name)</h6>
-                                <small class="text-body">100 Products</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            
-        }
-            </div>
+                        </p>
+                     </div>
+       
         </div>
-        <!-- Categories End -->
-
+@*       *************************@
         <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <b> @Html.DisplayNameFor(model => model.Name)</b>
+
+
+                <a href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm , currentFilter=ViewBag.CurrentFilter})>
+                    <i class="fa fa-fw fa-sort"> </i>
+                </a>
             </th>
             <th></th>
         </tr>
@@ -76,3 +76,4 @@
 
 </table>
         @await Html.PartialAsync("_PaginationPartial")
+

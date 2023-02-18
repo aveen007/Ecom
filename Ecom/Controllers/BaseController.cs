@@ -30,7 +30,7 @@ namespace Ecom.Controllers
         }
     
 
-    public void Notify(string message, string title = "MultiShop",
+    public void Notify(string message,bool toastr=true, string title = "MultiShop",
                             NotificationTypeEnum notificationType = NotificationTypeEnum.success)
     {
         var msg = new
@@ -39,13 +39,13 @@ namespace Ecom.Controllers
             title = title,
             icon = notificationType.ToString(),
             type = notificationType.ToString(),
-            provider = GetProvider()
+            provider = GetProvider(toastr)
         };
 
         TempData["Message"] = JsonConvert.SerializeObject(msg);
     }
 
-    private string GetProvider()
+    private string GetProvider(bool toastr)
     {
         var builder = new ConfigurationBuilder()
                         .SetBasePath(Directory.GetCurrentDirectory())
@@ -53,10 +53,19 @@ namespace Ecom.Controllers
                         .AddEnvironmentVariables();
 
         IConfigurationRoot configuration = builder.Build();
+            var value = toastr ? configuration["NotificationProvider"] : configuration["NotificationProvider1"];
+      /*      if (toastr)
+            {
+         value = configuration["NotificationProvider"];
 
-        var value = configuration["NotificationProvider"];
+            }
+            else
+            {
+                 value = configuration["NotificationProvider1"];
 
-        return value;
+            }*/
+
+            return value;
     }
 }
 }

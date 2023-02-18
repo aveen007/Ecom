@@ -91,17 +91,39 @@ namespace Ecom.Controllers
             return View(productViewModel);
         }
         // GET: Products
-        public IActionResult Index(string sortOrder, int? page)
+        public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            if (page == null)
+            {
+                page = 1;
+            }
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+
+
+            }
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.Page = page;
+            ViewBag.CurrentFilter = searchString;
+
 
             var products = _unitOfWork.ProductRepo.GetAll(includeProperties: "Category").ToList();
             var productsViewModels = _mapper.Map<List<ProductViewModel>>(products);
             var productVMs = from s in productsViewModels
                              select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                productVMs = productVMs.Where(s => s.Name.Contains(searchString)
+                                      );
+            }
+
             switch (sortOrder)
             {
                 case "Name":

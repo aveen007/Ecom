@@ -9,12 +9,35 @@
   <!-- Products Start -->
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Products</span></h2>
-<p>
-       @* @await Html.PartialAsync("_SorterPartial")*@
 
-        <a class="btn btn-primary" asp-action="Create">Create New</a>
-</p>
+    @*search*********************@
+    <div class="container-fluid pt-5">
 
+        <div class="row justify-content-start">
+            <p>
+
+                <a class="btn btn-primary" asp-action="Create">Create New</a>
+                <div class="col-lg-4 col-6 text-left">
+
+                    <form action="">
+                        <div class="input-group">
+                            @Html.TextBox("SearchString",ViewBag.CurrentFilter as string , new { placeholder = "Search for products", @class ="form-control" })
+
+
+                            <button type="submit" class="input-group-append input-group-text bg-transparent text-primary" aria-hidden="true">
+                                <i class="fas fa-search "></i>
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+
+
+            </p>
+        </div>
+
+    </div>
+    @*       *************************@
 <table class="table">
     <thead>
         <tr>
@@ -23,8 +46,8 @@
                     <b> @Html.DisplayNameFor(model => model.Name)</b>
 
 
-                    <a href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm })> 
-                        <i class="fa fa-fw fa-sort"> </i></a>
+                <a href=@Url.Action(null , new {page=1, sortOrder=ViewBag.NameSortParm, currentFilter=ViewBag.CurrentFilter })>
+                    <i class="fa fa-fw fa-sort"> </i></a>
                        
                        
                     
