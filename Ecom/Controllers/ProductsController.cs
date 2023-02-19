@@ -379,22 +379,22 @@ namespace Ecom.Controllers
                     {
                         await SaveImage(product);
                         deleteImage(old_product.ImageLink);
-                        _unitOfWork.ProductRepo.Detach(old_product);
 
 
                     }
                     else
                     {
-                        product.Imagefile = old_product.Imagefile;
+                        product.ImageLink = old_product.ImageLink;
                       
                     }
+                    _unitOfWork.ProductRepo.Detach(old_product);
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
 
                     _unitOfWork.ProductSpecificationValueRepo.Delete(filter: e => e.ProductId == product.Id);
                     await _unitOfWork.SaveAsync();
 
-                    if (Specifications != null)
+                    if (Specifications != null && Specifications != "[]")
                     {
                         var tmp = Specifications.Substring(1, Specifications.Length - 2);
                         var tmps = tmp.Split(',');
@@ -446,7 +446,7 @@ namespace Ecom.Controllers
                     _unitOfWork.ProductCategoryValueRepo.Delete(filter: e => e.ProductId == product.Id);
                     await _unitOfWork.SaveAsync();
 
-                    if (CategorySpecifications != null)
+                    if (CategorySpecifications != null && CategorySpecifications != "[]")
                     {
                         var tmp = CategorySpecifications.Substring(1, CategorySpecifications.Length - 2);
                         var tmps = tmp.Split(',');

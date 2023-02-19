@@ -36,11 +36,12 @@ namespace Ecom.Models
 
                 controller.ViewData.Add("Cats", categories);
             }
-            if (!(controllerName == "Orders" && actionName == "ProceedToCheckOut") && !(controllerName == "TrackOrderService"))
-            {
-                var userId = controller.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
 
-                var orders = controller.unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+            var userId = controller.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            if (!(controllerName == "Orders" && actionName == "ProceedToCheckOut") && (userId != null))
+            {
+                var orders = controller.unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId.Value && e.IsOrdered == false).ToList();
 
                 Order order;
                 var productCount = 0;
