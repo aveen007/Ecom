@@ -30,7 +30,6 @@ namespace Ecom.Controllers
             this._mapper = mapper;
             _userManager = userManager;
         }
-        public static List< Tuple<Product, int> > cart = new List<Tuple<Product,int> >();
         public async Task<IActionResult> AddToCart(int? id, int quantity)
         {
             
@@ -112,7 +111,7 @@ namespace Ecom.Controllers
             Order order;
             if (!orders.Any())
             {
-                Notify("There are no products in your cart dude!!");
+                Notify("There are no products in your cart dude!!", notificationType: NotificationTypeEnum.warning);
                 return RedirectToAction("Index", "Home");
                 //return RedirectToAction("Shop", "Categories", new { id = categoyId });
             }
