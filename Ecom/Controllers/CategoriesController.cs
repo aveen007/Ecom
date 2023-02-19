@@ -85,8 +85,10 @@ namespace Ecom.Controllers
            /* ViewData["Categories"] = categories;*/
             return View(categoryVMs.ToPagedList(pageNumber, pageSize));
         }
-        public IActionResult Shop(int? id,string sortOrder, string currentFilter, string searchString, int? page)
+        public IActionResult Shop(int? id,string sortOrder, string currentFilter, string searchString,string ItemIds, int? page)
         {
+            List<int> items = !string.IsNullOrEmpty(ItemIds) ? ItemIds.Split(',').Select(x => int.Parse(x)).ToList() : new List<int>();
+            ViewBag.items = items;
             if (page == null)
             {
                 page = 1;
