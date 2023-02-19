@@ -1,4 +1,4 @@
-﻿@model AppDbContext.Models.Promotion
+﻿@model Ecom.Models.PromotionViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -42,7 +42,65 @@
         </dd>
     </dl>
 </div>
+<div class="form-group">
+    <select id="SelectedCats" asp-for="SelectedCategoryPromotion" class ="form-control" asp-items="ViewBag.SelectedCategoryPromotion" hidden></select>
+    <select id="Cats" asp-for="CategoryPromotion" class ="form-control" asp-items="ViewBag.CategoryPromotion" hidden></select>
+</div>
+<div class="form-group">
+    <button type="button" id="showSpecifications"  class="btn btn-sm btn-light ml-2" onclick='specsListChange()'>Show Specifications</i></button>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div id="spec">
+            <div id='specs_list' class='form-group'>
+
+            </div>
+            <p id="msg"></p>
+
+            <script type="text/javascript" src="~/js/site.js"></script>
+            <script>
+                var isProduct = false;
+                var isDetails = true;
+
+                var specifications = document.getElementById("Cats");
+                var spec_dictionary = {};
+                for (i = 0; i < specifications.length; i++){
+                    spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                }
+                var selectedSpecifications = document.getElementById("SelectedCats");
+
+                var selectedValues = [];
+                for (i = 0; i < selectedSpecifications.length; i++){
+                    selectedValues.push(selectedSpecifications[i].text)
+                }
+                if(selectedValues.length > 0)
+                {
+                    var spec = "<input hidden id='specIds' name='Specifications' value='" + JSON.stringify(selectedValues) + "'>"
+                    $("#spec").append(spec);
+                    updateSpecs();
+                }
+
+                document.getElementById("specs_list").hidden = true;
+
+                function specsListChange(){
+                    var specsList = document.getElementById("specs_list");
+                    var showButton = document.getElementById("showSpecifications");
+
+                    if (specsList.hidden){
+                        showButton.textContent = "Hide Specifications";
+                    }
+                    else{
+                        showButton.textContent = "Show Specifications";
+                    }
+
+                    specsList.hidden = !specsList.hidden;
+                }
+            </script>
+
+        </div>
+    </div>
+</div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary"  asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a class="btn btn-primary" href=@Url.Action("index", "Promotions", new { page=1})>Back to List</a>
 </div>

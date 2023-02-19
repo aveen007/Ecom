@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-/*using DynamicVML;*/
+
 namespace Ecom.Models
 {
     public class CategoryViewModel 
@@ -19,8 +19,5 @@ namespace Ecom.Models
 
         public virtual ICollection<CategorySpecification> CategorySpecification { get; set; }
         public virtual ICollection<CategorySpecification> SelectedCategorySpecification { get; set; }
-        /*       [Display(Name = "Authored books")]
-               public virtual DynamicList<SpecificationViewModel> Specs { get; set; } = new DynamicList<SpecificationViewModel>();
-           */
     }
 }

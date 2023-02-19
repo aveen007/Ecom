@@ -23,7 +23,7 @@ namespace Ecom.Controllers
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IMapper _mapper;
 
-        public CategoriesController( IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
+        public CategoriesController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment _hostEnvironment, IMapper mapper) : base(unitOfWork, configuration, _hostEnvironment)
         {
             this._hostEnvironment = _hostEnvironment;
             this._mapper = mapper;

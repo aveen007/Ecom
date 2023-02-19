@@ -1,4 +1,4 @@
-﻿@model AppDbContext.Models.Promotion
+﻿@model Ecom.Models.PromotionViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -19,7 +19,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="4" cols="50"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,6 +38,31 @@
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <select id="CategoryPromotions" asp-for="CategoryPromotion" class ="form-control" asp-items="ViewBag.CategoryPromotion" hidden></select>
+            
+            </div>
+            <div class="form-group">
+                <button type="button" id="showSpec"  class="btn btn-sm btn-light ml-2">Add Categories <i class="fa fa-plus"></i></button>
+            </div>
+            <div id="spec">
+                <div id='specs_list' class='form-group'>
+
+                </div>
+            <p id="msg"></p>
+            <script>
+                var isProduct = false;
+                var isDetails = false;
+
+                var specifications = document.getElementById("CategoryPromotions");
+                var spec_dictionary = {};
+                for (i = 0; i < specifications.length; i++){
+                    spec_dictionary[JSON.stringify(specifications.options[i].value)] = specifications.options[i].text;
+                }
+            </script>
+
+            </div>
+
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -45,9 +70,29 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" href=@Url.Action("index", "Promotions", new { page=1})>Back to List</a>
 </div>
 
-@section Scripts {
+@*@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+}*@
+
+<script>
+
+
+    var btn = document.getElementById("#showSpec");
+
+
+
+
+        function submitt() {
+            var Specs = document.getElementsByClass('Specs');
+           
+            var myArray = [];
+            for (var i = 0; i < Specs.length; i++) {
+                var obj = { id: "Your custom logic", Specs: Specs[i].value }
+                myArray.push(obj);
+            document.getElementById('StringifiedJSArray').value = JSON.stringify(myArray);
+          
+        }
+</script>
