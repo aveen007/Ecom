@@ -81,6 +81,7 @@ namespace AppDbContext.Repos
         {
             _dbSet.Update(item);
         }
+
         public bool IsExist(int id)
         {
             var dbItem = Get(id);
@@ -90,6 +91,12 @@ namespace AppDbContext.Repos
                 return true;
             }
             return false;
+        }
+
+        public  void Detach(T entity)
+        {
+            _db.Entry<T>(entity).State = EntityState.Detached;
+            return;
         }
     }
 }

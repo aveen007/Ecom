@@ -31,7 +31,7 @@ namespace Ecom.Controllers
             this._mapper = mapper;
 
         }
-        private  IActionResult SaveImage(Product product)
+        private async Task SaveImage(Product product)
         {
             string wwwRootPath = _hostEnvironment.WebRootPath;
             string filename = Path.GetFileNameWithoutExtension(product.Imagefile.FileName);
@@ -45,8 +45,8 @@ namespace Ecom.Controllers
             //100: height
             //100: width
             image.Mutate(x => x.Resize(200, 200));
-            image.Save(path);
-            return Ok();
+            await image.SaveAsync(path);
+          /*  return  Ok();*/
          /*   using var fileStream = new FileStream(path, FileMode.Create);
             await product.Imagefile.CopyToAsync(fileStream);*/
         }
@@ -201,10 +201,17 @@ namespace Ecom.Controllers
             if (ModelState.IsValid)
             {
 
+              
                 if (product.Imagefile != null)
-                     SaveImage(product);
-                _unitOfWork.ProductRepo.Add(product);
+                {
+                    await SaveImage(product);
+                  
+
+                }
+               
+                _unitOfWork.ProductRepo.Update(product);
                 await _unitOfWork.SaveAsync();
+
                 if (Specifications != null)
                 {
                     var tmp = Specifications.Substring(1, Specifications.Length - 2);
@@ -358,9 +365,20 @@ namespace Ecom.Controllers
             {
                 try
                 {
+                    Product old_product=_unitOfWork.ProductRepo.Get(id);
                     if (product.Imagefile != null)
-                         SaveImage(product);
+                    {
+                        await SaveImage(product);
+                        deleteImage(old_product.ImageLink);
+                        _unitOfWork.ProductRepo.Detach(old_product);
 
+
+                    }
+                    else
+                    {
+                        product.Imagefile = old_product.Imagefile;
+                      
+                    }
                     _unitOfWork.ProductRepo.Update(product);
                     await _unitOfWork.SaveAsync();
 

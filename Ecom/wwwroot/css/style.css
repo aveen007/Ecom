@@ -5,6 +5,19 @@
  * Copyright 2011-2020 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+.image-upload > input {
+    visibility: hidden;
+    width: 0;
+    height: 0
+}
+
+.image-upload:hover div {
+
+    visibility: visible;
+    opacity: 0.7;
+}
+
 .my-custom-scrollbar {
     position: relative;
     height: 200px;

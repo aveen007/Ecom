@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppDbContext.IRepos
 {
@@ -22,6 +23,7 @@ namespace AppDbContext.IRepos
 
         public bool IsExist(int id);
         public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "");
-       
+        public void Detach(T entity);
+     
     }
 }

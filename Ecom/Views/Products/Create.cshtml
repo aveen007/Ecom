@@ -42,10 +42,27 @@
                 <input asp-for="ImageLink" class="form-control" />
                 <span asp-validation-for="ImageLink" class="text-danger"></span>
             </div>*@
+
             <div class="form-group">
-                
-                <input type="file" name="Imagefile" class="form-control" required/>
-                <span asp-validation-for="Imagefile" class="text-danger"></span>
+                <div class="image-upload">
+                    <label for="Imagefile">
+                        <img id="prod_img" src="https://customercare.igloosoftware.com/.api2/api/v1/communities/10068556/previews/thumbnails/4fc20722-5368-e911-80d5-b82a72db46f2?width=680&height=680&crop=False" style="cursor: pointer;     max-width: 200px;
+    max-height: 200px;" />
+
+                        <div class="mask" style="background-color: hsla(0, 0%, 0%, 0.4)">
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <p class="text-white mb-0">Add product image</p>
+                            </div>
+                        </div>
+                        <div class="hover-overlay">
+                            <div class="mask" style="background-color: hsla(0, 0%,98%, 0.2)"></div>
+                        </div>
+                    </label>
+                    <input type="file" id="Imagefile" name="Imagefile" class="form-control"
+                           onchange="document.getElementById('prod_img').src = window.URL.createObjectURL(this.files[0])" required/>
+                    <span asp-validation-for="Imagefile" class="text-danger"></span>
+                </div>
+
             </div>
             <div class="form-group">
                 <select id="Specs" asp-for="ProductSpecification" class ="form-control" asp-items="ViewBag.ProductSpecification" hidden></select>

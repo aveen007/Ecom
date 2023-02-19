@@ -38,15 +38,26 @@
                 <select id='CategoryId' asp-for="CategoryId" class="form-control" onchange='updateHiddenSelect()' asp-items="ViewBag.CategoryId"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
-   @*         <div class="form-group">
-                <label asp-for="ImageLink" class="control-label"></label>
-                <input asp-for="ImageLink" class="form-control" />
-                <span asp-validation-for="ImageLink" class="text-danger"></span>
-            </div>*@
+   
             <div class="form-group">
-
-                <input type="file" name="Imagefile" class="form-control" required />
-                <span asp-validation-for="Imagefile" class="text-danger"></span>
+                <div class="image-upload">
+                    <label for="Imagefile">
+                        <img id="prod_img" src=@Model.ImageLink style="cursor: pointer;     max-width: 200px;
+    max-height: 200px;" />
+                       
+                            <div class="mask" style="background-color: hsla(0, 0%, 0%, 0.4)">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <p class="text-white mb-0">Change product image</p>
+                                </div>
+                            </div>
+                            <div class="hover-overlay">
+                                <div class="mask" style="background-color: hsla(0, 0%,98%, 0.2)"></div>
+                            </div>              
+                    </label>
+                    <input type="file" id="Imagefile" name="Imagefile" class="form-control"
+                           onchange="document.getElementById('prod_img').src = window.URL.createObjectURL(this.files[0])" />
+                </div>
+              
             </div>
             <div class="form-group">
                 <select id="SelectedProductSpecs" asp-for="SelectedProductSpecification" class ="form-control" asp-items="ViewBag.SelectedProductSpecification" hidden></select>
