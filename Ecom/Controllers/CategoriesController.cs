@@ -85,8 +85,11 @@ namespace Ecom.Controllers
            /* ViewData["Categories"] = categories;*/
             return View(categoryVMs.ToPagedList(pageNumber, pageSize));
         }
-        public IActionResult Shop(int? id,string sortOrder, string currentFilter, string searchString, int? page)
+        public IActionResult Shop(int? id,string sortOrder, string currentFilter, string searchString,string ItemIds, int? page)
         {
+            List<int> items = !string.IsNullOrEmpty(ItemIds) ? ItemIds.Split(',').Select(x => int.Parse(x)).ToList() : new List<int>();
+            ViewBag.items = items;
+          
             if (page == null)
             {
                 page = 1;
@@ -121,7 +124,26 @@ namespace Ecom.Controllers
             {
                 productVMs = productVMs.Where(s => s.Name.Contains(searchString));
             }
+           /* var tempProds = new List<ProductViewModel>(); */
+            var tempIds= new List<int>();
+            if (!items.Contains(0)&&items.Count!=0)
+            {
 
+
+                foreach (var item in items)
+
+                {
+
+                    var minPrice = (item-1) * 10;
+                    var maxPrice = minPrice + 10;
+                    var tempProds = productVMs.Where(s => s.Price >= minPrice && s.Price <= maxPrice);
+                    foreach (var pro in tempProds)
+                    {
+                        tempIds.Add(pro.Id);
+                    }
+                }
+                productVMs = productVMs.Where(s => tempIds.Contains(s.Id));
+            }
             switch (sortOrder)
             {
                 case "Name":
