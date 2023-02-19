@@ -15,34 +15,68 @@
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by price</span></h5>
             <div class="bg-light p-4 mb-30 " id="PriceArea">
                     <form>
+                    @if (@ViewBag.items.Count==0){
+                      
+                        <script>
+                            $(document).ready(function () {
+
+                            
+                               $("#price-0").prop("checked", true);
+                                    
+
+                                });
+                            
+
+                        </script>
+                    }
+                    @foreach (var old_item in @ViewBag.items)
+                    {
+                        <script>
+                            $(document).ready(function () {
+
+                            $("#PriceArea input[type=checkbox]").each(function (index, val) {
+                                var Id = $(val).attr("id");
+                                var array = Id.split("-");
+                                var ItemId = array[1];
+                               
+                                if ("@old_item" == ItemId){
+                                        $("#" + Id).prop("checked", true);
+                                }
+                                    
+                            });
+                            });
+                          
+                        </script>
+                    }
+
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="price-0" onchange='getPrices()'>
+                         <input type="checkbox" class="custom-control-input"  id="price-0" onchange='getPrices()'>
                             <label class="custom-control-label" for="price-0">All Price</label>
                             <span class="badge border font-weight-normal">1000</span>
                         </div>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" id="price-1" onchange='getPrices()'>
-                            <label class="custom-control-label" for="price-1">$0 - $100</label>
+                            <label class="custom-control-label" for="price-1">$0 - $10</label>
                             <span class="badge border font-weight-normal">150</span>
                         </div>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" id="price-2" onchange='getPrices()'>
-                            <label class="custom-control-label" for="price-2">$100 - $200</label>
+                            <label class="custom-control-label" for="price-2">$10 - $20</label>
                             <span class="badge border font-weight-normal">295</span>
                         </div>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" id="price-3" onchange='getPrices()'>
-                            <label class="custom-control-label" for="price-3">$200 - $300</label>
+                            <label class="custom-control-label" for="price-3">$20 - $30</label>
                             <span class="badge border font-weight-normal">246</span>
                         </div>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" id="price-4" onchange='getPrices()'>
-                            <label class="custom-control-label" for="price-4">$300 - $400</label>
+                            <label class="custom-control-label" for="price-4">$30 - $40</label>
                             <span class="badge border font-weight-normal">145</span>
                         </div>
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
                         <input type="checkbox" class="custom-control-input" id="price-5" onchange='getPrices()'>
-                            <label class="custom-control-label" for="price-5">$400 - $500</label>
+                            <label class="custom-control-label" for="price-5">$40 - $50</label>
                             <span class="badge border font-weight-normal">168</span>
                         </div>
                     
@@ -63,7 +97,7 @@
                 function getPrices() {
                 var ItemIdArray = [];
                 var ItemsIdsCommaSeparated = "";
-           
+                 cat_spec_dictionaries=""
 
                     $("#PriceArea input[type=checkbox]").each(function (index, val) {
                         var Id = $(val).attr("id");
@@ -76,7 +110,7 @@
                         ItemsIdsCommaSeparated = ItemIdArray.toString();
 
                     })
-                        
+                       
                         window.location.href = '@Url.Action("Shop", "Categories")?ItemIds=' + ItemsIdsCommaSeparated;
                          
                             
@@ -85,6 +119,7 @@
                 }
                     
                 </script>
+         
 
           
         
