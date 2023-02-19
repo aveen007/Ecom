@@ -30,7 +30,6 @@ namespace Ecom.Controllers
             this._mapper = mapper;
             _userManager = userManager;
         }
-        public static List< Tuple<Product, int> > cart = new List<Tuple<Product,int> >();
         public async Task<IActionResult> AddToCart(int? id, int quantity)
         {
             
@@ -59,7 +58,7 @@ namespace Ecom.Controllers
                 {
                     OrderId = order.Id,
                     ShippingStateId = 1,
-                    ShippingPrice = 20
+                    ShippingPrice = 10
                 };
                 _unitOfWork.ShippingRepo.Add(shipping);
                 await _unitOfWork.SaveAsync();
@@ -103,6 +102,7 @@ namespace Ecom.Controllers
             //return RedirectToAction(nameof(Index));
             return RedirectToAction("Shop", "Categories", new {id = categoyId });
         }
+        [Authorize]
         public IActionResult ShoppingCart()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
@@ -111,7 +111,7 @@ namespace Ecom.Controllers
             Order order;
             if (!orders.Any())
             {
-                Notify("There are no products in your cart dude!!");
+                Notify("There are no products in your cart dude!!", notificationType: NotificationTypeEnum.warning);
                 return RedirectToAction("Index", "Home");
                 //return RedirectToAction("Shop", "Categories", new { id = categoyId });
             }
@@ -207,11 +207,8 @@ namespace Ecom.Controllers
                 _unitOfWork.OrderRepo.Update(order);
                 await _unitOfWork.SaveAsync();
 
-                /*Shipping shipping = new Shipping();
-                shipping.OrderId = order.Id;
-                _unitOfWork.ShippingRepo.Add(shipping);
-                await _unitOfWork.SaveAsync();
-                */
+                string orderMessage = "Order has been placed successfully To track your order use the order id: " + order.Id.ToString();
+                Notify(orderMessage);
             }
 
             return RedirectToAction("Index", "Home"); ;

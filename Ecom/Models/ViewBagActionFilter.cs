@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using AppDbContext.UOW;
 using Ecom.Controllers;
+using AppDbContext.Models;
+using System.Linq;
 
 namespace Ecom.Models
 {
@@ -24,15 +26,37 @@ namespace Ecom.Models
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!context.Controller.GetType().Equals(typeof(CategoriesController)))
+            string actionName = context.RouteData.Values["action"].ToString();
+            string controllerName = context.RouteData.Values["controller"].ToString();
+
+            var controller = context.Controller as BaseController;
+            if (!(controllerName == "Categories" && actionName == "Edit"))
             {
-                var controller = context.Controller as BaseController;
                 var categories = controller.unitOfWork.CategoryRepo.GetAll();
 
                 controller.ViewData.Add("Cats", categories);
             }
-            
-          //  throw new System.NotImplementedException();
+            if (!(controllerName == "Orders" && actionName == "ProceedToCheckOut") && !(controllerName == "TrackOrderService"))
+            {
+                var userId = controller.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+                var orders = controller.unitOfWork.OrderRepo.GetAll(filter: e => e.UserId == userId && e.IsOrdered == false).ToList();
+
+                Order order;
+                var productCount = 0;
+                if (!orders.Any())
+                {
+                    productCount = 0;
+                }
+                else
+                {
+                    order = orders.First();
+                    productCount = controller.unitOfWork.ProductOrderRepo.GetAll(filter: e => e.OrderId == order.Id).ToList().Count();
+                }
+
+                controller.ViewData.Add("ProductCount", productCount);
+            }
+
         }
 
       /*  public override void OnResultExecuting(ResultExecutingContext context)

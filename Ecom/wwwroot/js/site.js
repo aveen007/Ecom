@@ -283,15 +283,28 @@ function updateSpecs() {
                 tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
                 var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + spec_dictionary[JSON.stringify(tmps[i])] + "</div></td>";
                 if (isProduct) {
-                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control values' oninput='updateValuesInput()' ";
-                    if (value_dictionary[tmps[i]]) {
-                        value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
-                        tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
+                    if (isDetails) {
+                        tmp_spec += "<td><div id='spec_" + tmps[i] + "'>";
+                        if (value_dictionary[tmps[i]]) {
+                            value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
+                            tmp_spec += value_dictionary[tmps[i]];
+                        }
+                        else {
+                            value_dic_tmp[tmps[i]] = "";
+                        }
+                        tmp_spec += "</div></td>";
                     }
                     else {
-                        value_dic_tmp[tmps[i]] = "";
+                        tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control values' oninput='updateValuesInput()' ";
+                        if (value_dictionary[tmps[i]]) {
+                            value_dic_tmp[tmps[i]] = value_dictionary[tmps[i]];
+                            tmp_spec += "value='" + value_dictionary[tmps[i]] + "'";
+                        }
+                        else {
+                            value_dic_tmp[tmps[i]] = "";
+                        }
+                        tmp_spec += " required></div></td>";
                     }
-                    tmp_spec += " required></div></td>";
                 }
                 tmp_spec += "</tr>";
                 $("#list_body").append(tmp_spec);
@@ -314,15 +327,28 @@ function updateSpecs() {
                 tmps[i] = tmps[i].substring(1, tmps[i].length - 1);
                 var tmp_spec = "<tr><th scope='row'>" + tmps[i] + "</th><td><div>" + cat_spec_dictionary[tmps[i]] + "</div></td>";
                 if (isProduct) {
-                    tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control catValues' oninput='updateCatValuesInput()' ";
-                    if (cat_value_dictionary[tmps[i]]) {
-                        value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
-                        tmp_spec += "value='" + cat_value_dictionary[tmps[i]] + "'";
+                    if (isDetails) {
+                        tmp_spec += "<td><div id='spec_" + tmps[i] + "'>";
+                        if (cat_value_dictionary[tmps[i]]) {
+                            value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
+                            tmp_spec += cat_value_dictionary[tmps[i]];
+                        }
+                        else {
+                            value_dic_tmp[tmps[i]] = "";
+                        }
+                        tmp_spec += "</div></td>";
                     }
                     else {
-                        value_dic_tmp[tmps[i]] = "";
+                        tmp_spec += "<td><div id='spec_" + tmps[i] + "'><input class='form-control catValues' oninput='updateCatValuesInput()' ";
+                        if (cat_value_dictionary[tmps[i]]) {
+                            value_dic_tmp[tmps[i]] = cat_value_dictionary[tmps[i]];
+                            tmp_spec += "value='" + cat_value_dictionary[tmps[i]] + "'";
+                        }
+                        else {
+                            value_dic_tmp[tmps[i]] = "";
+                        }
+                        tmp_spec += " required></div></td>";
                     }
-                    tmp_spec += " required></div></td>";
                 }
                 tmp_spec += "</tr>";
                 $("#list_body").append(tmp_spec);
